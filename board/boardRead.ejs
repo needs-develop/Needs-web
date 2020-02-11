@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>글 읽기</title> 
+</head>
+    
+<body>
+        <pre>                                                                                 <a href="boardWrite?document_name=<%=board.document_name%>"> 수정 | </a><a href="boardDelete?document_name=<%=board.document_name%>">삭제 </a></pre>
+    
+        <!-- 글 읽기-->
+		<table border="1" style="width:600px">
+			<colgroup>
+				<col width='20%' />
+				<col width='*%' />
+			</colgroup>
+			<tbody>
+                <tr>
+					<td>제목</td> 
+					<td><%=board.title%></td> 
+				</tr>
+				<tr>
+					<td>작성자</td> 
+					<td><%=board.write%></td> 
+				</tr>
+				<tr>
+					<td>내용</td> 
+					<td><%=board.content%></td> 
+				</tr>
+                <tr>
+					<td>작성시간</td> 
+					<td><%=board.day%></td> 
+				</tr>
+                <tr>
+                    <td>조회수</td>
+                    <td><%=board.visit_num%></td>
+                </tr>
+                <tr>
+                    <td>좋아요</td>
+                    <td><%=board.good_num%></td>
+                </tr>
+			</tbody>
+		</table>    
+        <br>
+    
+        
+        <form name="form1" action="boardLike" method="post"> 
+            <input type="button" value=" ♥ " onClick="form1.submit()">  
+            <input type="hidden" name="document_name" value="<%=board.document_name%>">    
+        </form>
+        <br><br><br><br><hr>
+     
+        
+    
+       
+        <!-- 댓글 읽기-->
+        <caption><h3>댓글(<%=reply.length%>)</h3></caption>
+        
+        <%   
+        if(reply.length != 0) {     // 댓글이 존재하면 댓글을 출력
+        %>
+            <%
+            for(var i=0; i<reply.length; i++) {
+            %>
+                <pre>                                                                                 <a href="commentEdit?data_doc=<%=board.document_name%>&reply_doc=<%=reply[i].reply_doc%>"> 수정 | </a><a href="commentDelete?data_doc=<%=board.document_name%>&reply_doc=<%=reply[i].reply_doc%>">삭제 </a></pre>
+    
+                <table border="1" style="width:600px">
+                    <colgroup>
+	   			         <col width='20%' />
+	   			         <col width='*%' />
+	   		        </colgroup>
+                    
+                    <tbody>
+                    <tr>
+                        <td>이름</td>
+                        <td><%=reply[i].writerReply%></td>      
+                    </tr>
+                    <tr>
+                        <td>내용</td>
+                        <td><%=reply[i].contentReply%></td>      
+                    </tr>
+                    <tr>
+                        <td>작성시간</td>
+                        <td><%=reply[i].timeReply%></td>      
+                    </tr>
+                    </tbody>
+                    
+                </table>
+                <br>
+            <%
+            }
+            %>
+    
+        <%
+        }
+        %>
+    
+    
+    
+        <br><br>
+        <!-- 댓글 쓰기-->
+        <form name="form2" action="commentSave" method="post">
+            이름 : <input type="text" name="writerReply" size=15><p>
+            내용 : <textarea name="contentReply" cols=40 rows=6></textarea>&nbsp;
+            <input type="hidden" name="data_doc" value="<%=board.document_name%>">
+            <input type="submit" value=등록 onClick="form2.submit()">
+        </form>
+        <br><br>
+        
+        <form name="form3" action="boardList" method="get">
+            <pre>                                                                                       <input type="submit" value="목록"></pre>
+        </form>
+        <br>    
+    
+</body>
+</html>
+
+
+

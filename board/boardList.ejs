@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>글 목록</title>
+</head>
+<body>
+    
+	<table border="1" style="width:600px">
+        <caption><h1>글 목록</h1></caption>
+		<colgroup>
+			<col width='8%' />
+			<col width='*%' />
+			<col width='15%' />
+			<col width='25%' />
+            <col width='10%' />
+            <col width='10%' />
+		</colgroup>
+		<thead>
+			<tr>
+				<th>No.</th> 
+				<th>제목</th>
+				<th>작성자</th>
+				<th>작성시간</th>
+                <th>조회수</th>
+                <th>좋아요</th>
+			</tr>
+		</thead>
+		<tbody>
+		<%
+			 for(var i=0; i<board.length; i++) {
+		%>
+			<tr>
+				<td><%=board.length-i%></td>
+                <td><a href="boardRead?document_name=<%=board[i].document_name%>&visitNew=1"><%=board[i].title%></a></td>
+				<td><%=board[i].write%></td>
+				<td><%=board[i].day%></td>
+                <td><%=board[i].visit_num%></td>
+                <td><%=board[i].good_num%></td>
+			</tr>
+		<%
+			 }
+		%>
+		</tbody>
+	</table>
+    
+    
+    <form name="form1" action="boardWrite" method="get">
+        <pre>                                                                                     <input type="submit" value="글쓰기"></pre>
+    </form>
+</body>
+</html>
