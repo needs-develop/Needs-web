@@ -45,8 +45,9 @@
     
         
         <form name="form1" action="boardLike" method="post"> 
-            <input type="button" value=" ♥ " onClick="form1.submit()">  
+            <input type="button" value=" ♥ " onClick="form1.submit()"> 
             <input type="hidden" name="document_name" value="<%=board.document_name%>">    
+            <input type="hidden" name="page" value="<%=page%>">
         </form>
         <br><br><br><br><hr>
      
@@ -109,11 +110,9 @@
         
         <form name="form3" action="boardList" method="get">
             <pre>                                                                                       <input type="submit" value="목록"></pre>
+            <input type="hidden" name="page" value="<%=page%>">
         </form>
         <br>    
     
 </body>
 </html>
-
-
-
