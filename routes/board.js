@@ -31,15 +31,19 @@ var db = firebase.firestore(app);
 
 // 글 목록
 router.get('/boardList', function(req, res, next) {
+    var page = Number(req.query.page);
+    if (!page) {    // 그냥 boardList로 이동할 경우 1페이지를 보여줌
+        page = 1;
+    }
+  
     db.collection('freeData').orderBy("day", "desc").get()  // 날짜의 내림차순으로 정렬
         .then((snapshot) => {
             var free_board = [];
             snapshot.forEach((free_doc) => {
                 var free_data = free_doc.data();  // Key(문서이름)는 빼고 Data만 저장
-                free_board.push(free_data);
-                
+                free_board.push(free_data);               
             });
-            res.render('board/boardList', {board: free_board});
+            res.render('board/boardList', {board: free_board, page: page});
         })
         .catch((err) => {
             console.log('Error getting documents', err);
@@ -54,15 +58,16 @@ router.get('/boardRead', function(req, res, next) {
     free_doc.get()
         .then((doc) => {    
             var free_data = doc.data();    
+            var page = req.query.page;
            
             // boardList에서 글을 처음 읽을 때만 조회수 증가 (수정, 좋아요, 댓글 시에는 증가하지 않음)
             if(req.query.visitNew == 1) {
                 // 실제 document의 visit_num를 1 증가
-                var visit = Number(free_data.visit_num) + 1;    
+                var visit = free_data.visit_num + 1;    
                 free_doc.update({visit_num : visit});  
                 
-                // row로 넘겨줄 visit_num를 1 증가
-                free_data.visit_num = Number(free_data.visit_num) + 1; 
+                // board로 넘겨줄 visit_num를 1 증가
+                free_data.visit_num += 1; 
             }
 
 
@@ -75,7 +80,7 @@ router.get('/boardRead', function(req, res, next) {
                         reply_data.data_doc = free_data.document_name;
                         reply.push(reply_data);
                     });
-                    res.render('board/boardRead', {board: free_data, reply: reply});
+                    res.render('board/boardRead', {board: free_data, page: page, reply: reply});
                 })
                 .catch((err) => {
                     console.log('Error getting documents', err);
@@ -112,7 +117,7 @@ router.post('/boardSave', function(req,res,next){
     var postData = req.body;
     
     if (!postData.document_name) {  // new
-        postData.day = moment().format('YYYY/M/D HH:mm');
+        postData.day = moment().format('YYYY/MM/DD HH:mm:ss');
         postData.visit_num = 0;
         postData.good_num = 0;
         
@@ -137,10 +142,10 @@ router.post('/boardLike', function(req,res,next){
         .then((doc) => {
             var board_data = doc.data();
         
-            var good = Number(board_data.good_num) + 1;  
+            var good = board_data.good_num + 1;  
             board_doc.update({good_num : good});
         
-            res.redirect('boardRead?document_name=' + req.body.document_name);  // get함수 밖으로 빼면 안됨!
+            res.redirect('boardRead?document_name=' + req.body.document_name + '&page=' + req.body.page);  // get함수 밖으로 빼면 안됨!
     });  
 });
 
@@ -201,10 +206,4 @@ router.get('/commentDelete', function(req,res,next){
 
 
 
-
-
-
-
-
 module.exports = router;
-
