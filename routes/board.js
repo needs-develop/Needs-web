@@ -26,8 +26,15 @@ if (!firebase.apps.length) {
 var db = firebase.firestore(app);
 
 
+router.get('/', function(req, res, next){
+    console.log("GET방식");
+    res.redirect("/board/boardList");
+});
 
-
+router.post('/', function(req, res, next){
+    console.log("POST방식");
+    res.redirect("/board/boardList");
+});
 
 // 글 목록
 router.get('/boardList', function(req, res, next) {
@@ -203,7 +210,5 @@ router.get('/commentDelete', function(req,res,next){
     db.collection("freeData").doc(getData.data_doc).collection("reply").doc(getData.reply_doc).delete()   
     res.redirect('boardRead?document_name=' + getData.data_doc);
 });
-
-
 
 module.exports = router;
