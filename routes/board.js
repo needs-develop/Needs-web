@@ -26,15 +26,15 @@ if (!firebase.apps.length) {
 var db = firebase.firestore(app);
 
 
-router.get('/', function(req, res, next){
-    console.log("GET방식");
-    res.redirect("/board/boardList");
-});
-
-router.post('/', function(req, res, next){
-    console.log("POST방식");
-    res.redirect("/board/boardList");
-});
+//router.get('/', function(req, res, next){
+//    console.log("GET방식");
+//    res.redirect("main");
+//});
+//
+//router.post('/', function(req, res, next){
+//    console.log("POST방식");
+//    res.redirect("main");
+//});
 
 // 글 목록
 router.get('/boardList', function(req, res, next) {
@@ -50,6 +50,7 @@ router.get('/boardList', function(req, res, next) {
                 var free_data = free_doc.data();  // Key(문서이름)는 빼고 Data만 저장
                 free_board.push(free_data);               
             });
+            console.log("여기까지됨");
             res.render('board/boardList', {board: free_board, page: page});
         })
         .catch((err) => {
@@ -187,7 +188,7 @@ router.post('/commentSave', function(req,res,next){
     var board_doc = db.collection("freeData").doc(postData.data_doc);
     
     if (!postData.reply_doc) {     // new
-        postData.timeReply = moment().format('YYYY/M/D H:m');
+        postData.timeReply = moment().format('YYYY/MM/DD HH:mm:ss');
         var reply_doc = board_doc.collection("reply").doc();    
         postData.reply_doc = reply_doc.id;
         reply_doc.set(postData);
