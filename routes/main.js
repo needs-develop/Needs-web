@@ -26,14 +26,14 @@ var fb_auth = firebase.auth();
 /* GET Main Page */
 router.get('/', function(req, res, next){
     console.log("게시판 렌더링함.");
-    //res.render("main.html");
-    res.redirect("/board");
+    res.render("home");
 });
 
 /* POST Main Page */
 router.post('/', function(req, res) {
     console.log("여길 거치네?");
-    res.redirect("/main");
+    res.render("home");
 });
+
 
 module.exports = router;
