@@ -5,14 +5,14 @@ require('date-utils');
 
 /* firebase Web-App Configuration */
 var firebase_config = {
-  apiKey: "AIzaSyDrYAeASDEBnNm7Srjr_VzMBn9KI-LE_-M",
-  authDomain: "needspractice-b62a1.firebaseapp.com",
-  databaseURL: "https://needspractice-b62a1.firebaseio.com",
-  projectId: "needspractice-b62a1",
-  storageBucket: "needspractice-b62a1.appspot.com",
-  messagingSenderId: "475959556794",
-  appId: "1:475959556794:web:f767bed57b25953959a083",
-  measurementId: "G-T23HLG7EXN"
+  apiKey: "AIzaSyCE59at8BFrqn84RG63hn1uS_NhNrnPuso",
+  authDomain: "lloginexample.firebaseapp.com",
+  databaseURL: "https://lloginexample.firebaseio.com",
+  projectId: "lloginexample",
+  storageBucket: "lloginexample.appspot.com",
+  messagingSenderId: "124851004056",
+  appId: "1:124851004056:web:b58239166f9907ce3926ed",
+  measurementId: "G-CR5E843ZEM"
 };
 
 /* Initialize Firebase */
@@ -92,7 +92,7 @@ router.post('/', function(req, res) {
             fb_auth.signInWithEmailAndPassword(param_email, param_pw)
                 .then(function(data){
                     //로그인 -> 메인페이지로 넘어감
-                    res.redirect('/main');
+                    res.redirect('main');
                 })
                 .catch(function(error) {
                     res.send(`
