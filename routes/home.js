@@ -27,11 +27,11 @@ router.get('/', function(req, res, next) {
   var user = fb_auth.currentUser;
   if(user){
     console.log("---------유저등장--------");
-    res.redirect('/main');
+    res.redirect('main');
   }
   else {
     console.log("---------유저없음---------");
-    res.render('home.html');
+    res.render('home');
   }
 });
 
@@ -46,7 +46,7 @@ router.post('/email_login', function(req, res) {
   var param_pw = req.body.userPw;
   fb_auth.signInWithEmailAndPassword(param_email, param_pw)
     .then(function(firebaseUser) {
-      res.redirect("/main");
+      res.redirect("main");
     })
     .catch(function(error) {  //알람메세지 띄우고 뒤로가기
       res.send(`
@@ -98,7 +98,7 @@ router.get('/google_login', function(req, res){
     .catch(err => {
       console.log("ERROR");
     });
-    res.redirect('/main');
+    res.redirect('main');
   })
 });
 
@@ -140,9 +140,9 @@ router.get('/facebook_login', function(req, res){
       }
     })
     .catch(err => {
-      console.log("ERROR");y
+      console.log("ERROR");
     });
-    res.redirect('/main');
+    res.redirect('main');
   })
 });
 
