@@ -8,10 +8,12 @@ const session = require('express-session');
 var mainRouter = require('./routes/main');
 var homeRouter = require('./routes/home');
 var registerRouter = require('./routes/register');
+var boardRouter = require('./routes/board');
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
+//app.set('views/board', path.join(__dirname, 'views/board'));
 app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
 
@@ -24,7 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', homeRouter);
 app.use('/register', registerRouter);
 app.use('/main', mainRouter);
-app.use('/board', require('./routes/board'));
+app.use('/board', boardRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
