@@ -7,9 +7,8 @@
     
 <body>
 	<form name="form1" action="commentSave" method="post">
-        <caption><h3>댓글 수정</h3></caption>  
+        <caption><h3>댓글 수정</h3></caption><br> 
         
-        이름 : <input type="text" name="writerReply" value="<%=reply.writerReply%>" size=15><p>
         내용 : <textarea name="contentReply" cols=40 rows=6><%=reply.contentReply%></textarea>&nbsp;
         <input type="hidden" name="data_doc" value="<%=reply.data_doc%>">
         <input type="hidden" name="reply_doc" value="<%=reply.reply_doc%>">
