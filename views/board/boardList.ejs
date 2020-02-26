@@ -100,7 +100,7 @@
                     <tr>
                         <td style="text-align:center"><%=board.length-i%></td>
                         <td><a href="boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>" style="color: black"><%=board[i].title%></a></td>
-                        <td><%=board[i].write%></td>
+                        <td><%=board[i].id_nickName%></td>
                         <td><%=board[i].day%></td>
                         <td><%=board[i].visit_num%></td>
                         <td><%=board[i].good_num%></td>
@@ -116,7 +116,7 @@
                     <tr>
                         <td style="text-align:center"><%=board.length-i%></td>
                         <td><a href="boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>" style="color: black"><%=board[i].title%></a></td>
-                        <td><%=board[i].write%></td>
+                        <td><%=board[i].id_nickName%></td>
                         <td><%=board[i].day%></td>
                         <td><%=board[i].visit_num%></td>
                         <td><%=board[i].good_num%></td>
@@ -131,11 +131,10 @@
             <br><br><br><hr/>
             
             <form name="form1" action="boardWrite" method="get">
-                <!--        <pre>                                                                                     <input type="submit" value="글쓰기"></pre>-->
                 <a href="boardWrite" class="btn btn-default pull-right" style=" width: auto; height: auto; background:#18bc9c; color:white">글쓰기</a>
             </form>
             
-             
+            
             
             <!-- pagination -->
             <div class="text-center" style="display:table; margin: auto">
@@ -286,5 +285,8 @@
                                        
 </body>
 </html>
-
+    
+    
+    
+    
     
