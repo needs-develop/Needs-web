@@ -18,10 +18,6 @@
 					<td>제목</td> 
 					<td><input type="text" name="title" size="50" maxlength="250" value="<%=row.title%>"></td> 
 				</tr>
-                <tr>
-					<td>작성자</td> 
-					<td><input type="text" name="write" size="20" maxlength="20" value="<%=row.write%>"></td> 
-				</tr>
 				<tr>
 					<td>내용</td> 
 					<td><textarea name="content" rows="10" cols="60"><%=row.content%></textarea></td> 
@@ -30,6 +26,8 @@
 		</table>
 		<pre>                                                                                       <input type="submit" value="완료" onclick=form1.submit()></pre>
         <input type="hidden" name="document_name" value="<%=row.document_name%>"> 
+        <input type="hidden" name="id_nickName" value="<%=row.id_nickName%>"> 
+        <input type="hidden" name="id_email" value="<%=row.id_email%>"> 
 	</form>	
 </body>
 </html>
