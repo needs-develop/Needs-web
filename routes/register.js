@@ -24,7 +24,7 @@ var fb_auth = firebase.auth();  //authentication
 
 /* GET register page */
 router.get('/', function(req, res) {
-    res.render('register.html');
+    res.render('register');
 });
 
 /* POST nickname overlap check listener */
@@ -92,7 +92,7 @@ router.post('/', function(req, res) {
             fb_auth.signInWithEmailAndPassword(param_email, param_pw)
                 .then(function(data){
                     //로그인 -> 메인페이지로 넘어감
-                    res.redirect('main');
+                    res.redirect('/');
                 })
                 .catch(function(error) {
                     res.send(`
