@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var firebase = require('firebase');
 require('date-utils');
+var session = require('express-session');
 
 /* firebase Web-App Configuration */
 var firebase_config = {
@@ -22,18 +23,20 @@ if (!firebase.apps.length) {
 var db = firebase.firestore();  //firestore
 var fb_auth = firebase.auth();
 
+/* GET home page. */
+router.get('/', function(req, res, next) {
+  var user = fb_auth.currentUser;
 
-/* GET Main Page */
-router.get('/', function(req, res, next){
-    console.log("게시판 렌더링함.");
-    res.render("home");
+  if(user){
+    console.log("---------유저등장--------");
+    res.render('main');
+  }
+  else {
+    console.log("---------유저없음---------");
+    res.render('main');
+  }
 });
 
-/* POST Main Page */
-router.post('/', function(req, res) {
-    console.log("여길 거치네?");
-    res.render("home");
-});
 
 
 module.exports = router;
