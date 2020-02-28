@@ -28,12 +28,12 @@ router.get('/', function(req, res, next) {
   var user = fb_auth.currentUser;
 
   if(user){
-    console.log("---------유저등장--------");
-    res.render('main');
+    console.log("---------유저등장---------");
+    res.render('main_login');
   }
   else {
     console.log("---------유저없음---------");
-    res.render('main');
+    res.render('main_logout');
   }
 });
 
