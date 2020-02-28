@@ -58,6 +58,7 @@
             <input type="button" value=" ♥ " onClick="form1.submit()"> 
             <input type="hidden" name="document_name" value="<%=board.document_name%>">    
             <input type="hidden" name="page" value="<%=page%>">
+            <input type="hidden" name="id_nickName" value="<%=user.id_nickName%>">
             <input type="hidden" name="id_email" value="<%=user.id_email%>">
         </form>
         <br><br><br><br><hr>
@@ -122,6 +123,7 @@
             내용 : <textarea name="contentReply" cols=40 rows=6></textarea>&nbsp;
             <input type="hidden" name="data_doc" value="<%=board.document_name%>">
             <input type="hidden" name="writerReply" value="<%=user.id_nickName%>">
+            <input type="hidden" name="id_uid" value="<%=board.id_uid%>">
             <input type="submit" value=등록 onClick="form2.submit()">
         </form>
         <br><br>
