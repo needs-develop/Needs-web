@@ -6,14 +6,13 @@ var logger = require('morgan');
 const session = require('express-session');
 
 var mainRouter = require('./routes/main');
-var homeRouter = require('./routes/home');
 var registerRouter = require('./routes/register');
+var loginRouter = require('./routes/login');
 var boardRouter = require('./routes/board');
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-//app.set('views/board', path.join(__dirname, 'views/board'));
 app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
 
@@ -23,9 +22,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', homeRouter);
+app.use('/', mainRouter);
 app.use('/register', registerRouter);
-app.use('/main', mainRouter);
+app.use('/login', loginRouter);
 app.use('/board', boardRouter);
 
 // catch 404 and forward to error handler
