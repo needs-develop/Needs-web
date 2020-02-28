@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Login</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom fonts for this template -->
+    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+
+    <!-- Plugin CSS -->
+    <link href="../vendor/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css">
+
+    <!-- Custom styles for this template -->
+    <link href="../css/freelancer.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type='text/css'>
+     <link href='https://fonts.googleapis.com/css?family=PT+Sans:700' rel='stylesheet' type='text/css'>
+     <link href="../button_styles.css" rel='stylesheet'>
+
+  </head>
+
+  <body id="page-top">
+    <header class="masthead bg-primary text-black">
+      <div class="container">
+        <h3>로그인</h3>
+        <br><br>
+        <form name="registerform" method="post" action="email_login">
+          <div class="fieldlabel"><label for="email01">이메일</label></div>
+          <div class="formfield"><input type="text" id="email01" name="email01" size="20" maxlength="20"
+               value="" autocomplete="off" required/><span> @ </span>
+              <input id="email02" name="email02" list="domains" placeholder="도메인입력/선택" required/>
+              <datalist id="domains">
+                  <option value="naver.com">
+                  <option value="daum.net">
+                  <option value="gmail.com">
+                  <option value="yahoo.co.kr">
+                  <option value="gmail.com">
+              </datalist>
+          </div>
+          <div id="email01_check"></div>
+          <div id="email02_check"></div>
+          <br>
+          <div class="fieldlabel"><label for="userPw">패스워드</label></div>
+          <div class="formfield">
+            <input type="password" id="userPw" name="userPw" maxlength="20" autocomplete="off" required/>
+          </div>
+          <div id="pw_check"></div>
+          <br>
+          <div class="btnfield">
+              <input type="submit" value="로그인" id="login_submit">
+          </div>
+      </form>
+      </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="/">Needs</a>
+
+      </div>
+    </nav>
+
+
+    <!-- Footer -->
+    <footer class="footer text-center" style="margin-top:300px">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4 mb-5 mb-lg-0">
+            <h4 class="text-uppercase mb-4">위치</h4>
+            <p class="lead mb-0">서울특별시
+              </p>
+          </div>
+          <div class="col-md-4 mb-5 mb-lg-0">
+
+          </div>
+          <div class="col-md-4">
+            <h4 class="text-uppercase mb-4">문의</h4>
+            <p class="lead mb-0">02) XXX - XXXX</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <div class="copyright py-4 text-center text-white">
+      <div class="container">
+        <small> (주)Needs</small>
+      </div>
+    </div>
+
+    <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
+    <div class="scroll-to-top d-lg-none position-fixed ">
+      <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top">
+        <i class="fa fa-chevron-up"></i>
+      </a>
+    </div>
+
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="../vendor/jquery/jquery.min.js"></script>
+    <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="../vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+
+    <!-- Contact Form JavaScript -->
+    <script src="../js/jqBootstrapValidation.js"></script>
+    <script src="../js/contact_me.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="../js/freelancer.min.js"></script>
+
+    <script>
+        //이메일 입력하지 않은 경우 버튼 막음
+      $("#email01").blur(function() {
+        var email_front = $("#email01").val();
+        $.ajax({
+          success : function(data){
+            if(email_front == ""){
+              $("#email01_check").text("이메일을 입력해주세요");
+              $("#email01_check").css("color", "red");
+              $("#login_submit").attr("disabled", true);
+            } 
+            else {
+              $("#email01_check").text("");
+              $("#login_submit").attr("disabled", false);
+            }
+          }
+        })
+      })
+
+      //이메일 도메인 선택 안한경우 막음
+      $("#email02").blur(function() {
+        var email_domain = $("#email02").val();
+        $.ajax({
+          success : function(data){
+            if(email_domain == ""){
+              $("#email02_check").text("이메일 도메인을 선택/입력해주세요");
+              $("#email02_check").css("color", "red");
+              $("#login_submit").attr("disabled", true);
+            } 
+            else {
+              $("#email02_check").text("");
+              $("#login_submit").attr("disabled", false);
+            }
+          }
+        })
+      })
+
+      //비밀번호 입력 안한경우 막음
+      $("#userPw").blur(function() {
+        var pw = $("#userPw").val();
+        $.ajax({
+          success : function(data){
+            if(pw == ""){
+              $("#pw_check").text("비밀번호를 입력해주세요");
+              $("#pw_check").css("color", "red");
+              $("#login_submit").attr("disabled", true);
+            } 
+            else {
+              $("#pw_check").text("");
+              $("#login_submit").attr("disabled", false);
+            }
+          }
+        })
+      })
+
+    </script>
+
+  </body>
+
+</html>
