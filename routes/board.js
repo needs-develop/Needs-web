@@ -26,15 +26,6 @@ if (!firebase.apps.length) {
 var db = firebase.firestore(app);
 
 
-//router.get('/', function(req, res, next){
-//    console.log("GET방식");
-//    res.redirect("main");
-//});
-//
-//router.post('/', function(req, res, next){
-//    console.log("POST방식");
-//    res.redirect("main");
-//});
 
 // 글 목록
 router.get('/boardList', function(req, res, next) {
@@ -63,7 +54,7 @@ router.get('/boardRead', function(req, res, next) {
     var free_doc = db.collection("freeData").doc(req.query.document_name);   
 
     var uid = firebase.auth().currentUser.uid;
-    
+    console.log(uid);
     free_doc.get()
         .then((doc) => {    
             var free_data = doc.data();    
@@ -77,11 +68,6 @@ router.get('/boardRead', function(req, res, next) {
                 
                 // board로 넘겨줄 visit_num를 1 증가
                 free_data.visit_num += 1; 
-                
-                
-                // user - write 컬렉션의 visitnum 수정
-                var user_write_doc = db.collection('user').doc(uid).collection('write').doc(free_data.document_name);
-                user_write_doc.update({visitnum: free_data.visit_num});
             }
 
         
@@ -167,24 +153,12 @@ router.post('/boardSave', function(req,res,next){
         
         // user 컬렉션에 데이터 저장
         var user_doc = db.collection('user').doc(uid).collection('write').doc(postData.document_name);
-        var userData = {
-            content: postData.content,
-            day: postData.day,
-            documentName: postData.document_name,
-            good: postData.good_num,
-            id: postData.id_nickName,
-            id_value: postData.id_email,
-            title: postData.title,
-            visitnum: postData.visit_num
-        }
+        var userData = { documentName: postData.document_name }
         user_doc.set(userData);
     } 
     else {            // update
         var free_doc = db.collection("freeData").doc(postData.document_name);
         free_doc.update(postData);
-        
-        var user_doc = db.collection('user').doc(uid).collection('write').doc(postData.document_name);
-        user_doc.update({title: postData.title, content: postData.content});
     }
     
     res.redirect('boardRead?document_name=' + postData.document_name);
@@ -217,19 +191,8 @@ router.post('/boardLike', function(req,res,next){
                     
                     // user - like 컬렉션 생성
                     var user_like_doc = db.collection('user').doc(uid).collection('like').doc(postData.document_name);
-                    var likeData = {
-                        content: board_data.content,
-                        day: board_data.day,
-                        documentName: postData.document_name,
-                        good: good,
-                        title: board_data.title,
-                        visitnum: board_data.visit_num
-                    }
+                    var likeData = { documentName: postData.document_name }
                     user_like_doc.set(likeData);            
-                    
-                    // user - write 컬렉션의 good 수정
-                    var user_write_doc = db.collection('user').doc(uid).collection('write').doc(postData.document_name);
-                    user_write_doc.update({good: good});
                 }
                 
                 
@@ -246,10 +209,6 @@ router.post('/boardLike', function(req,res,next){
                     
                     // user - like 에서 문서 삭제
                     var user_like_doc = db.collection('user').doc(uid).collection('like').doc(postData.document_name).delete();       
-                    
-                    // user - write 컬렉션의 good 수정
-                    var user_write_doc = db.collection('user').doc(uid).collection('write').doc(postData.document_name);
-                    user_write_doc.update({good: good});
                 }
                 
                 
@@ -262,10 +221,38 @@ router.post('/boardLike', function(req,res,next){
 // 글 삭제
 router.get('/boardDelete', function(req,res,next){
     var getData = req.query;
+    var board_doc = db.collection('freeData').doc(getData.document_name);
     
+    // freeData - like 컬렉션 하위 문서 모두 삭제 (like 컬렉션 삭제)
+    db.collection('freeData').doc(getData.document_name).collection('like').get()
+        .then((snapshot) => {
+            snapshot.forEach((doc) => {
+                board_doc.collection('like').doc(doc.id).delete();
+            });
+        })
+        .catch((err) => {
+            console.log('Error getting documents', err);
+        });
+    
+    // freeData - reply 컬렉션 하위 문서 모두 삭제 (reply 컬렉션 삭제)
+    db.collection('freeData').doc(getData.document_name).collection('reply').get()
+        .then((snapshot) => {
+            snapshot.forEach((doc) => {
+                //console.log('id'+ doc.id);
+                board_doc.collection('reply').doc(doc.id).delete();
+            });
+        })
+        .catch((err) => {
+            console.log('Error getting documents', err);
+        });
+    
+    // freeData의 문서 삭제
     db.collection('freeData').doc(getData.document_name).delete();
+    
+    // user - write의 문서 삭제
     var uid = firebase.auth().currentUser.uid;
-    db.collection('user').doc(uid).collection('write').doc(getData.title+getData.content).delete();
+    db.collection('user').doc(uid).collection('write').doc(getData.document_name).delete();
+    
     
     res.redirect('boardList');
 });
@@ -274,9 +261,11 @@ router.get('/boardDelete', function(req,res,next){
 
 
 
+
+
 // 댓글 수정
 router.get('/commentEdit', function(req,res,next){
-    db.collection("freeData").doc(req.query.data_doc).collection("reply").doc(req.query.reply_doc).get() 
+    db.collection("freeData").doc(req.query.data_doc).collection("reply").doc(req.query.reply_doc).get()
         .then((doc) => {
             var childData = doc.data();
             res.render('board/commentEdit', {reply: childData});
@@ -297,35 +286,30 @@ router.post('/commentSave', function(req,res,next){
     
     if (!postData.reply_doc) {     // new
         
-        // freeData 컬렉션에 데이터 추가 
+        // freeData - reply에 데이터 추가 
         postData.timeReply = moment().format('YYYY/MM/DD HH:mm:ss');
         var free_reply_doc = board_doc.collection("reply").doc();    
         postData.reply_doc = free_reply_doc.id;
         free_reply_doc.set(postData);
         
         
-        // user 컬렉션에 데이터 추가
+        // user - reply 에 데이터 추가
         var uid = firebase.auth().currentUser.uid;
         var user_reply_doc = db.collection('user').doc(uid).collection('reply').doc(postData.reply_doc);
-        var userData = {
-            documentName: postData.data_doc,
-            reply_doc: postData.reply_doc,
-            content: postData.contentReply,
-            day: postData.timeReply,
-        }
+        var userData = { documentName: postData.data_doc, reply_doc: postData.reply_doc }
         user_reply_doc.set(userData);
+        
+        
+        
+        
+        
+        
     } 
     
-    else {      // update
-        
+    else {    // update       
         // freeData 컬렉션 데이터 수정 
         var free_reply_doc = board_doc.collection("reply").doc(postData.reply_doc);
-        free_reply_doc.update(postData);
-        
-        // user 컬렉션 데이터 수정
-        var uid = firebase.auth().currentUser.uid;
-        var user_reply_doc = db.collection('user').doc(uid).collection('reply').doc(postData.reply_doc);
-        user_reply_doc.update({content: postData.contentReply});    
+        free_reply_doc.update(postData);   
     } 
     
     res.redirect('boardRead?document_name=' + postData.data_doc);
