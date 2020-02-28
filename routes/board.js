@@ -52,9 +52,8 @@ router.get('/boardList', function(req, res, next) {
 // 글 읽기
 router.get('/boardRead', function(req, res, next) {
     var free_doc = db.collection("freeData").doc(req.query.document_name);   
-
     var uid = firebase.auth().currentUser.uid;
-    console.log(uid);
+
     free_doc.get()
         .then((doc) => {    
             var free_data = doc.data();    
