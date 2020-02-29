@@ -9,6 +9,7 @@ var mainRouter = require('./routes/main');
 var registerRouter = require('./routes/register');
 var loginRouter = require('./routes/login');
 var freeboardRouter = require('./routes/freeboard');
+var mypageRouter = require('./routes/mypage');
 var app = express();
 
 // view engine setup
@@ -26,6 +27,7 @@ app.use('/', mainRouter);
 app.use('/register', registerRouter);
 app.use('/login', loginRouter);
 app.use('/freeboard', freeboardRouter);
+app.use('/mypage', mypageRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
