@@ -35,16 +35,16 @@
         <br><br>
         <form name="registerform" method="post" enctype="multipart/form-data" action="./register">
           <div class="fieldlabel"><label for="email01">이메일</label></div>
-          <text> hydenny@naver.com</text>
+          <text><%= email %></text>
           <br><br>
           <div class="fieldlabel"><label for="userPw">이 름</label></div>
-          <text> 정하영</text>
+          <text><%= name %></text>
           <br><br>
           <div class="fieldlabel"><label for="userPwCheck">닉네임</label></div>
-          <text> hydenny</text>
+          <text><%= nickName %></text>
           <br><br>
           <div class="fieldlabel"><label for="userName">포인트 현황</label></div>
-          <text>100p</text>
+          <text><%= point %></text>
           <br><br>
           <div class="btnfield">
               <input type="submit" value="비밀번호 재설정">
