@@ -69,7 +69,10 @@ router.get('/editInfo', function(req, res, next) {
 router.post('/editInfo', function(req, res, next) {
 	//개인정보 수정
 	console.log("개인정보 수정 완료 버튼");
-	res.render("mypage/editInfo");
+	var param_nick = req.body.nickName;
+	var uid = fb_auth.currentUser.uid;
+	db.collection("user").doc(uid).update({id_nickName: param_nick});
+	res.redirect("/mypage");
 });
 
 
