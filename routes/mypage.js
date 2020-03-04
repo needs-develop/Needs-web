@@ -25,9 +25,7 @@ var fb_auth = firebase.auth();
 
 /* GET mypage page. */
 router.get('/', function(req, res, next) {
-	var uid = fb_auth.currentUser['uid'];
-	//db.collection("user").doc(uid).set(data);
-	//console.log(user['uid']);
+	var uid = fb_auth.currentUser.uid;
 	db.collection("user").doc(uid).get()
 		.then(doc => {
 			if(!doc.exists){
@@ -47,6 +45,51 @@ router.get('/', function(req, res, next) {
 		})
 });
 
+/* GET editInfo page. */
+router.get('/editInfo', function(req, res, next) {
+	console.log("개인정보 수정 페이지");
+	var uid = fb_auth.currentUser.uid;
+	db.collection("user").doc(uid).get()
+		.then(doc => {
+			if(!doc.exists){
+				console.log("error occurred");
+			}
+			else {
+				let data = doc.data();
+				let my_nickName = data.id_nickName;
+				res.render('mypage/editInfo', {nickName: my_nickName});
+			}
+		})
+		.catch(err => {
+			console.log("error getting doc", err);
+		})
+});
+
+/* POST editInfo page. */
+router.post('/editInfo', function(req, res, next) {
+	//개인정보 수정
+	console.log("개인정보 수정 완료 버튼");
+	res.render("mypage/editInfo");
+});
+
+
+/* GET myPost page. */
+router.get('/myPost', function(req, res, next) {
+	console.log("페이지 제대로 띄움");
+	res.render("mypage/myPost");
+});
+
+/* GET myLikePost page. */
+router.get('/myLikePost', function(req, res, next) {
+	console.log("페이지 제대로 띄움");
+	res.render("mypage/myLikePost");
+});
+
+/* GET myCommentPost page. */
+router.get('/myCommentPost', function(req, res, next) {
+	console.log("페이지 제대로 띄움");
+	res.render("mypage/myCommentPost");
+});
 
 
 module.exports = router;

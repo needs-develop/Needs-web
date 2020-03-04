@@ -11,8 +11,7 @@ router.get('/', function(req, res, next) {
 //});
 
 //router.get('/board', function(req, res, next) {
-//    res.render('test_board');
-//});
+//    res.render('test_board');//});
 
 module.exports = router;
 
