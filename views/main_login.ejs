@@ -49,7 +49,7 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item mx-0 mx-lg-1">
-              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/#####">지역게시판</a>
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/regionboard">지역게시판</a>
             </li>
             <li class="nav-item mx-0 mx-lg-1">
               <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/freeboard/boardList">자유게시판</a>
@@ -169,6 +169,69 @@
 
     <!-- Custom scripts for this template -->
     <script src="js/freelancer.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/7.8.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.8.2/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.8.2/firebase-auth.js"></script>
+    <script>
+      /* firebase Web-App Configuration */
+      var firebase_config = {
+        apiKey: "AIzaSyCE59at8BFrqn84RG63hn1uS_NhNrnPuso",
+        authDomain: "lloginexample.firebaseapp.com",
+        databaseURL: "https://lloginexample.firebaseio.com",
+        projectId: "lloginexample",
+        storageBucket: "lloginexample.appspot.com",
+        messagingSenderId: "124851004056",
+        appId: "1:124851004056:web:b58239166f9907ce3926ed",
+        measurementId: "G-CR5E843ZEM"
+      };
+
+      /* Initialize Firebase */
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebase_config);
+      }
+      var db = firebase.firestore();  //firestore
+      var fb_auth = firebase.auth();
+
+      function facebook_login(){
+        var provider = new firebase.auth.FacebookAuthProvider();
+        provider.addScope('user_birthday');
+        provider.setCustomParameters({
+          'display': 'popup'
+        });
+        fb_auth.signInWithPopup(provider)
+          .then(function(result) {
+            var token = result.credential.accessToken;
+            location.replace("/facebook_login?token="+token);
+            return true;
+          })
+          .catch(function(error){
+            var errorCode = error.code;
+            var errorMsg = error.message;
+            var email = error.email;
+            var credential = error.credential;
+            return false;
+          }
+        );
+      }
+
+      function google_login(){
+        var provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+    
+        fb_auth.signInWithPopup(provider).then(function(result) {
+          var token = result.credential.accessToken;
+          location.replace("/google_login?token="+token);
+          return true;
+        }).catch(function(error) {
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          var email = error.email;
+          var credential = error.credential;
+          return false;
+        });
+      }    
+    </script>
 
   </body>
 
