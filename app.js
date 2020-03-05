@@ -9,6 +9,7 @@ var mainRouter = require('./routes/main');
 var registerRouter = require('./routes/register');
 var loginRouter = require('./routes/login');
 var freeboardRouter = require('./routes/freeboard');
+var regionboardRouter = require('./routes/regionboard');
 var mypageRouter = require('./routes/mypage');
 var app = express();
 
@@ -27,6 +28,7 @@ app.use('/', mainRouter);
 app.use('/register', registerRouter);
 app.use('/login', loginRouter);
 app.use('/freeboard', freeboardRouter);
+app.use('/regionboard', regionboardRouter);
 app.use('/mypage', mypageRouter);
 
 // catch 404 and forward to error handler
