@@ -52,12 +52,14 @@
             <li class="nav-item mx-0 mx-lg-1">
               <a class="nav-link py-3 px-0 px-lg-3 rounded" href="/mypage">My Page</a>
             </li>
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded" href="/action">알림</a>
+            </li>
           </ul>
         </div>
       </div>
     </nav>
     
-    <!-- Header -->
 
     
     
@@ -75,80 +77,76 @@
             
             
             <%
-            var pageNum = (board.length%5==0) ? parseInt(board.length/5) : parseInt(board.length/5)+1; // 총 페이지 수 계산 
-            %>
-            
-            
-            <table class="table table-hover">
+            if(board.length != 0) {  // 글이 존재할 경우
                 
-                <colgroup>
-                    <col width='13%' />
-                    <col width='*%' />
-                    <col width='10%' />
-                    <col width='27%' />
-                    <col width='10%' />
-                    <col width='10%' />
-                </colgroup>
+                var pageNum = (board.length%5==0) ? parseInt(board.length/5) : parseInt(board.length/5)+1; // 총 페이지 수 계산 
+                %>
                 
-                <thead>        
-                    <tr>
-                        <th><center>No.</center></th> 
-                        <th><center>제목</center></th>
-                        <th><center>작성자</center></th>
-                        <th><center>작성시간</center></th>
-                        <th><center>조회수</center></th>
-                        <th><center>좋아요</center></th>
-                    </tr>
-                </thead>
-                
-                <tbody>
-                    <%
-                    if (page != pageNum) {  // 마지막 페이지가 아닌 경우
-                        for(var i=(page-1)*5; i<page*5; i++) {
-                    %>    
-                    <tr>
-                        <td style="text-align:center"><%=board.length-i%></td>
-                        <td><a href="boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>" style="color: black"><%=board[i].title%></a></td>
-                        <td style="text-align:center"><%=board[i].id_nickName%></td>
-                        <td style="text-align:center"><%=board[i].day%></td>
-                        <td style="text-align:center"><%=board[i].visit_num%></td>
-                        <td style="text-align:center"><%=board[i].good_num%></td>
-                    </tr>
-                    <%
-                    }
-                    }
-                    %>          
-                    <%
-                    if (page == pageNum) { //else문,  마지막 페이지
-                        for(var i=(page-1)*5; i<board.length; i++) {
-                    %>   
-                    <tr>
-                        <td style="text-align:center"><%=board.length-i%></td>
-                        <td><a href="boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>" style="color: black"><%=board[i].title%></a></td>
-                        <td style="text-align:center"><%=board[i].id_nickName%></td>
-                        <td style="text-align:center"><%=board[i].day%></td>
-                        <td style="text-align:center"><%=board[i].visit_num%></td>
-                        <td style="text-align:center"><%=board[i].good_num%></td>
-                    </tr>        
-                    <%
-                    }
-                    }
-                    %>    
-                </tbody>
-                
-            </table>
-            <br><br><br><hr/>
+                <table class="table table-hover">
+                    
+                    <colgroup>
+                        <col width='13%' />
+                        <col width='*%' />
+                        <col width='10%' />
+                        <col width='27%' />
+                        <col width='10%' />
+                        <col width='10%' />
+                    </colgroup>
+                    
+                    <thead>        
+                        <tr>
+                            <th><center>No.</center></th> 
+                            <th><center>제목</center></th>
+                            <th><center>작성자</center></th>
+                            <th><center>작성시간</center></th>
+                            <th><center>조회수</center></th>
+                            <th><center>좋아요</center></th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        <%
+                        if (page != pageNum) {  // 마지막 페이지가 아닌 경우
+                            for(var i=(page-1)*5; i<page*5; i++) {
+                        %>    
+                        <tr>
+                            <td style="text-align:center"><%=board.length-i%></td>
+                            <td><a href="boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>" style="color: black"><%=board[i].title%></a></td>
+                            <td style="text-align:center"><%=board[i].id_nickName%></td>
+                            <td style="text-align:center"><%=board[i].day%></td>
+                            <td style="text-align:center"><%=board[i].visit_num%></td>
+                            <td style="text-align:center"><%=board[i].good_num%></td>
+                        </tr>
+                        <%
+                        }
+                        }
+                        %>          
+                        <%
+                        if (page == pageNum) { //else문,  마지막 페이지
+                            for(var i=(page-1)*5; i<board.length; i++) {
+                        %>   
+                        <tr>
+                            <td style="text-align:center"><%=board.length-i%></td>
+                            <td><a href="boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>" style="color: black"><%=board[i].title%></a></td>
+                            <td style="text-align:center"><%=board[i].id_nickName%></td>
+                            <td style="text-align:center"><%=board[i].day%></td>
+                            <td style="text-align:center"><%=board[i].visit_num%></td>
+                            <td style="text-align:center"><%=board[i].good_num%></td>
+                        </tr>        
+                        <%
+                        }
+                        }
+                        %>    
+                    </tbody>
+                    
+                </table>
+                <br><br><br><hr/>
             
-            <form name="form1" action="boardWrite" method="get">
-                <a href="boardWrite" class="btn btn-default pull-right" style=" width: auto; height: auto; background:#18bc9c; color:white">글쓰기</a>
-            </form>
-            
-            
+       
             
             <!-- pagination -->
             <div class="text-center" style="display:table; margin: auto">
-                <ol class="pagination">
-                    
+                <ol class="pagination">                 
                     <%
                     if (parseInt((page-1)/5)*5+1 != 1) {    // 1~5페이지가 보이는 경우가 아니면 이전 버튼 출력
                     %>  
@@ -174,10 +172,24 @@
                     <a href="boardList?page=<%=(parseInt((page-1)/5)+1)*5+1%>"> 다음 </a>  
                     <%
                     }                                     
-                    %>    
-                    
+                    %>                        
                 </ol>
-            </div>  
+            </div>     
+            <%
+            }
+            
+            else {  // 글이 없을 경우
+            %>    
+                <br><br><center>글이 없습니다.</center><br><br><br><br>  
+            <%
+            }
+            %>
+            
+            
+            
+            <form name="form1" action="boardWrite" method="get">
+                <a href="boardWrite" class="btn btn-default pull-right" style=" width: auto; height: auto; background:#18bc9c; color:white">글쓰기</a>
+            </form>
         </div>
       </section> 
     
