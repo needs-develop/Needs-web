@@ -18,10 +18,11 @@
                   onclick="if(plain1.style.display == 'none') {plain1.style.display=''; test.innerText = '강남구'} else {plain1.style.display = 'none'; test.innerText = '강남구'}">강남구 (클릭)</span></li>
             <div id="plain1" style="display: none">
                 <a href="regionboard/boardList">└ 청담동 (클릭) </a>
-                    <form name="form1" action="regionboard/myregion" method="post">
+                    <form name="form1" action="regionboard/favorites" method="post">
                         <input type="button" value="★" onclick=form1.submit()>
                         <input type="hidden" name="id_email" value="<%=user.id_email%>">    
-                        <input type="hidden" name="regionName" value="강남구청담동"> 
+                        <input type="hidden" name="goodPlace" value="강남구청담동">
+                        <input type="hidden" name="strict" value="강남구"> 
                     </form>
                 <a href="">└ 논현동</a><br>
                 <a href="">└ 압구정동</a><br>
