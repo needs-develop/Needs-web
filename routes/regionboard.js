@@ -54,13 +54,19 @@ router.get('/boardList', function(req, res, next) {
   
     db.collection('data').doc('allData').collection('강남구청담동').orderBy("day", "desc").get()  // 날짜의 내림차순으로 정렬
         .then((snapshot) => {
-            var region_board = [];
-            snapshot.forEach((region_doc) => {
-                var region_data = region_doc.data();
-                region_board.push(region_data);    
-            });
-        
-            res.render('regionboard/boardList', {board: region_board, page: page});
+            // 글이 있는 경우
+            if(snapshot.size != 0) {
+                var region_board = [];
+                snapshot.forEach((region_doc) => {
+                    var region_data = region_doc.data();
+                    region_board.push(region_data);    
+                });
+                res.render('regionboard/boardList', {board: region_board, page: page});
+            }
+            // 글이 없는 경우
+            else {
+                res.render('regionboard/boardList', {board: '', page: ''});
+            }
         })
         .catch((err) => {
             console.log('Error getting documents', err);
@@ -76,47 +82,51 @@ router.get('/boardRead', function(req, res, next) {
 
     region_doc.get()
         .then((doc) => {    
-            var region_data = doc.data();    
-            var page = req.query.page;
-           
-            // boardList에서 글을 처음 읽을 때만 조회수 증가 (수정, 좋아요, 댓글 시에는 증가하지 않음)
-            if(req.query.visitNew == 1) {
-                // 실제 document의 visit_num를 1 증가
-                var visit = region_data.visit_num + 1;    
-                region_doc.update({visit_num : visit});   
-                
-                // board로 넘겨줄 visit_num를 1 증가
-                region_data.visit_num += 1; 
-            }
-
-        
-            var userData;
-            db.collection('user').doc(uid).get()
-                .then((doc) => {
-                    var data = doc.data();    
-                    userData = {  // 로그인한 사용자의 별명 가져옴
-                        id_nickName : data.id_nickName,
-                        id_email : data.id_email
-                    }
-                });
-
+            if(doc.exists) {   // 해당 글이 있는 경우
+                var region_data = doc.data();    
+                var page = req.query.page;
             
-
-            var reply = [];
-            region_doc.collection("reply").orderBy("timeReply").get()
-                .then((snapshot) => {
+                // boardList에서 글을 처음 읽을 때만 조회수 증가 (수정, 좋아요, 댓글 시에는 증가하지 않음)
+                if(req.query.visitNew == 1) {
+                    // 실제 document의 visit_num를 1 증가
+                    var visit = region_data.visit_num + 1;    
+                    region_doc.update({visit_num : visit});   
                     
-                    snapshot.forEach((reply_doc) => {
-                        var reply_data = reply_doc.data();
-                        reply_data.data_doc = region_data.document_name;
-                        reply.push(reply_data);
+                    // board로 넘겨줄 visit_num를 1 증가
+                    region_data.visit_num += 1; 
+                }
+    
+            
+                var userData;
+                db.collection('user').doc(uid).get()
+                    .then((doc) => {
+                        var data = doc.data();    
+                        userData = {  // 로그인한 사용자의 별명 가져옴
+                            id_nickName : data.id_nickName,
+                            id_email : data.id_email
+                        }
                     });
-                    res.render('regionboard/boardRead', {board: region_data, page: page, reply: reply, user: userData});
-                })
-                .catch((err) => {
-                    console.log('Error getting documents', err);
-                });
- 
+    
+                
+    
+                var reply = [];
+                region_doc.collection("reply").orderBy("timeReply").get()
+                    .then((snapshot) => {
+                        
+                        snapshot.forEach((reply_doc) => {
+                            var reply_data = reply_doc.data();
+                            reply_data.data_doc = region_data.document_name;
+                            reply.push(reply_data);
+                        });
+                        res.render('regionboard/boardRead', {board: region_data, page: page, reply: reply, user: userData});
+                    })
+                    .catch((err) => {
+                        console.log('Error getting documents', err);
+                    });
+            }
+            else {  // 해당 글이 없는 경우
+                res.send("<script>alert('삭제된 글입니다.');history.back();</script>")
+            }
         })
         .catch((err) => {
             console.log('Error getting documents', err);
@@ -410,21 +420,40 @@ router.get('/commentDelete', function(req,res,next){
 
 
 // 지역 즐겨찾기
-router.post('/myregion', function(req,res,next){   
+router.post('/favorites', function(req,res,next){   
     var postData = req.body;
     var uid = firebase.auth().currentUser.uid;
+    var user_doc = db.collection("user").doc(uid);
+    var user_favorites_doc = user_doc.collection('favorites').doc(postData.id_email+postData.goodPlace);
+
+    user_favorites_doc.get().then((doc) => {
+        
+        // 즐겨찾기한 지역이 아닌 경우
+        if(!doc.exists) 
+        {
+            user_doc.collection('myRegion').doc(postData.id_email+'myRegion').get()
+                .then((doc2) => {
+                    var regionData = {
+                        goodPlace: postData.goodPlace,
+                        region: doc2.data().regionName,
+                        strict: postData.strict
+                    }
+                    user_favorites_doc.set(regionData);
+                });
     
-    var user_region_doc = db.collection("user").doc(uid).collection('myRegion').doc(postData.id_email+'myRegion');
-    var regionData = {regionName: postData.regionName}
-    user_region_doc.set(regionData);
-    
-    res.send("<script>alert('즐겨찾기 설정 되었습니다.');history.back();</script>");
-                
-    //res.redirect(history.back()); 
+            res.send("<script>alert('즐겨찾기 설정 되었습니다.');history.back();</script>");
+        }
+        
+        // 즐겨찾기를 이미 한 상태에서 또 누른 경우 (즐겨찾기 해제)
+        else
+        {
+            // user - favorites 에서 문서 삭제
+            user_favorites_doc.delete();  
+            
+            res.send("<script>alert('즐겨찾기 해제 되었습니다.');history.back();</script>");
+        }
+   });         
 });
-
-
-
 
 
 
