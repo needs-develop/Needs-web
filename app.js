@@ -11,6 +11,7 @@ var loginRouter = require('./routes/login');
 var freeboardRouter = require('./routes/freeboard');
 var regionboardRouter = require('./routes/regionboard');
 var mypageRouter = require('./routes/mypage');
+var actionRouter = require('./routes/action');
 var app = express();
 
 // view engine setup
@@ -30,6 +31,7 @@ app.use('/login', loginRouter);
 app.use('/freeboard', freeboardRouter);
 app.use('/regionboard', regionboardRouter);
 app.use('/mypage', mypageRouter);
+app.use('/action', actionRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
