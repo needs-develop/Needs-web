@@ -78,8 +78,47 @@ router.post('/editInfo', function(req, res, next) {
 
 /* GET myPost page. */
 router.get('/myPost', function(req, res, next) {
-	console.log("페이지 제대로 띄움");
-	res.render("mypage/myPost");
+	var uid = fb_auth.currentUser.uid;
+	var page = Number(req.query.page);
+	if(!page){
+		page = 1;
+	}
+	db.collection("user").doc(uid).collection("write").get()
+		.then((user_snapshot) => {
+			if(user_snapshot.size != 0){
+				var post_info = [];
+				user_snapshot.forEach((snap) => {
+					var post = snap.data();
+					post_info.push(post);
+				});
+				
+				var my_post = [];
+				for(var i=0; i<post_info.length; i++){
+					if(post_info[i].data == "freeData"){	//자유게시판
+						db.collection("freeData").doc(post_info[i].document_name).get()
+							.then((post_snapshot) => {
+								var data = post_snapshot.data();
+								my_post.push(data);
+								if(my_post.length == post_info.length){
+									res.render('mypage/myPost', {board: my_post, page: page});
+								}
+							})
+							.catch((err) => {
+								console.log(err);
+							});
+					}
+					else{	//지역게시판
+
+					}
+				}
+			}
+			else{
+				res.render('mypage/myPost', {board: '', page: ''});
+			}
+		})
+		.catch((err) => {
+			console.log("Error getting my post", err);
+		});
 });
 
 /* GET myLikePost page. */

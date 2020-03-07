@@ -167,7 +167,10 @@ router.post('/boardSave', function(req,res,next){
 
         // user 컬렉션에 데이터 저장
         var user_doc = db.collection('user').doc(uid).collection('write').doc(postData.document_name);
-        var userData = { documentName: postData.document_name }
+        var userData = { 
+            data: "freeData",
+            document_name: postData.document_name
+        }
         user_doc.set(userData);
     } 
     else {            // update
