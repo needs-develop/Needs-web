@@ -58,6 +58,7 @@ router.post('/', function(req, res) {
     var param_name = req.body.userName;
     var param_nickname = req.body.nickName;
     var param_email = req.body.email01 + "@" + req.body.email02;
+    var param_region = req.body.regionName;
     var param_pw = req.body.userPw;
     console.log(param_email, " ", param_pw);
     fb_auth.createUserWithEmailAndPassword(param_email, param_pw)
@@ -76,6 +77,7 @@ router.post('/', function(req, res) {
                 id_email: user.email,
                 id_name: param_name,
                 id_nickName: param_nickname,
+                id_region: param_region,
                 id_point: 10,
                 id_uid: uid
             });
