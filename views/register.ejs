@@ -43,7 +43,7 @@
           <div class="fieldlabel"><label for="email01">이메일</label></div>
           <div class="formfield"><input type="text" id="email01" name="email01" size="20" maxlength="20"
                value="" autocomplete="off" required><span>@</span>
-            <input id="email02" name="email02" list="domains" placeholder="도메인입력/선택" required>
+            <input id="email02" name="email02" list="domains" placeholder="도메인 입력/선택" required>
             <datalist id="domains">
               <option value="naver.com">
               <option value="daum.net">
@@ -54,6 +54,13 @@
           <div id="email01_check"></div>
           <div id="email02_check"></div>
           <br>
+        
+          <div class="fieldlabel"><label for="regionName">지역</label></div>
+          <div class="formfield"><input type="text" id="regionName" name="regionName" maxlength="20" value="" required></div>
+          <div id="region_check"></div>
+          <br>
+            
+            
           <div class="fieldlabel"><label for="userPw">패스워드</label></div>
           <div class="formfield">
             <input type="password" id="userPw" name="userPw" maxlength="20" autocomplete="off" required>
@@ -219,6 +226,24 @@
         })
       })
 
+      //지역 입력하지 않은 경우 버튼 막음
+      $("#regionName").blur(function() {
+        var region = $("#regionName").val();
+        $.ajax({
+          success : function(data){
+            if(region == ""){
+              $("#region_check").text("지역을 입력해주세요");
+              $("#region_check").css("color", "red");
+              $("#reg_submit").attr("disabled", true);
+            } 
+            else {
+              $("#region_check").text("");
+              $("#reg_submit").attr("disabled", false);
+            }
+          }
+        })
+      })
+        
       //비밀번호 입력 안한경우 막음
       $("#userPw").blur(function() {
         var pw = $("#userPw").val();
