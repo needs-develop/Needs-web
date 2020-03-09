@@ -21,22 +21,26 @@ if (!firebase.apps.length) {
   firebase.initializeApp(firebase_config);
 }
 var db = firebase.firestore();  //firestore
-var fb_auth = firebase.auth();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  var user = fb_auth.currentUser;
+  var user = firebase.auth().currentUser;
 
   if(user){
-    console.log("---------유저등장---------");
-    res.render('main_login');
+    console.log("---------유저등장---------");   
+    var uid = user.uid;
+    
+    db.collection('user').doc(uid).get()   // user 데이터로부터 지역 가져옴
+        .then((doc) => {
+            res.render('main_login', {region: doc.data().id_region});
+        });
   }
+              
   else {
     console.log("---------유저없음---------");
     res.render('main_logout');
   }
 });
-
 
 
 module.exports = router;
