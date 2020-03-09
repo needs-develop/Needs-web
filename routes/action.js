@@ -38,8 +38,15 @@ router.get('/', function(req,res,next){
             snapshot.forEach((doc) => {
                 action_data.push(doc.data());
             });
+        
+            db.collection('user').doc(uid).get()
+                .then((doc2) => {
+                    var id_region = doc2.data().id_region;
+                
+                    res.render('action', {action: action_data, region: id_region});
+                });
 
-            res.render('action', {action: action_data});
+            
         })
         .catch((err) => {
             console.log('Error getting documents', err);
