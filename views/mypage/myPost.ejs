@@ -9,10 +9,10 @@
     <title>내가 쓴 글</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom fonts for this template -->
-    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
 
@@ -20,21 +20,16 @@
     <link href="../vendor/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css">
 
     <!-- Custom styles for this template -->
-    <link href="../css/freelancer.min.css" rel="stylesheet">
+    <link href="../../css/freelancer.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type='text/css'>
   	<link href='https://fonts.googleapis.com/css?family=PT+Sans:700' rel='stylesheet' type='text/css'>
-    <link href="../button_styles.css" rel='stylesheet'>
-  	<link href="../css/bootstrap.css" rel='stylesheet'>
+    <link href="../../button_styles.css" rel='stylesheet'>
+  	<link href="../../css/bootstrap.css" rel='stylesheet'>
 
   </head>
 
   <body id="page-top">
-    <header class="masthead bg-primary text-black">
-      <div class="container">
-        <h2>내가 쓴 글</h2>
-        <br><br>
-      </div>
-    </header>
+    
 
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
@@ -50,7 +45,10 @@
               <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/mypage/editInfo">개인정보 수정</a>
             </li>
             <li class="nav-item mx-0 mx-lg-1">
-              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/mypage/myPost">내가 작성한 글</a>
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/mypage/myPost/freeboard">내 글(자유 게시판)</a>
+            </li>
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/mypage/myPost/regionboard">내 글(지역 게시판)</a>
             </li>
             <li class="nav-item mx-0 mx-lg-1">
               <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/mypage/myLikePost">내가 좋아요 한 글</a>
@@ -65,7 +63,7 @@
 
     <section class="portfolio" id="portfolio">
       <div class="container" style="padding-top:100px">
-        <h3 class="text-center text-uppercase">내가 쓴 글 목록</h3>
+        <h3 class="text-center text-uppercase">내가 쓴 글</h3>
         <br><br><br>
         <%
         if(board.length != 0) {  // 글이 존재할 경우
@@ -82,7 +80,7 @@
           </colgroup>
           <thead>        
             <tr>
-              <th><center>No.</center></th> 
+              <th><center>No.</center></th>
               <th><center>제목</center></th>
               <th><center>작성자</center></th>
               <th><center>작성시간</center></th>
@@ -97,7 +95,7 @@
             %> 
             <tr>
               <td style="text-align:center"><%= board.length-i %></td>
-              <td style="text-align:center"><%= board[i].title %></td>
+              <td><a href="../postRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>&boardType=<%=boardType%>" style="color: black"><%=board[i].title%></a></td>
               <td style="text-align:center"><%= board[i].id_nickName %></td>
               <td style="text-align:center"><%= board[i].day %></td>
               <td style="text-align:center"><%= board[i].visit_num %></td>
@@ -111,7 +109,7 @@
             %> 
             <tr>
               <td style="text-align:center"><%= board.length-i %></td>
-              <td style="text-align:center"><%= board[i].title %></td>
+              <td><a href="../postRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>&boardType=<%=boardType%>" style="color: black"><%=board[i].title%></a></td>
               <td style="text-align:center"><%= board[i].id_nickName %></td>
               <td style="text-align:center"><%= board[i].day %></td>
               <td style="text-align:center"><%= board[i].visit_num %></td>
@@ -194,21 +192,21 @@
 
 
     <!-- Bootstrap core JavaScript -->
-    <script src="../vendor/jquery/jquery.min.js"></script>
-    <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../vendor/jquery/jquery.min.js"></script>
+    <script src="../../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Plugin JavaScript -->
-    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
-    <script src="../vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+    <script src="../../vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="../../vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
 
     <!-- Contact Form JavaScript -->
-    <script src="../js/jqBootstrapValidation.js"></script>
-    <script src="../js/contact_me.js"></script>
+    <script src="../../js/jqBootstrapValidation.js"></script>
+    <script src="../../js/contact_me.js"></script>
 
     <!-- Custom scripts for this template -->
-    <script src="../js/freelancer.min.js"></script>
-    <script src="../js/jquery-3.1.1.js"></script>
-    <script src="../js/bootstrap.js"></script>
+    <script src="../../js/freelancer.min.js"></script>
+    <script src="../../js/jquery-3.1.1.js"></script>
+    <script src="../../js/bootstrap.js"></script>
 
   </body>
 

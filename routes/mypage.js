@@ -65,6 +65,7 @@ router.get('/editInfo', function(req, res, next) {
 		})
 });
 
+
 /* POST editInfo page. */
 router.post('/editInfo', function(req, res, next) {
 	//개인정보 수정
@@ -76,44 +77,38 @@ router.post('/editInfo', function(req, res, next) {
 });
 
 
-/* GET myPost page. */
-router.get('/myPost', function(req, res, next) {
+/* GET myPost page. freeboard */
+router.get('/myPost/freeboard', function(req, res, next) {
 	var uid = fb_auth.currentUser.uid;
 	var page = Number(req.query.page);
-	if(!page){
-		page = 1;
+	if(!page){	
+		page = 1; 
 	}
 	db.collection("user").doc(uid).collection("write").get()
-		.then((user_snapshot) => {
-			if(user_snapshot.size != 0){
+		.then((usersnap) => {
+			if(usersnap.size != 0){
 				var post_info = [];
-				user_snapshot.forEach((snap) => {
+				usersnap.forEach((snap) => {	//유저가 쓴 글 몽땅 불러옴
 					var post = snap.data();
-					post_info.push(post);
+					if(post.data == "freeData"){
+						post_info.push(post);
+					}
 				});
-				
+				//document_name을 사용하여 freeData collection에서 글을 가져옴.
 				var my_post = [];
-				for(var i=0; i<post_info.length; i++){
-					if(post_info[i].data == "freeData"){	//자유게시판
-						db.collection("freeData").doc(post_info[i].document_name).get()
-							.then((post_snapshot) => {
-								var data = post_snapshot.data();
-								my_post.push(data);
-								if(my_post.length == post_info.length){
-									res.render('mypage/myPost', {board: my_post, page: page});
-								}
-							})
-							.catch((err) => {
-								console.log(err);
-							});
-					}
-					else{	//지역게시판
-
-					}
-				}
+				post_info.forEach(function(element, index) {
+					db.collection("freeData").doc(element.document_name).get()
+						.then((post_snapshot) => {
+							var data = post_snapshot.data();
+							my_post.push(data);
+							if(index == post_info.length - 1){
+								res.render('mypage/myPost', {boardType: "freeData", board: my_post, page: page});
+							}
+						})
+				});
 			}
 			else{
-				res.render('mypage/myPost', {board: '', page: ''});
+				res.render('mypage/myPost', {boardType: '', board: '', page: ''});
 			}
 		})
 		.catch((err) => {
@@ -121,11 +116,70 @@ router.get('/myPost', function(req, res, next) {
 		});
 });
 
+
+/* GET myPost page. regionboard */
+router.get('/myPost/regionboard', function(req, res, next) {
+	
+});
+
+
+/* GET postRead page */
+router.get('/postRead', function(req, res, next) {
+	var uid = fb_auth.currentUser.uid;
+	var doc_name = req.query.document_name;
+	var my_post_ref = db.collection("freeData").doc(doc_name);
+	if(req.query.boardType == "freeData"){
+		my_post_ref.get()
+			.then((postsnap) => {
+				var doc = postsnap.data();
+				var page = req.query.page;
+				if(req.query.visitNew == 1){	//글을 처음 읽을 때만 조회수 증가
+					var visit = doc.visit_num + 1;
+					my_post_ref.update({visit_num: visit});
+					doc.visit_num += 1;
+				}
+
+				var userData;
+				db.collection("user").doc(uid).get()	//닉네임, 이메일 가져옴
+					.then((usersnap) => {
+						var data = usersnap.data();
+						userData = {
+							id_nickName : data.id_nickName,
+							id_email: data.id_email
+						}
+					})
+				console.log(userData);
+
+				var reply = [];
+				my_post_ref.collection("reply").orderBy("timeReply").get()
+					.then((replysnap) => {
+						replysnap.forEach((reply_doc) => {
+							var reply_data = reply_doc.data();
+							reply_data.data_doc = doc.document_name;
+							reply.push(reply_data);
+						});
+						res.render('mypage/postRead', {board: doc, page: page, reply: reply, user: userData})
+					})
+
+			})
+			.catch((err) => {
+				console.log(err);
+			})
+	}
+	else{
+
+	}
+
+
+});
+
+
 /* GET myLikePost page. */
 router.get('/myLikePost', function(req, res, next) {
 	console.log("페이지 제대로 띄움");
 	res.render("mypage/myLikePost");
 });
+
 
 /* GET myCommentPost page. */
 router.get('/myCommentPost', function(req, res, next) {

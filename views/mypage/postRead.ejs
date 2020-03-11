@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>게시글</title> 
+	</head>
+	<body>
+		<br>
+		<!-- 자신이 쓴 글일 경우에만 수정 / 삭제 가능 -->
+		<%
+		if(board.id_nickName == user.id_nickName) {
+		%>
+		<pre>
+			<a href="#"><%=user.id_nickName%></a>
+		</pre>
+		<% } %>
+
+		<!-- 글 읽기-->
+		<table border="1" style="width:600px">
+			<colgroup>
+				<col width='20%' />
+				<col width='*%' />
+			</colgroup>
+			<tbody>
+				<tr>
+					<td>제목</td> 
+					<td><%=board.title%></td> 
+				</tr>
+				<tr>
+					<td>작성자</td> 
+					<td><%=board.id_nickName%></td> 
+				</tr>
+				<tr>
+					<td>내용</td> 
+					<td><%=board.content%></td> 
+				</tr>
+								<tr>
+					<td>작성시간</td> 
+					<td><%=board.day%></td> 
+				</tr>
+				<tr>
+					<td>조회수</td>
+					<td><%=board.visit_num%></td>
+				</tr>
+				<tr>
+					<td>좋아요</td>
+					<td><%=board.good_num%></td>
+				</tr>
+			</tbody>
+		</table>
+	</body>
+</html>
