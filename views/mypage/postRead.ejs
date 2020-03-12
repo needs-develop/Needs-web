@@ -11,6 +11,7 @@
 		if(board.id_nickName == user.id_nickName) {
 		%>
 		<pre>
+			<!-- 수정 / 삭제 기능 현재 미구현 상태. -->
 			<a href="#"><%=user.id_nickName%></a>
 		</pre>
 		<% } %>
@@ -34,7 +35,7 @@
 					<td>내용</td> 
 					<td><%=board.content%></td> 
 				</tr>
-								<tr>
+				<tr>
 					<td>작성시간</td> 
 					<td><%=board.day%></td> 
 				</tr>

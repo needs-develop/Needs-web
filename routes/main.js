@@ -29,13 +29,45 @@ router.get('/', function(req, res, next) {
   if(user){
     console.log("---------유저등장---------");   
     var uid = user.uid;
-    
-    db.collection('user').doc(uid).get()   // user 데이터로부터 지역 가져옴
-        .then((doc) => {
-            res.render('main_login', {region: doc.data().id_region});
-        });
+    var freeData_ref = db.collection("freeData").orderBy("good_num", "desc");
+    var data_ref = db.collection("data").doc("allData");
+    var user_ref = db.collection("user").doc(uid);
+
+    var freebestpost = [];
+    var regionbestpost = [];
+    freeData_ref.get()
+      .then((freepostsnap) => {
+        if(freepostsnap){
+          var i = 0;
+          freepostsnap.forEach((freesnap) => {
+            i++;
+            if(i<=4){
+              freebestpost.push(freesnap.data());
+            }
+          })
+          console.log(freebestpost);
+          //이 부분 callback 함수 어떻게 처리해야할 지 모르겠어서 then 안에 넣었어요.ㅜㅜ
+          user_ref.get()   // user 데이터로부터 지역 가져옴
+            .then((doc) => {
+              var data = doc.data();  //사용자 정보
+              var region = data.id_region;
+              data_ref.collection(region).get()
+                .then((regionpostsnap) => {
+                  if(regionpostsnap){
+                    var j = 0;
+                    regionpostsnap.forEach((regionsnap) => {
+                      j++;
+                      if(j<=4){
+                        regionbestpost.push(regionsnap.data());
+                      }
+                    });
+                    res.render('main_login', {region: region, freeDataPost: freebestpost, regionDataPost: regionbestpost});
+                  }
+                })
+            });
+        }
+      })
   }
-              
   else {
     console.log("---------유저없음---------");
     res.render('main_logout');
