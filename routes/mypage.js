@@ -160,7 +160,9 @@ router.get('/postRead', function(req, res, next) {
 	var doc_name = req.query.document_name;
 	var address = req.query.address;
 	var freeData_ref = db.collection("freeData").doc(doc_name);
-	var data_ref = db.collection("data").doc("allData").collection(address).doc(doc_name);
+	if(address){
+		var data_ref = db.collection("data").doc("allData").collection(address).doc(doc_name);
+	}
 	if(req.query.boardType == "freeData"){		//자유게시판
 		freeData_ref.get()
 			.then((postsnap) => {
