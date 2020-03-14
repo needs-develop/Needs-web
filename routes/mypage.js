@@ -84,31 +84,36 @@ router.get('/myPost/freeboard', function(req, res, next) {
 	if(!page){	
 		page = 1; 
 	}
+	var post_info = [];
+	var my_post = [];
 	db.collection("user").doc(uid).collection("write").get()
 		.then((usersnap) => {
 			if(usersnap.size != 0){
-				var post_info = [];
 				usersnap.forEach((snap) => {	//유저가 쓴 글 몽땅 불러옴
 					var post = snap.data();
-					if(post.data == "freeData"){	//자유게시판
+					if(post.data == "freedata"){	//자유게시판
 						post_info.push(post);
 					}
 				});
+				if(post_info.length == 0){
+					res.render('mypage/myPost', {boardType: '', board: my_post, page: '', address: ''});
+				}
 				//document_name을 사용하여 freeData collection에서 글을 가져옴.
-				var my_post = [];
 				post_info.forEach(function(element, index) {
 					db.collection("freeData").doc(element.document_name).get()
 						.then((post_snapshot) => {
 							var data = post_snapshot.data();
 							my_post.push(data);
 							if(index == post_info.length - 1){
+								console.log(my_post.length);
 								res.render('mypage/myPost', {boardType: "freeData", board: my_post, page: page, address: ''});
 							}
 						})
 				});
 			}
 			else{
-				res.render('mypage/myPost', {boardType: '', board: '', page: ''});
+				console.log(my_post.length);
+				res.render('mypage/myPost', {boardType: '', board: my_post, page: '', address: ''});
 			}
 		})
 		.catch((err) => {
@@ -124,18 +129,20 @@ router.get('/myPost/regionboard', function(req, res, next) {
 	if(!page){	
 		page = 1; 
 	}
+	var post_info = [];
+	var my_post = [];
 	db.collection("user").doc(uid).collection("write").get()
 		.then((usersnap) => {
 			if(usersnap.size != 0){
-				var post_info = [];
 				usersnap.forEach((snap) => {	//유저가 쓴 글 몽땅 불러옴
 					var post = snap.data();
 					if(post.data == "data"){		//지역게시판
 						post_info.push(post);
 					}
 				});
-
-				var my_post = [];
+				if(post_info.length == 0){
+					res.render('mypage/myPost', {boardType: '', board: my_post, page: '', address: ''});
+				}
 				post_info.forEach(function(element, index) {
 					db.collection("data").doc('allData').collection(element.address).doc(element.document_name).get()
 						.then((post_snapshot) => {
@@ -244,6 +251,20 @@ router.get('/myLikePost', function(req, res, next) {
 /* GET myCommentPost page. */
 router.get('/myCommentPost', function(req, res, next) {
 	console.log("페이지 제대로 띄움");
+	var uid = fb_auth.currentUser.uid;
+	var user_ref = db.collection("user").doc(uid).collection("reply");
+
+	var reply_uid = [];
+	user_ref.get().then((replysnap) => {
+		replysnap.forEach((snap) => {
+			var data = snap.data();
+			reply_uid.push(data);
+		});
+		console.log(reply_uid);
+	})
+
+
+
 	res.render("mypage/myCommentPost");
 });
 
