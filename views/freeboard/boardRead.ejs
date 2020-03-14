@@ -1,138 +1,206 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>글 읽기</title> 
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<title>글 읽기</title>
+	<!-- Bootstrap core CSS -->
+	<link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+	<!-- Custom fonts for this template -->
+	<link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+	<link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+
+	<!-- Plugin CSS -->
+	<link href="../vendor/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css">
+
+	<!-- Custom styles for this template -->
+	<link href="../css/freelancer.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=PT+Sans:700' rel='stylesheet' type='text/css'>
+	<link href="../button_styles.css" rel='stylesheet'>
+	<link href="../css/bootstrap.css" rel='stylesheet'>
 </head>
     
-<body>
-        <br>
+<body id="page-top">
+
+	<!-- Navigation -->
+    <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
+		<div class="container">
+		  <a class="navbar-brand js-scroll-trigger" href="/">Needs</a>
+		  <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-fixed Black rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+			Menu
+			<i class="fa fa-bars"></i>
+		  </button>
+		  <div class="collapse navbar-collapse" id="navbarResponsive">
+			<ul class="navbar-nav ml-auto">
+			  <li class="nav-item mx-0 mx-lg-1">
+				<a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/regionboard">지역게시판</a>
+			  </li>  
+			  <li class="nav-item mx-0 mx-lg-1">
+				<a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#portfolio">자유게시판</a>
+			  </li>
+			  <li class="nav-item mx-0 mx-lg-1">
+				<a class="nav-link py-3 px-0 px-lg-3 rounded" href="#">Logout</a>
+			  </li>
+			  <li class="nav-item mx-0 mx-lg-1">
+				<a class="nav-link py-3 px-0 px-lg-3 rounded" href="/mypage">My Page</a>
+			  </li>
+			  <li class="nav-item mx-0 mx-lg-1">
+				<a class="nav-link py-3 px-0 px-lg-3 rounded" href="/action">알림</a>
+			  </li>
+			</ul>
+		  </div>
+		</div>
+	  </nav>
+
+	<section class="portfolio" id="portfolio">
+		<div class="container" style="padding-top:100px">
+			<!-- 자신이 쓴 글일 경우에만 수정 / 삭제 가능 -->
+			<%
+			if(board.id_nickName == user.id_nickName) {
+			%>
+				<pre class="pull-right">
+				<a href="boardWrite?document_name=<%=board.document_name%>" style="color: #212529"> 수정 | </a><a href="boardDelete?document_name=<%=board.document_name%>&title=<%=board.title%>&content=<%=board.content%>" style="color: #212529">삭제 </a>
+				</pre>
+			<%
+			}
+			%>
+			<table class="table table-bordered">
+				<tbody>
+					<tr>
+						<td>제목</td> 
+						<td><%=board.title%></td> 
+					</tr>
+					<tr>
+						<td>작성자</td> 
+						<td><%=board.id_nickName%></td> 
+					</tr>
+					<tr>
+						<td>작성시간</td> 
+						<td><%=board.day%></td> 
+					</tr>
+					<tr>
+						<td>조회수</td>
+						<td><%=board.visit_num%></td>
+					</tr>
+					<tr>
+						<td>좋아요</td>
+						<td><%=board.good_num%></td>
+					</tr>
+					<tr>
+						<th>내용</th>
+						<td class="form-control" style="min-height: 300px; width: 100%"><%=board.content%></td>
+					</tr>
+					<tr>
+						<th>댓글</th>
+						<td>
+							<form name="form2" action="commentSave" method="post">
+								<textarea name="contentReply" class="autosize" onkeydown="resize(this)" onkeyup="resize(this)"  placeholder="내용을 입력하세요. " class="form-control" style="width: 100%"></textarea>
+								<input type="hidden" name="data_doc" value="<%=board.document_name%>" class="pull-right">
+								<input type="hidden" name="writerReply" value="<%=user.id_nickName%>" class="pull-right">
+								<input type="hidden" name="id_uid" value="<%=board.id_uid%>" class="pull-right">
+								<input type="submit" value=등록 onClick="form2.submit()" class="pull-right">
+							</form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<!--  좋아요  -->
+			<div style="float:right">
+				<form name="form1" action="boardLike" method="post"> 
+					<input type="button" value=" ❤ " onClick="form1.submit()"> 
+					<input type="hidden" name="document_name" value="<%=board.document_name%>">    
+					<input type="hidden" name="page" value="<%=page%>">
+					<input type="hidden" name="id_nickName" value="<%=user.id_nickName%>">
+					<input type="hidden" name="id_email" value="<%=user.id_email%>">
+				</form>
+			</div>
+			<!--  목록  -->	
+			<div style="float:right; margin-left: 10px">
+				<form name="form3" action="boardList" method="get">
+					<pre class="pull-right"><input type="submit" value="목록"></pre>               
+					<input type="hidden" name="page" value="<%=page%>">
+				</form>
+			</div>
+		</div>	
+	</section>
+		  
+  <br><hr>       
     
-        <!-- 자신이 쓴 글일 경우에만 수정 / 삭제 가능 -->
-        <%
-        if(board.id_nickName == user.id_nickName) {
-        %>
-            <pre>                                                                                 <a href="boardWrite?document_name=<%=board.document_name%>"> 수정 | </a><a href="boardDelete?document_name=<%=board.document_name%>&title=<%=board.title%>&content=<%=board.content%>">삭제 </a></pre>
-        <%
-        }
-        %>
-    
-        <!-- 글 읽기-->
-		<table border="1" style="width:600px">
-			<colgroup>
-				<col width='20%' />
-				<col width='*%' />
-			</colgroup>
-			<tbody>
-                <tr>
-					<td>제목</td> 
-					<td><%=board.title%></td> 
-				</tr>
-				<tr>
-					<td>작성자</td> 
-					<td><%=board.id_nickName%></td> 
-				</tr>
-				<tr>
-					<td>내용</td> 
-					<td><%=board.content%></td> 
-				</tr>
-                <tr>
-					<td>작성시간</td> 
-					<td><%=board.day%></td> 
-				</tr>
-                <tr>
-                    <td>조회수</td>
-                    <td><%=board.visit_num%></td>
-                </tr>
-                <tr>
-                    <td>좋아요</td>
-                    <td><%=board.good_num%></td>
-                </tr>
-			</tbody>
-		</table>    
-        <br>
-    
+	<div class="container" style="padding-top:100px">
+    <!-- 댓글 읽기-->
+   <caption><h3>댓글(<%=reply.length%>)</h3></caption><br>
         
-        <!--  좋아요  -->
-        <form name="form1" action="boardLike" method="post"> 
-            <input type="button" value=" ♥ " onClick="form1.submit()"> 
-            <input type="hidden" name="document_name" value="<%=board.document_name%>">    
-            <input type="hidden" name="page" value="<%=page%>">
-            <input type="hidden" name="id_nickName" value="<%=user.id_nickName%>">
-            <input type="hidden" name="id_email" value="<%=user.id_email%>">
-        </form>
-        <br><br><br><br><hr>
-     
-        
+		<%   
+		if(reply.length != 0) {     // 댓글이 존재하면 댓글을 출력
+		%>
+		<%
+		for(var i=0; i<reply.length; i++) {
+		%>
+		<!-- 자신이 쓴 댓글일 경우에만 수정 / 삭제 가능 -->
+		<%
+		if(reply[i].writerReply == user.id_nickName) {
+		%>
+				<pre><a href="commentEdit?data_doc=<%=board.document_name%>&reply_doc=<%=reply[i].reply_doc%>"> 수정 | </a><a href="commentDelete?data_doc=<%=board.document_name%>&reply_doc=<%=reply[i].reply_doc%>">삭제 </a></pre>
+		<%
+		}
+		%>
     
-       
-        <!-- 댓글 읽기-->
-        <caption><h3>댓글(<%=reply.length%>)</h3></caption><br>
-        
-        <%   
-        if(reply.length != 0) {     // 댓글이 존재하면 댓글을 출력
-        %>
-            <%
-            for(var i=0; i<reply.length; i++) {
-            %>
-                <!-- 자신이 쓴 댓글일 경우에만 수정 / 삭제 가능 -->
-                <%
-                if(reply[i].writerReply == user.id_nickName) {
-                %>
-                    <pre>                                                                                 <a href="commentEdit?data_doc=<%=board.document_name%>&reply_doc=<%=reply[i].reply_doc%>"> 수정 | </a><a href="commentDelete?data_doc=<%=board.document_name%>&reply_doc=<%=reply[i].reply_doc%>">삭제 </a></pre>
-                <%
-                }
-                %>
-    
-                <table border="1" style="width:600px">
-                    <colgroup>
-	   			         <col width='20%' />
-	   			         <col width='*%' />
-	   		        </colgroup>
-                    
-                    <tbody>
-                    <tr>
-                        <td>이름</td>
-                        <td><%=reply[i].writerReply%></td>      
-                    </tr>
-                    <tr>
-                        <td>내용</td>
-                        <td><%=reply[i].contentReply%></td>      
-                    </tr>
-                    <tr>
-                        <td>작성시간</td>
-                        <td><%=reply[i].timeReply%></td>      
-                    </tr>
-                    </tbody>
-                    
-                </table>
-                <br>
-            <%
-            }
-            %>
-    
-        <%
-        }
-        %>
-    
-    
-    
-        <br><br>
-        <!-- 댓글 쓰기-->
-        <form name="form2" action="commentSave" method="post">
-            내용 : <textarea name="contentReply" cols=40 rows=6></textarea>&nbsp;
-            <input type="hidden" name="data_doc" value="<%=board.document_name%>">
-            <input type="hidden" name="writerReply" value="<%=user.id_nickName%>">
-            <input type="hidden" name="id_uid" value="<%=board.id_uid%>">
-            <input type="submit" value=등록 onClick="form2.submit()">
-        </form>
-        <br><br>
-        
-        <form name="form3" action="boardList" method="get">
-            <pre>                                                                                       <input type="submit" value="목록"></pre>
-            <input type="hidden" name="page" value="<%=page%>">
-        </form>
-        <br>    
-    
+			<table class="table table-bordered">
+															
+					<tbody>
+					<tr>
+							<td>이름</td>
+							<td><%=reply[i].writerReply%></td>      
+					</tr>
+					<tr>
+							<td>내용</td>
+							<td><%=reply[i].contentReply%></td>      
+					</tr>
+					<tr>
+							<td>작성시간</td>
+							<td><%=reply[i].timeReply%></td>      
+					</tr>
+					</tbody>
+					
+			</table>
+      <br>
+				<%
+				}
+				%>
+
+		<%
+		}
+		%>
+	</div>
+	<br><br>
+		
+	<script>
+		function resize(obj) {
+			obj.style.height = "1px";
+			obj.style.height = (12+obj.scrollHeight)+"px";
+		}
+	</script>
+
+	<!-- Bootstrap core JavaScript -->
+	<script src="../vendor/jquery/jquery.min.js"></script>
+	<script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+	<!-- Plugin JavaScript -->
+	<script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+	<script src="../vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+
+	<!-- Contact Form JavaScript -->
+	<script src="../js/jqBootstrapValidation.js"></script>
+	<script src="../js/contact_me.js"></script>
+
+	<!-- Custom scripts for this template -->
+	<script src="../js/freelancer.min.js"></script>
+	<script src="../js/jquery-3.1.1.js"></script>
+	<script src="../js/bootstrap.js"></script>
 </body>
 </html>
