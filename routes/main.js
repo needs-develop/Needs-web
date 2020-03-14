@@ -51,7 +51,7 @@ router.get('/', function(req, res, next) {
             .then((doc) => {
               var data = doc.data();  //사용자 정보
               var region = data.id_region;
-              data_ref.collection(region).get()
+              data_ref.collection(region).orderBy("good_num", "desc").get()
                 .then((regionpostsnap) => {
                   if(regionpostsnap){
                     var j = 0;
