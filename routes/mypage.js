@@ -254,48 +254,51 @@ router.get('/myLikePost', function(req, res, next) {
 		likesnap.forEach((snap) => {
 			var data = snap.data();
 			my_like.push(data);
-			var region_ref = db.collection("data").doc("allData");
-			var free_ref = db.collection("freeData");
+		});
 
-			var post = [];
-			var address = [];
-			var boardType = [];
-			my_like.forEach(function(element, index){
-				if(element.data == "data"){			//지역게시판
-					region_ref.collection(element.address).doc(element.document_name).get()
-					.then((postsnap_region) => {
-						var data = postsnap_region.data();
-						post.push(data);
-						address.push(element.address);
-						boardType.push("data");
-						if(index == my_like.length - 1){
-							res.render("mypage/myLikePost", {
-								boardType: boardType,
-								board: post,
-								page: page,
-								address: address
-							});
-						}
-					})
-				}
-				else if(element.data == "freedata"){	//자유게시판
-					free_ref.doc(element.document_name).get()
-					.then((postsnap_free) => {
-						var data = postsnap_free.data();
-						post.push(data);
-						address.push("");
-						boardType.push("freeData");
-						if(index == my_like.length - 1){
-							res.render("mypage/myLikePost", {
-								boardType: boardType,
-								board: post,
-								page: page,
-								address: address
-							});
-						}
-					})
-				}
-			});
+		var region_ref = db.collection("data").doc("allData");
+		var free_ref = db.collection("freeData");
+		if(my_like.length == 0){
+			res.render('mypage/myPost', {boardType: '', board: my_like, page: '', address: ''});
+		}
+		var post = [];
+		var address = [];
+		var boardType = [];
+		my_like.forEach(function(element, index){
+			if(element.data == "data"){			//지역게시판
+				region_ref.collection(element.address).doc(element.document_name).get()
+				.then((postsnap_region) => {
+					var data = postsnap_region.data();
+					post.push(data);
+					address.push(element.address);
+					boardType.push("data");
+					if(index == my_like.length - 1){
+						res.render("mypage/myLikePost", {
+							boardType: boardType,
+							board: post,
+							page: page,
+							address: address
+						});
+					}
+				})
+			}
+			else if(element.data == "freedata"){	//자유게시판
+				free_ref.doc(element.document_name).get()
+				.then((postsnap_free) => {
+					var data = postsnap_free.data();
+					post.push(data);
+					address.push("");
+					boardType.push("freeData");
+					if(index == my_like.length - 1){
+						res.render("mypage/myLikePost", {
+							boardType: boardType,
+							board: post,
+							page: page,
+							address: address
+						});
+					}
+				})
+			}
 		})
 	})
 });
@@ -317,7 +320,9 @@ router.get('/myCommentPost', function(req, res, next) {
 		});
 		var region_ref = db.collection("data").doc("allData");
 		var free_ref = db.collection("freeData");
-
+		if(my_reply.length == 0){
+			res.render('mypage/myPost', {boardType: '', board: my_reply, page: '', address: ''});
+		}
 		var post = [];
 		var address = [];
 		var boardType = [];
