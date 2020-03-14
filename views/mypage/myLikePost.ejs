@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>My page</title>
+    <title>내가 좋아요 남긴 글</title>
 
     <!-- Bootstrap core CSS -->
     <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -29,20 +29,147 @@
   </head>
 
   <body id="page-top">
-    <header class="masthead bg-primary text-black">
-      <div class="container">
-        <h2>내가 좋아요 누른 글</h2>
-        <br><br>
-      </div>
-    </header>
 
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
-        <div class="container">
-        <a class="navbar-brand js-scroll-trigger" href="#page-top">Needs</a>
-
+      <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="/">Needs</a>
+        <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-fixed Black rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/mypage/editInfo">개인정보 수정</a>
+            </li>
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/mypage/myPost/freeboard">내 글(자유 게시판)</a>
+            </li>
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/mypage/myPost/regionboard">내 글(지역 게시판)</a>
+            </li>
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/mypage/myLikePost">내가 좋아요 한 글</a>
+            </li>
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/mypage/myCommentPost">내가 댓글 남긴 글</a>
+            </li>
+          </ul>
         </div>
+      </div>
     </nav>
+
+    <section class="portfolio" id="portfolio">
+      <div class="container" style="padding-top:100px">
+        <%
+        if(board.length != 0) {  // 글이 존재할 경우
+            var pageNum = (board.length%5==0) ? parseInt(board.length/5) : parseInt(board.length/5)+1; // 총 페이지 수 계산 
+        %>
+        <h3 class="text-center text-uppercase">내가 좋아요 남긴 글</h3>
+        <br><br><br>
+
+        <table class="table table-hover">
+          <colgroup>
+            <col width='13%' />
+            <col width='*%' />
+            <col width='10%' />
+            <col width='27%' />
+            <col width='10%' />
+            <col width='10%' />
+          </colgroup>
+          <thead>        
+            <tr>
+              <th><center>No.</center></th>
+              <th><center>제목</center></th>
+              <th><center>작성자</center></th>
+              <th><center>작성시간</center></th>
+              <th><center>조회수</center></th>
+              <th><center>좋아요</center></th>
+            </tr>
+          </thead>
+          <tbody>
+            <%
+            if (page != pageNum) {  // 마지막 페이지가 아닌 경우
+                for(var i=(page-1)*5; i<page*5; i++) {
+            %> 
+            <tr>
+              <td style="text-align:center"><%= board.length-i %></td>
+              <% 
+                if(boardType[i] == "freeData"){
+              %>
+              <td><a href="../../freeboard/boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>" style="color: black"><%=board[i].title%></a></td>
+              <% } else { %>
+              <td><a href="../../regionboard/boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>&address=<%=address%>" style="color: black"><%=board[i].title%></a></td>
+              <% } %>
+              <td style="text-align:center"><%= board[i].id_nickName %></td>
+              <td style="text-align:center"><%= board[i].day %></td>
+              <td style="text-align:center"><%= board[i].visit_num %></td>
+              <td style="text-align:center"><%= board[i].good_num %></td>
+            </tr>
+            <% }} %>
+
+            <%
+            if (page == pageNum) {  // 마지막 페이지인 경우
+                for(var i=(page-1)*5; i<board.length; i++) {
+            %> 
+            <tr>
+              <td style="text-align:center"><%= board.length-i %></td>
+              <% 
+                if(boardType[i] == "freeData"){
+              %>
+              <td><a href="../../freeboard/boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>&address=<%=address%>" style="color: black"><%=board[i].title%></a></td>
+              <% } else { %>
+              <td><a href="../../regionboard/boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>&address=<%=address%>" style="color: black"><%=board[i].title%></a></td>
+              <% } %>
+              <td style="text-align:center"><%= board[i].id_nickName %></td>
+              <td style="text-align:center"><%= board[i].day %></td>
+              <td style="text-align:center"><%= board[i].visit_num %></td>
+              <td style="text-align:center"><%= board[i].good_num %></td>
+            </tr>
+            <% }} %>
+          </tbody>
+        </table>
+        <br><br><br><hr/>
+
+        <!-- pagination -->
+        <div class="text-center" style="display:table; margin: auto">
+          <ol class="pagination">
+            <%
+            if (parseInt((page-1)/5)*5+1 != 1) {    // 1~5페이지가 보이는 경우가 아니면 이전 버튼 출력
+            %>  
+            <a href="myPost?page=<%=parseInt((page-1)/5)*5%>"> 이전 </a> 
+            <%
+            }
+            %>   
+            
+            <%
+            for(var i=parseInt((page-1)/5)*5+1; i<=parseInt((page-1)/5)*5+5; i++) {
+                if(i > pageNum) {   // 마지막 페이지 번호까지 출력했으면 break
+                    break;
+                }
+            %>
+            <a href="myPost?page=<%=i%>" style="color: black; padding: 5px"><%= i %></a>
+            <%
+            }
+            %>
+            
+            <%
+            if (parseInt((page-1)/5)*5+5 < pageNum) { // 해당 페이지에서 보이는 다섯 페이지의 다음 페이지가 존재하는 경우 다음 버튼 출력
+            %>
+            <a href="myPost?page=<%=(parseInt((page-1)/5)+1)*5+1%>"> 다음 </a>  
+            <%
+            }                                     
+            %>
+          </ol>
+        </div>
+
+        <% } else {%>
+          <h3 class="text-center text-uppercase">글이 존재하지 않습니다.</h3>
+        <% } %>
+      </div>
+    </section>
+
 
     <!-- Footer -->
     <footer class="footer text-center" style="margin-top:300px">
@@ -92,6 +219,8 @@
 
     <!-- Custom scripts for this template -->
     <script src="../js/freelancer.min.js"></script>
+    <script src="../js/jquery-3.1.1.js"></script>
+    <script src="../js/bootstrap.js"></script>
 
   </body>
 
