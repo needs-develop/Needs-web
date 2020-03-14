@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var firebase = require("firebase");
 var dateFormat = require('dateformat');
+var urlencode = require('urlencode');	//한글 인코딩 모듈
 // 서울 현재 시간 불러오기 위해 필요한 모듈
 var moment = require('moment');
 require('moment-timezone');
@@ -409,5 +410,50 @@ router.get('/commentDelete', function(req,res,next){
 
     res.redirect('boardRead?document_name=' + getData.data_doc);
 });
+
+
+// 자유게시판 검색기능
+router.get('/search', function(req, res, next) {
+	var page = Number(req.query.page);
+	if (!page) {    // 그냥 boardList로 이동할 경우 1페이지를 보여줌
+		page = 1;
+	}
+	var search_method = req.query.sfl;
+	var search_content = urlencode.decode(req.query.stx);
+	console.log(search_method, search_content);
+	var uid = firebase.auth().currentUser.uid;
+	if(search_method == "by_nickName"){ //작성자 닉네임으로 검색
+		db.collection("freeData").where("id_nickName", "==", search_content).get()
+			.then((snap) => {
+				if(snap.empty){
+					console.log("No matching documents");
+				}
+				var search_result = [];
+				snap.forEach(doc => {
+					console.log(doc.data());
+					search_result.push(doc.data());
+				});
+				// 빛나님 id_region 왜 들어가는지 몰라서 일단 빼고 진행했어요.
+				res.render('freeboard/boardList', {board: search_result, page: page});
+			})
+	}
+	else if(search_method == "by_title"){	//제목으로 검색
+		// 검색은 Prefix 기능만 구현되어 있음.
+		db.collection("freeData").where("title", ">=", search_content)
+			.where("title", "<=", search_content+'\uf8ff').get()
+			.then((snap) => {
+				if(snap.empty){
+					console.log("No matching documents")
+				}
+				var search_result = [];
+				snap.forEach(doc => {
+					console.log(doc.data());
+					search_result.push(doc.data());
+				});
+				// 빛나님 id_region 왜 들어가는지 몰라서 일단 빼고 진행했어요.
+				res.render('freeboard/boardList', {board: search_result, page: page});
+			})
+	}
+})
 
 module.exports = router;

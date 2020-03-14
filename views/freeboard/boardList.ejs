@@ -2,7 +2,7 @@
 <html lang="ko">
     
 <head>
-    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -68,6 +68,24 @@
     <section class="portfolio" id="portfolio">
         <div class="container" style="padding-top:100px">
             <h3 class="text-center text-uppercase">자유게시판</h3>
+            <br><br>
+            <div class="text-center">
+              <fieldset id="bo_sch">
+                <form name="fsearch" method="get" action="/freeboard/search">
+                  <input type="hidden" name="bo_table" value="gallery">
+                  <input type="hidden" name="sca" value="">
+                  <input type="hidden" name="sop" value="and">
+                  <label for="sfl" class="sound_only">검색대상</label>
+                  <select name="sfl" id="sfl">
+                    <option value="by_title">제목</option>
+                    <option value="by_nickName">작성자</option>
+                  </select>
+                  <label for="stx" class="sound_only">검색어</label>
+                  <input type="text" name="stx" value="" required="" id="stx" class="sch_input" size="25" maxlength="20" placeholder="검색어를 입력해주세요">
+                  <button type="submit" value="검색" class="sch_btn"><i class="fa fa-search" aria-hidden="true"></i><span class="sound_only">검색</span></button>
+                </form>
+              </fieldset>
+            </div>
             <br><br><br>
             
             
