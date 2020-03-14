@@ -30,46 +30,53 @@ var db = firebase.firestore(app);
 // 글 목록
 router.get('/boardList', function(req, res, next) {
     var page = Number(req.query.page);
+    var uid = firebase.auth().currentUser.uid;
+    
     if (!page) {    // 그냥 boardList로 이동할 경우 1페이지를 보여줌
         page = 1;
     }
-
-    db.collection('freeData').orderBy("day", "desc").get()  // 날짜의 내림차순으로 정렬
-        .then((snapshot) => {
-            // 글이 있는 경우
-            if(snapshot.size != 0) {
-                var free_board = [];
-                snapshot.forEach((free_doc) => {
-                    var free_data = free_doc.data();  // Key(문서이름)는 빼고 Data만 저장
-                    free_board.push(free_data);    
+    
+    db.collection('user').doc(uid).get()
+        .then((doc) => {
+            var id_region = doc.data().id_region;   // 지역 가져오기
+            
+            db.collection('freeData').orderBy("day", "desc").get()  // 날짜의 내림차순으로 글 가져오기
+                .then((snapshot) => {
+                    // 글이 있는 경우
+                    if(snapshot.size != 0) {
+                        var free_board = [];
+                        snapshot.forEach((free_doc) => {
+                            var free_data = free_doc.data();  // Key(문서이름)는 빼고 Data만 저장
+                            free_board.push(free_data);    
+                        });
+                        res.render('freeboard/boardList', {board: free_board, page: page, id_region: id_region});
+                    }
+                    // 글이 없는 경우
+                    else {
+                        res.render('freeboard/boardList', {board: '', page: '', id_region: id_region});
+                    }
+                })
+                .catch((err) => {
+                    console.log('Error getting documents', err);
                 });
-                res.render('freeboard/boardList', {board: free_board, page: page});
-            }
-            // 글이 없는 경우
-            else {
-                res.render('freeboard/boardList', {board: '', page: ''});
-            }
-        })
-        .catch((err) => {
-            console.log('Error getting documents', err);
         });
 });
 
 
 // 글 읽기
 router.get('/boardRead', function(req, res, next) {
-    var free_doc = db.collection("freeData").doc(req.query.document_name);   
-
+    var getData = req.query;
     var uid = firebase.auth().currentUser.uid;
-
-    free_doc.get()
-        .then((doc) => {    
-            if(doc.exists) {    // 해당 글이 있는 경우
+    var free_doc = db.collection("freeData").doc(getData.document_name);   
+    
+    if(!getData.action) {   // 게시판으로부터 글을 읽는 경우
+        free_doc.get()
+            .then((doc) => {    
                 var free_data = doc.data();    
-                var page = req.query.page;
+                var page = getData.page;
     
                 // boardList에서 글을 처음 읽을 때만 조회수 증가 (수정, 좋아요, 댓글 시에는 증가하지 않음)
-                if(req.query.visitNew == 1) {
+                if(getData.visitNew == 1) {
                     // 실제 document의 visit_num를 1 증가
                     var visit = free_data.visit_num + 1;    
                     free_doc.update({visit_num : visit});   
@@ -77,8 +84,7 @@ router.get('/boardRead', function(req, res, next) {
                     // board로 넘겨줄 visit_num를 1 증가
                     free_data.visit_num += 1; 
                 }
-    
-    
+        
                 var userData;
                 db.collection('user').doc(uid).get()
                     .then((doc) => {
@@ -105,16 +111,24 @@ router.get('/boardRead', function(req, res, next) {
                     .catch((err) => {
                         console.log('Error getting documents', err);
                     });       
+            })
+            .catch((err) => {
+                console.log('Error getting documents', err);
+            });
+    }
+    else {  // 알림 페이지로부터 읽는 경우
+        free_doc.get().then((doc) => {    
+            if(doc.exists) {  // 해당 글이 있는 경우
+                res.redirect('boardRead?document_name='+getData.document_name+'&visitNew=1')
             }
-        
             else {  // 해당 글이 없는 경우
                 res.send("<script>alert('삭제된 글입니다.');history.back();</script>")
             }
-
         })
         .catch((err) => {
             console.log('Error getting documents', err);
-        });
+        });   
+    }
 });
 
 
@@ -127,10 +141,7 @@ router.get('/boardWrite', function(req,res,next){
             .then((doc) => {
                 var userData = doc.data();    
 
-                var data = {    // 로그인한 사용자의 별명과 이메일 가져옴
-                    id_nickName : userData.id_nickName
-                    //id_email : userData.id_email
-                }
+                var data = { id_nickName : userData.id_nickName }
 
                 res.render('freeboard/boardWrite', {row: data});
             });
@@ -154,6 +165,7 @@ router.post('/boardSave', function(req,res,next){
     var postData = req.body;
     var uid = firebase.auth().currentUser.uid;
 
+
     if (!postData.document_name) {  // new
         postData.day = moment().format('YYYY/MM/DD HH:mm:ss');
         postData.visit_num = 0;
@@ -168,8 +180,8 @@ router.post('/boardSave', function(req,res,next){
         // user 컬렉션에 데이터 저장
         var user_doc = db.collection('user').doc(uid).collection('write').doc(postData.document_name);
         var userData = { 
-            data: "freeData",
-            document_name: postData.document_name
+            data: "freedata",
+            document_name: postData.document_name 
         }
         user_doc.set(userData);
     } 
@@ -208,7 +220,10 @@ router.post('/boardLike', function(req,res,next){
 
                     // user - like
                     var user_like_doc = db.collection('user').doc(uid).collection('like').doc(postData.document_name);
-                    var likeData = { data: "freedata", document_name: postData.document_name }
+                    var likeData = { 
+                        data: "freedata", 
+                        document_name: postData.document_name 
+                    }
                     user_like_doc.set(likeData);     
 
 
@@ -349,7 +364,7 @@ router.post('/commentSave', function(req,res,next){
         var user_reply_doc = db.collection('user').doc(uid).collection('reply').doc(postData.reply_doc);
         var userData = { 
             data: "freedata",
-            documentName: postData.data_doc, 
+            document_name: postData.data_doc, 
             reply_doc: postData.reply_doc    
         }
         user_reply_doc.set(userData);
