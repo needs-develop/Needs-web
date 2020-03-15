@@ -84,7 +84,7 @@
                     }
                     else {  // 지역게시판에 쓴 글           
                 %>        
-                        <li><a href='/regionboard/boardRead?document_name=<%=action[i].document_name%>&visitNew=1&action=true' style='color:grey'><%=action[i].writer%>님이 게시물에 관심을 가졌습니다.</a>&emsp;&emsp;<%=action[i].day%></li><br>    
+                        <li><a href='/regionboard/boardRead?document_name=<%=action[i].document_name%>&visitNew=1&action=true&board_region=<%=action[i].address%>' style='color:grey'><%=action[i].writer%>님이 게시물에 관심을 가졌습니다.</a>&emsp;&emsp;<%=action[i].day%></li><br>    
                 <%
                     }
                 }
@@ -211,6 +211,4 @@
                                        
 </body>
 </html>
-            
-            
             
