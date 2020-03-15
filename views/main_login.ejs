@@ -109,14 +109,14 @@
             <div class="card" style="float : left; margin : 10px">
               <div class="board" style="width:330px; text-align:justify; background-color:#b399ff	">
                 <h5 style="margin:20px; text-align:center">
-                  <a href="/regionboard">지역 게시판 HOT</a>
+                  <a href="/regionboard/boardList?board_region=<%=region%>">지역 게시판 HOT</a>
                 </h5>
                 <hr>
                 <% 
                   for(var i=0; i<4; i++) {
                     if(regionDataPost[i]){
                 %>
-                <a class="list" href="regionboard/boardRead?document_name=<%=regionDataPost[i].document_name%>&visitNew=1&page=1">
+                <a class="list" href="regionboard/boardRead?document_name=<%=regionDataPost[i].document_name%>&visitNew=1&page=1&board_region=<%=region%>">
                   <time style="float:right; padding-right:1rem"><%=regionDataPost[i].good_num%></time>
                   <p style="padding-left: 1rem"><%=regionDataPost[i].title%></p>
                   <% if(i<3){ %>
