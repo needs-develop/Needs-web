@@ -1,32 +1,114 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>글 작성/수정</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<title>글 작성/수정</title>  <!-- 해당 게시글 제목이 여기에 들어가야 할 듯! -->
+
+	<!-- Bootstrap core CSS -->
+	<link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+	<!-- Custom fonts for this template -->
+	<link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+	<link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+
+	<!-- Plugin CSS -->
+	<link href="../vendor/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css">
+
+	<!-- Custom styles for this template -->
+	<link href="../css/freelancer.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=PT+Sans:700' rel='stylesheet' type='text/css'>
+	<link href="../button_styles.css" rel='stylesheet'>
+	<link href="../css/bootstrap.css" rel='stylesheet'>
 </head>
     
 <body>
-	<form name="form1" action="boardSave" method="post">
-		<table border="1" style="width:600px">
-			<caption><h1>글 작성/수정</h1></caption>
-			<colgroup>
-				<col width='15%' />
-				<col width='*%' />
-			</colgroup>
-			<tbody>
-				<tr>
-					<td>제목</td> 
-					<td><input type="text" name="title" size="50" maxlength="250" value="<%=row.title%>"></td> 
-				</tr>
-				<tr>
-					<td>내용</td> 
-					<td><textarea name="content" rows="10" cols="60"><%=row.content%></textarea></td> 
-				</tr>
-			</tbody>
-		</table>
-		<pre>                                                                                       <input type="submit" value="완료" onclick=form1.submit()></pre>
-        <input type="hidden" name="document_name" value="<%=row.document_name%>"> 
-        <input type="hidden" name="id_nickName" value="<%=row.id_nickName%>"> 
-	</form>	
+
+	<!-- Navigation -->
+	<nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
+		<div class="container">
+		  <a class="navbar-brand js-scroll-trigger" href="/">Needs</a>
+		  <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-fixed Black rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+			Menu
+			<i class="fa fa-bars"></i>
+		  </button>
+		  <div class="collapse navbar-collapse" id="navbarResponsive">
+			<ul class="navbar-nav ml-auto">
+			  <li class="nav-item mx-0 mx-lg-1">
+				<a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/regionboard">지역게시판</a>
+			  </li>  
+			  <li class="nav-item mx-0 mx-lg-1">
+				<a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#portfolio">자유게시판</a>
+			  </li>
+			  <li class="nav-item mx-0 mx-lg-1">
+				<a class="nav-link py-3 px-0 px-lg-3 rounded" href="#">Logout</a>
+			  </li>
+			  <li class="nav-item mx-0 mx-lg-1">
+				<a class="nav-link py-3 px-0 px-lg-3 rounded" href="/mypage">My Page</a>
+			  </li>
+			  <li class="nav-item mx-0 mx-lg-1">
+				<a class="nav-link py-3 px-0 px-lg-3 rounded" href="/action">알림</a>
+			  </li>
+			</ul>
+		  </div>
+		</div>
+	</nav>
+
+	<section class="portfolio" id="portfolio">
+		<div class="container" style="padding-top:100px">
+			<h3 class="text-center text-uppercase">글 작성/수정</h3><br><br>
+			<form name="form1" action="boardSave" method="post">
+				<table class="table table-bordered">
+					<!--
+					<caption><h1>글 작성/수정</h1></caption>
+					-->
+					<tbody>
+						<tr>
+							<td>제목</td> 
+							<td><input type="text" name="title" size="50" maxlength="250" value="<%=row.title%>"></td> 
+						</tr>
+						<tr>
+							<td>내용</td>
+							<td class="form-control" style="min-height: 300px; width: 100%">
+								<textarea class="autosize" onkeydown="resize(this)" onkeyup="resize(this)"  placeholder="내용을 입력하세요. " name="content" class="form-control" style="min-height: 300px; width: 100%"><%=row.content%></textarea>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<pre class="pull-right"><input type="submit" value="완료" onclick=form1.submit()></pre>
+					<input type="hidden" name="document_name" value="<%=row.document_name%>"> 
+					<input type="hidden" name="id_nickName" value="<%=row.id_nickName%>"> 
+			</form>	
+		</div>
+	</section>
+
+	<script>
+		function resize(obj) {
+			obj.style.height = "1px";
+			obj.style.height = (12+obj.scrollHeight)+"px";
+		}
+	</script>
+
+
+	<!-- Bootstrap core JavaScript -->
+	<script src="../vendor/jquery/jquery.min.js"></script>
+	<script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+	<!-- Plugin JavaScript -->
+	<script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+	<script src="../vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+
+	<!-- Contact Form JavaScript -->
+	<script src="../js/jqBootstrapValidation.js"></script>
+	<script src="../js/contact_me.js"></script>
+
+	<!-- Custom scripts for this template -->
+	<script src="../js/freelancer.min.js"></script>
+	<script src="../js/jquery-3.1.1.js"></script>
+	<script src="../js/bootstrap.js"></script>
 </body>
 </html>
