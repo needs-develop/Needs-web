@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var firebase = require("firebase");
 var dateFormat = require('dateformat');
-var urlencode = require('urlencode');	//한글 인코딩 모듈
+var urlencode = require('urlencode');
 // 서울 현재 시간 불러오기 위해 필요한 모듈
 var moment = require('moment');
 require('moment-timezone');
@@ -455,5 +455,6 @@ router.get('/search', function(req, res, next) {
 			})
 	}
 })
+
 
 module.exports = router;
