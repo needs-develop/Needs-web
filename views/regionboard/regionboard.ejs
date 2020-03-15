@@ -15,44 +15,100 @@
 
         
         <li><span id="test1" style="CURSOR: hand" 
-                  onclick="if(plain1.style.display == 'none') {plain1.style.display=''; test.innerText = '강남구'} else {plain1.style.display = 'none'; test.innerText = '강남구'}">강남구 (클릭)</span></li>
+                  onclick="if(plain1.style.display == 'none') {plain1.style.display=''; test.innerText = '강남구'} else {plain1.style.display = 'none'; test.innerText = '강남구'}">강남구</span></li>
             <div id="plain1" style="display: none">
-                <a href="regionboard/boardList">└ 청담동 (클릭) </a>
+                
+                <%
+                var region1 = "강남구 청담동";
+                var region2 = "강남구 논현동";
+                var region3 = "강남구 압구정동";
+                %>
+                
+                <a href="regionboard/boardList?board_region=<%=region1%>">└ 청담동</a>
+                    <!-- 지역 즐겨찾기 -->
                     <form name="form1" action="regionboard/favorites" method="post">
                         <input type="button" value="★" onclick=form1.submit()>
                         <input type="hidden" name="id_email" value="<%=user.id_email%>">    
-                        <input type="hidden" name="goodPlace" value="강남구청담동">
-                        <input type="hidden" name="strict" value="강남구"> 
+                        <input type="hidden" name="region" value="<%=region1%>">
                     </form>
-                <a href="">└ 논현동</a><br>
-                <a href="">└ 압구정동</a><br>
+                
+                <a href="regionboard/boardList?board_region=<%=region2%>">└ 논현동</a><br>
+                    <!-- 지역 즐겨찾기 -->
+                    <form name="form2" action="regionboard/favorites" method="post">
+                        <input type="button" value="★" onclick=form2.submit()>
+                        <input type="hidden" name="id_email" value="<%=user.id_email%>">    
+                        <input type="hidden" name="region" value="<%=region2%>">
+                    </form>
+                
+                <a href="regionboard/boardList?board_region=<%=region3%>">└ 압구정동</a><br>
+                    <!-- 지역 즐겨찾기 -->
+                    <form name="form3" action="regionboard/favorites" method="post">
+                        <input type="button" value="★" onclick=form3.submit()>
+                        <input type="hidden" name="id_email" value="<%=user.id_email%>">    
+                        <input type="hidden" name="region" value="<%=region3%>">
+                    </form>
+                
             </div>
         <br>
+        
         <li><span id="test2" style="CURSOR: hand" 
                   onclick="if(plain2.style.display == 'none') {plain2.style.display=''; test.innerText = '강동구'} else {plain2.style.display = 'none'; test.innerText = '강동구'}">강동구</span></li>
             <div id="plain2" style="display: none">
-                <a href="">└ 고덕동</a><br>
-                <a href="">└ 암사동</a><br>
-                <a href="">└ 천호동</a><br>
-                <a href="">└ 성내동</a><br>
+                
+                <%
+                var region4 = "강동구 천호동";
+                %>
+                
+                <a href="regionboard/boardList?board_region=<%=region4%>">└ 천호동</a><br>
+                    <!-- 지역 즐겨찾기 -->
+                    <form name="form4" action="regionboard/favorites" method="post">
+                        <input type="button" value="★" onclick=form4.submit()>
+                        <input type="hidden" name="id_email" value="<%=user.id_email%>">    
+                        <input type="hidden" name="region" value="<%=region4%>">
+                    </form>
+
             </div>
         <br>
+        
         <li><span id="test3" style="CURSOR: hand" 
                   onclick="if(plain3.style.display == 'none') {plain3.style.display=''; test.innerText = '강북구'} else {plain3.style.display = 'none'; test.innerText = '강북구'}">강북구</span></li>
             <div id="plain3" style="display: none">
-                <a href="">└ 월계동</a><br>
-                <a href="">└ 낙양동</a><br>
-                <a href="">└ 민락동</a><br>
+                
+                <%
+                var region5 = "강북구 수유동";
+                %>
+                
+                <a href="regionboard/boardList?board_region=<%=region5%>">└ 수유동</a><br>
+                    <!-- 지역 즐겨찾기 -->
+                    <form name="form5" action="regionboard/favorites" method="post">
+                        <input type="button" value="★" onclick=form5.submit()>
+                        <input type="hidden" name="id_email" value="<%=user.id_email%>">    
+                        <input type="hidden" name="region" value="<%=region5%>">
+                    </form>
+
             </div>
         <br>
+        
         <li><span id="test4" style="CURSOR: hand" 
                   onclick="if(plain4.style.display == 'none') {plain4.style.display=''; test.innerText = '강서구'} else {plain4.style.display = 'none'; test.innerText = '강서구'}">강서구</span></li>
             <div id="plain4" style="display: none">
-                <a href="">└ 월계동</a><br>
-                <a href="">└ 낙양동</a><br>
-                <a href="">└ 민락동</a><br>
+                
+                <%
+                var region6 = "강서구 등촌동";
+                %>
+                
+                <a href="regionboard/boardList?board_region=<%=region6%>">└ 등촌동</a><br>
+                    <!-- 지역 즐겨찾기 -->
+                    <form name="form6" action="regionboard/favorites" method="post">
+                        <input type="button" value="★" onclick=form6.submit()>
+                        <input type="hidden" name="id_email" value="<%=user.id_email%>">    
+                        <input type="hidden" name="region" value="<%=region6%>"> 
+                    </form>
+                
             </div>
         <br>
+        
+<!--
         <li><span id="test5" style="CURSOR: hand" 
                   onclick="if(plain5.style.display == 'none') {plain5.style.display=''; test.innerText = '관악구'} else {plain5.style.display = 'none'; test.innerText = '관악구'}">관악구</span></li>
             <div id="plain5" style="display: none">
@@ -77,11 +133,8 @@
                 <a href="">└ 민락동</a><br>
             </div>
         <br>
-        
+-->
 
-        
-
-        
     </div>    
 </body>
 
