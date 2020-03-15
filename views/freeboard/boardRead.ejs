@@ -41,7 +41,7 @@
 				<a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/regionboard">지역게시판</a>
 			  </li>  
 			  <li class="nav-item mx-0 mx-lg-1">
-				<a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#portfolio">자유게시판</a>
+				<a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/freeboard/boardList">자유게시판</a>
 			  </li>
 			  <li class="nav-item mx-0 mx-lg-1">
 				<a class="nav-link py-3 px-0 px-lg-3 rounded" href="#">Logout</a>
@@ -69,6 +69,7 @@
 			<%
 			}
 			%>
+            
 			<table class="table table-bordered">
 				<tbody>
 					<tr>
@@ -109,6 +110,7 @@
 					</tr>
 				</tbody>
 			</table>
+            
 			<!--  좋아요  -->
 			<div style="float:right">
 				<form name="form1" action="boardLike" method="post"> 
@@ -119,6 +121,7 @@
 					<input type="hidden" name="id_email" value="<%=user.id_email%>">
 				</form>
 			</div>
+            
 			<!--  목록  -->	
 			<div style="float:right; margin-left: 10px">
 				<form name="form3" action="boardList" method="get">
@@ -172,7 +175,6 @@
 				<%
 				}
 				%>
-
 		<%
 		}
 		%>
