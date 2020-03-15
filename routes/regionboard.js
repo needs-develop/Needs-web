@@ -35,7 +35,7 @@ router.get('/', function(req, res, next) {
     var userData;
     db.collection('user').doc(uid).get()
         .then((doc) => {
-            // 로그인한 사용자의 이메일 가져옴
+             //로그인한 사용자의 이메일 가져옴
             userData = {id_email : doc.data().id_email} 
         
             res.render('regionboard/regionboard', {user: userData});
@@ -48,37 +48,46 @@ router.get('/', function(req, res, next) {
 
 router.get('/boardList', function(req, res, next) {
     var page = Number(req.query.page);
+    var uid = firebase.auth().currentUser.uid;
+    var board_region = req.query.board_region;
+    
     if (!page) {    // 그냥 boardList로 이동할 경우 1페이지를 보여줌
         page = 1;
     }
   
-    db.collection('data').doc('allData').collection('강남구청담동').orderBy("day", "desc").get()  // 날짜의 내림차순으로 정렬
-        .then((snapshot) => {
-            // 글이 있는 경우
-            if(snapshot.size != 0) {
-                var region_board = [];
-                snapshot.forEach((region_doc) => {
-                    var region_data = region_doc.data();
-                    region_board.push(region_data);    
+    db.collection('user').doc(uid).get()
+        .then((doc) => {
+            var id_region = doc.data().id_region;   // 지역 가져오기
+
+            db.collection('data').doc('allData').collection(board_region).orderBy("day", "desc").get()  // 날짜의 내림차순으로 글 가져오기
+                .then((snapshot) => {
+                    // 글이 있는 경우
+                    if(snapshot.size != 0) {
+                        var region_board = [];
+                        snapshot.forEach((region_doc) => {
+                            var region_data = region_doc.data();
+                            region_board.push(region_data);    
+                        });
+                        res.render('regionboard/boardList', {board: region_board, page: page, id_region: id_region, board_region: board_region});
+                    }
+                    // 글이 없는 경우
+                    else {
+                        res.render('regionboard/boardList', {board: '', page: '', id_region: id_region, board_region: board_region});
+                    }
+                })
+                .catch((err) => {
+                    console.log('Error getting documents', err);
                 });
-                res.render('regionboard/boardList', {board: region_board, page: page});
-            }
-            // 글이 없는 경우
-            else {
-                res.render('regionboard/boardList', {board: '', page: ''});
-            }
-        })
-        .catch((err) => {
-            console.log('Error getting documents', err);
         });
 });
 
 
 // 글 읽기
 router.get('/boardRead', function(req, res, next) {
-    var region_doc = db.collection("data").doc('allData').collection('강남구청담동').doc(req.query.document_name);   
-
     var uid = firebase.auth().currentUser.uid;
+    var board_region = req.query.board_region;
+    
+    var region_doc = db.collection("data").doc('allData').collection(board_region).doc(req.query.document_name);   
 
     region_doc.get()
         .then((doc) => {    
@@ -118,7 +127,7 @@ router.get('/boardRead', function(req, res, next) {
                             reply_data.data_doc = region_data.document_name;
                             reply.push(reply_data);
                         });
-                        res.render('regionboard/boardRead', {board: region_data, page: page, reply: reply, user: userData});
+                        res.render('regionboard/boardRead', {board: region_data, page: page, reply: reply, user: userData, board_region: board_region});
                     })
                     .catch((err) => {
                         console.log('Error getting documents', err);
@@ -136,26 +145,29 @@ router.get('/boardRead', function(req, res, next) {
 
 // 글 쓰기
 router.get('/boardWrite', function(req,res,next){
-    if (!req.query.document_name) {   // new
+    var getData = req.query;
+    var board_region = getData.board_region;
+    
+    if (!getData.document_name) {   // new
         var uid = firebase.auth().currentUser.uid;
 
         db.collection('user').doc(uid).get()
             .then((doc) => {
-                var userData = doc.data();    
+                var data = doc.data();    
             
-                var data = {    // 로그인한 사용자의 별명과 이메일 가져옴
-                    id_nickName : userData.id_nickName
+                var userData = {    // 로그인한 사용자의 별명과 이메일 가져옴
+                    id_nickName : data.id_nickName
                 }
             
-                res.render('regionboard/boardWrite', {row: data});
+                res.render('regionboard/boardWrite', {row: userData, board_region: board_region});
             });
     }
     
     else {      // update
-        db.collection('data').doc('allData').collection('강남구청담동').doc(req.query.document_name).get()
+        db.collection('data').doc('allData').collection(board_region).doc(getData.document_name).get()
             .then((doc) => {
                 var regionData = doc.data();
-                res.render('regionboard/boardWrite', {row: regionData});
+                res.render('regionboard/boardWrite', {row: regionData, board_region: board_region});
             })
             .catch((err) => {
                 console.log('Error getting documents', err);
@@ -168,40 +180,44 @@ router.get('/boardWrite', function(req,res,next){
 router.post('/boardSave', function(req,res,next){
     var postData = req.body;
     var uid = firebase.auth().currentUser.uid;
+    var board_region = postData.board_region;
+    delete postData.board_region;
     
     if (!postData.document_name) {  // new
         postData.day = moment().format('YYYY/MM/DD HH:mm:ss');
         postData.visit_num = 0;
         postData.good_num = 0;
         
-        // data - 강남구xx동 컬렉션에 데이터 저장
-        var doc = db.collection("data").doc('allData').collection('강남구청담동').doc();    // 문서 명을 자동으로 지정
-        postData.document_name = doc.id;
+        // data - board_region 컬렉션에 데이터 저장
+        var data_doc = db.collection("data").doc('allData').collection(board_region).doc();
+        postData.document_name = data_doc.id;
         postData.id_uid = uid;
-        doc.set(postData);
+        data_doc.set(postData);
         
         // user 컬렉션에 데이터 저장
         var user_doc = db.collection('user').doc(uid).collection('write').doc(postData.document_name);
         var userData = { 
             document_name: postData.document_name,
-            address: '강남구청담동',
+            address: board_region,
             data: 'data'
         }
         user_doc.set(userData);
     } 
     else {            // update
-        var free_doc = db.collection("data").doc('allData').collection('강남구청담동').doc(postData.document_name);
-        free_doc.update(postData);
+        var data_doc = db.collection("data").doc('allData').collection(board_region).doc(postData.document_name);
+        data_doc.update(postData);
     }
     
-    res.redirect('boardRead?document_name=' + postData.document_name);
+    res.redirect('boardRead?document_name=' + postData.document_name + '&board_region=' + board_region);
 });
 
 
 // 글 좋아요
 router.post('/boardLike', function(req,res,next){   
     var postData = req.body;
-    var board_doc = db.collection("data").doc('allData').collection('강남구청담동').doc(postData.document_name);   
+    var board_region = postData.board_region;
+    
+    var board_doc = db.collection("data").doc('allData').collection(board_region).doc(postData.document_name);   
     var board_like_doc = board_doc.collection("like").doc(postData.id_email + "like");   
     var uid = firebase.auth().currentUser.uid;
 
@@ -218,14 +234,14 @@ router.post('/boardLike', function(req,res,next){
                     var good = board_data.good_num + 1;  
                     board_doc.update({good_num : good});
                 
-                    // data - 강남구xx동 - like
+                    // data - board_region - like
                     board_like_doc.set({goodBoolean: true, id_uid: uid});
                                      
                     
                     // user - like
                     var user_like_doc = db.collection('user').doc(uid).collection('like').doc(postData.document_name);
                     var likeData = { 
-                        address: '강남구청담동',
+                        address: board_region,
                         data: "data", 
                         document_name: postData.document_name 
                     }
@@ -239,7 +255,7 @@ router.post('/boardLike', function(req,res,next){
                             data: "data",
                             value: "data",
                             document_name: postData.document_name,
-                            address: '강남구청담동',
+                            address: board_region,
                             writer: postData.id_nickName,
                             day: moment().format('YYYY/MM/DD HH:mm:ss')
                         }
@@ -251,10 +267,10 @@ router.post('/boardLike', function(req,res,next){
                 // 좋아요를 이미 누른 상태에서 또 누른 경우 (좋아요 해제)
                 else
                 {
-                    // data - 강남구xx동 - like 에서 문서 삭제
+                    // data - board_region - like 에서 문서 삭제
                     board_doc.collection("like").doc(postData.id_email + "like").delete();  
                     
-                    // data - 강남구xx동 문서의 good_num 감소
+                    // data - board_region 문서의 good_num 감소
                     var good = board_data.good_num - 1;  
                     board_doc.update({good_num : good}); 
                     
@@ -264,7 +280,7 @@ router.post('/boardLike', function(req,res,next){
                 }
                 
                 
-                res.redirect('boardRead?document_name=' + postData.document_name + '&page=' + req.body.page);
+                res.redirect('boardRead?document_name=' + postData.document_name + '&page=' + req.body.page + '&board_region=' + board_region);
            });   
       });  
 });
@@ -273,10 +289,13 @@ router.post('/boardLike', function(req,res,next){
 // 글 삭제
 router.get('/boardDelete', function(req,res,next){
     var getData = req.query;
-    var board_doc = db.collection("data").doc('allData').collection('강남구청담동').doc(getData.document_name);
+    var board_region = getData.board_region;
+    
+    var board_doc = db.collection("data").doc('allData').collection(board_region).doc(getData.document_name);
+    
     
 
-    // data - 강남구xx동 - like 컬렉션 삭제
+    // data - board_region - like 컬렉션 삭제
     board_doc.collection('like').get()
         .then((snapshot) => {
             snapshot.forEach((doc) => {      
@@ -285,7 +304,7 @@ router.get('/boardDelete', function(req,res,next){
                 var like_uid = doc.data().id_uid;
                 db.collection('user').doc(like_uid).collection('like').doc(getData.document_name).delete();
                          
-                // data - 강남구xx동 - like 컬렉션 하위 문서 삭제
+                // data - board_region - like 컬렉션 하위 문서 삭제
                 board_doc.collection('like').doc(doc.id).delete();
             });
         })
@@ -294,7 +313,7 @@ router.get('/boardDelete', function(req,res,next){
         });
     
     
-    // data - 강남구xx동 - reply 컬렉션 삭제
+    // data - board_region - reply 컬렉션 삭제
     board_doc.collection('reply').get()
         .then((snapshot) => {
             snapshot.forEach((doc) => {
@@ -303,7 +322,7 @@ router.get('/boardDelete', function(req,res,next){
                 var reply_uid = doc.data().id_uid;
                 db.collection('user').doc(reply_uid).collection('reply').doc(doc.data().reply_doc).delete();
                  
-                // data - 강남구xx동 - reply 컬렉션 하위 문서 삭제
+                // data - board_region - reply 컬렉션 하위 문서 삭제
                 board_doc.collection('reply').doc(doc.id).delete();
             });
         })
@@ -312,8 +331,8 @@ router.get('/boardDelete', function(req,res,next){
         });
     
     
-    // data - 강남구xx동 의 문서 삭제
-    db.collection('data').doc('allData').collection('강남구청담동').doc(getData.document_name).delete();
+    // data - board_region 의 문서 삭제
+    db.collection('data').doc('allData').collection(board_region).doc(getData.document_name).delete();
     
     
     // user - write의 문서 삭제
@@ -321,7 +340,7 @@ router.get('/boardDelete', function(req,res,next){
     db.collection('user').doc(uid).collection('write').doc(getData.document_name).delete();
     
     
-    res.redirect('boardList');
+    res.redirect('boardList?board_region=' + board_region);
 });
 
 
@@ -332,10 +351,11 @@ router.get('/boardDelete', function(req,res,next){
 
 // 댓글 수정
 router.get('/commentEdit', function(req,res,next){
-    db.collection("data").doc('allData').collection('강남구청담동').doc(req.query.data_doc).collection("reply").doc(req.query.reply_doc).get()
+    var board_region = req.query.board_region;
+    db.collection("data").doc('allData').collection(req.query.board_region).doc(req.query.data_doc).collection("reply").doc(req.query.reply_doc).get()
         .then((doc) => {
             var childData = doc.data();
-            res.render('regionboard/commentEdit', {reply: childData});
+            res.render('regionboard/commentEdit', {reply: childData, board_region: board_region});
         })
         .catch((err) => {
             console.log('Error getting documents', err);
@@ -345,9 +365,11 @@ router.get('/commentEdit', function(req,res,next){
 
 
 // 댓글 저장
-router.post('/commentSave', function(req,res,next){
+router.post('/commentSave', function(req,res,next) {
     var postData = req.body;
-    var board_doc = db.collection("data").doc('allData').collection('강남구청담동').doc(postData.data_doc);
+    var board_region = postData.board_region;
+    
+    var board_doc = db.collection("data").doc('allData').collection(board_region).doc(postData.data_doc);
     var user_doc = db.collection("user").doc(postData.data_doc);
     
     var uid = firebase.auth().currentUser.uid;    
@@ -357,7 +379,7 @@ router.post('/commentSave', function(req,res,next){
     
     if (!postData.reply_doc) {     // new
         
-        // data - 강남구xx동 - reply
+        // data - board_region - reply
         postData.timeReply = moment().format('YYYY/MM/DD HH:mm:ss');
         var region_reply_doc = board_doc.collection("reply").doc();    
         postData.reply_doc = region_reply_doc.id;
@@ -369,7 +391,7 @@ router.post('/commentSave', function(req,res,next){
         var uid = firebase.auth().currentUser.uid;
         var user_reply_doc = db.collection('user').doc(uid).collection('reply').doc(postData.reply_doc);
         var userData = { 
-            address: '강남구청담동',
+            address: board_region,
             data: "data",
             document_name: postData.data_doc, 
             reply_doc: postData.reply_doc    
@@ -384,7 +406,7 @@ router.post('/commentSave', function(req,res,next){
                 data: "data",
                 value: "data",
                 document_name: postData.data_doc,
-                address: '강남구청담동',
+                address: board_region,
                 writer: postData.writerReply,
                 day: postData.timeReply
             }
@@ -394,28 +416,29 @@ router.post('/commentSave', function(req,res,next){
     } 
     
     else {    // update       
-        // data - 강남구xx동 - reply 데이터 수정 
+        // data - board_region - reply 데이터 수정 
         var region_reply_doc = board_doc.collection("reply").doc(postData.reply_doc);
         region_reply_doc.update(postData);   
     } 
     
-    res.redirect('boardRead?document_name=' + postData.data_doc);
+    res.redirect('boardRead?document_name=' + postData.data_doc + '&board_region=' + board_region);
 });
 
 
 // 댓글 삭제
 router.get('/commentDelete', function(req,res,next){
     var getData = req.query;
+    var board_region = getData.board_region;
     
-   // data - 강남구xx동 - reply 에서 데이터 삭제
-    db.collection("data").doc('allData').collection('강남구청담동').doc(getData.data_doc).collection("reply").doc(getData.reply_doc).delete();   
+   // data - board_region - reply 에서 데이터 삭제
+    db.collection("data").doc('allData').collection(board_region).doc(getData.data_doc).collection("reply").doc(getData.reply_doc).delete();   
     
     // user 컬렉션에서 데이터 삭제
     var uid = firebase.auth().currentUser.uid;
     db.collection("user").doc(uid).collection('reply').doc(getData.reply_doc).delete();
     
     
-    res.redirect('boardRead?document_name=' + getData.data_doc);
+    res.redirect('boardRead?document_name=' + getData.data_doc + '&board_region=' + board_region);
 });
 
 
@@ -423,23 +446,15 @@ router.get('/commentDelete', function(req,res,next){
 router.post('/favorites', function(req,res,next){   
     var postData = req.body;
     var uid = firebase.auth().currentUser.uid;
-    var user_doc = db.collection("user").doc(uid);
-    var user_favorites_doc = user_doc.collection('favorites').doc(postData.id_email+postData.goodPlace);
+    var user_favorites_doc = db.collection("user").doc(uid).collection('favorites').doc(postData.id_email+postData.region);
 
     user_favorites_doc.get().then((doc) => {
         
         // 즐겨찾기한 지역이 아닌 경우
         if(!doc.exists) 
         {
-            user_doc.collection('myRegion').doc(postData.id_email+'myRegion').get()
-                .then((doc2) => {
-                    var regionData = {
-                        goodPlace: postData.goodPlace,
-                        region: doc2.data().regionName,
-                        strict: postData.strict
-                    }
-                    user_favorites_doc.set(regionData);
-                });
+            var regionData = { region: postData.region }
+            user_favorites_doc.set(regionData);
     
             res.send("<script>alert('즐겨찾기 설정 되었습니다.');history.back();</script>");
         }
