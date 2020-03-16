@@ -29,25 +29,43 @@
   </head>
 
   <body id="page-top">
-    <header class="masthead bg-primary text-black">
-      <div class="container">
-        <h2>개인정보 수정</h2>
+    <section class="portfolio" id="portfolio">
+      <div class="container" style="padding-top:100px">
+        <h3>개인정보 수정</h3>
+        <br><br>
+        <form name="change_nickName" method="POST">
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <td>현재 닉네임 : <%=nickName%></td> 
+                <td>새로운 닉네임 : 
+                  <input type="text" id="nickName" name="nickName" maxlength="20" value="" required></div>
+                  <div id="nickname_check"></div>
+                </td>
+              </tr>
+              <tr>
+                <td>현재 설정지역 : <%=region%></td>
+                <td>새로운 설정지역 : 
+                  <select name="new_region" id="new_region">
+                    <% 
+                      for(var i=0; i<region_list.length; i++) {
+                    %>
+                    <option value="<%=region_list[i]%>"><%=region_list[i]%></option>
+                    <% } %>
+                  </select>
+                </td>
+              </tr>
+            </tbody>
+          </table>
           <br><br>
-          <div class="fieldlabel"><label for="nickName">현재 닉네임</label></div>
-          <text><%= nickName %></text>
-          <br><br>
-          <form name="change_nickName" method="POST">
-            <div class="fieldlabel"><label for="nickName">바꿀 닉네임</label></div>
-            <div class="formfield"><input type="text" id="nickName" name="nickName" maxlength="20" value="" required></div>
-            <div id="nickname_check"></div>
-            <br>
-            <div class="btnfield">
-              <input type="submit" id="complete" value="완료">
-            </div>
-          </form>
-          <br><br>
+          <div class="btnfield">
+            <input type="submit" id="complete" value="완료">
+          </div>
+        </form>
+        <br><br>
       </div>
-    </header>
+    </section>
+
 
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">

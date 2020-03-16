@@ -3,6 +3,9 @@ var router = express.Router();
 var firebase = require('firebase');
 require('date-utils');
 var session = require('express-session');
+const admin = require('firebase-admin');
+const functions = require('firebase-functions');
+var urlencode = require('urlencode');
 
 /* firebase Web-App Configuration */
 var firebase_config = {
@@ -15,6 +18,14 @@ var firebase_config = {
   appId: "1:124851004056:web:b58239166f9907ce3926ed",
   measurementId: "G-CR5E843ZEM"
 };
+
+var serviceAccount = require("../service_account_key/lloginexample-firebase-adminsdk-7ekvt-a1fd2045eb.json");
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://lloginexample.firebaseio.com"
+});
+
+let db_admin = admin.firestore();
 
 /* Initialize Firebase */
 if (!firebase.apps.length) {
@@ -45,6 +56,7 @@ router.get('/', function(req, res, next) {
 		})
 });
 
+
 /* GET editInfo page. */
 router.get('/editInfo', function(req, res, next) {
 	console.log("개인정보 수정 페이지");
@@ -57,12 +69,20 @@ router.get('/editInfo', function(req, res, next) {
 			else {
 				let data = doc.data();
 				let my_nickName = data.id_nickName;
-				res.render('mypage/editInfo', {nickName: my_nickName});
+				let my_region = data.id_region;
+				var region_list = [];
+				let region_ref = db_admin.collection("data").doc("allData");
+				region_ref.listCollections().then(collections => {
+					collections.forEach(collection => {
+						region_list.push(collection.id);
+					});
+					res.render('mypage/editInfo', {nickName: my_nickName, region: my_region, region_list: region_list});
+				})
 			}
 		})
 		.catch(err => {
 			console.log("error getting doc", err);
-		})
+		});
 });
 
 
@@ -71,8 +91,12 @@ router.post('/editInfo', function(req, res, next) {
 	//개인정보 수정
 	console.log("개인정보 수정 완료 버튼");
 	var param_nick = req.body.nickName;
+	var new_region = req.body.new_region;
 	var uid = fb_auth.currentUser.uid;
-	db.collection("user").doc(uid).update({id_nickName: param_nick});
+	db.collection("user").doc(uid).update({
+		id_nickName: param_nick,
+		id_region: new_region
+	});
 	res.redirect("/mypage");
 });
 
@@ -131,7 +155,7 @@ router.get('/myPost/regionboard', function(req, res, next) {
 	}
 	var post_info = [];
 	var my_post = [];
-    var address = [];
+  var address = [];
 	db.collection("user").doc(uid).collection("write").get()
 		.then((usersnap) => {
 			if(usersnap.size != 0){
@@ -149,8 +173,7 @@ router.get('/myPost/regionboard', function(req, res, next) {
 						.then((post_snapshot) => {
 							var data = post_snapshot.data();
 							my_post.push(data);
-                            				address.push(element.address);
-                        
+              address.push(element.address);
 							if(index == post_info.length - 1){
 								res.render('mypage/myPost', {boardType: "data", board: my_post, page: page, address: address});
 							}
