@@ -45,12 +45,14 @@ router.get('/', function(req, res, next) {
               freebestpost.push(freesnap.data());
             }
           })
-          console.log(freebestpost);
+          
           //이 부분 callback 함수 어떻게 처리해야할 지 모르겠어서 then 안에 넣었어요.ㅜㅜ
           user_ref.get()   // user 데이터로부터 지역 가져옴
             .then((doc) => {
               var data = doc.data();  //사용자 정보
               var region = data.id_region;
+              
+              // 사용자 지역의 인기글을 좋아요 순으로 읽어옴
               data_ref.collection(region).orderBy("good_num", "desc").get()
                 .then((regionpostsnap) => {
                   if(regionpostsnap){
@@ -64,6 +66,23 @@ router.get('/', function(req, res, next) {
                     res.render('main_login', {region: region, freeDataPost: freebestpost, regionDataPost: regionbestpost});
                   }
                 })
+              
+              
+              // pointDay, pointLimit
+              var id_email = data.id_email;
+              var user_pointDay_ref = user_ref.collection('pointDay').doc(id_email+'pointDay');
+              user_pointDay_ref.get()
+                .then((doc2) => {
+                    // pointDay와 오늘 날짜가 다르면 pointDay를 오늘 날짜로 변경
+                    var pointDay = doc2.data().pointDay;
+                    
+                    var nowDate = new Date();
+                    var today = nowDate.toFormat('DD');
+                  
+                    if(pointDay != today) {
+                        user_pointDay_ref.update( {pointDay: today, pointLimit: "5"} );
+                    }
+              });
             });
         }
       })
