@@ -68,7 +68,7 @@
         %>
         <h3 class="text-center text-uppercase">내가 좋아요 남긴 글</h3>
         <br><br><br>
-
+          
         <table class="table table-hover">
           <colgroup>
             <col width='13%' />
@@ -100,7 +100,7 @@
               %>
               <td><a href="../../freeboard/boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>" style="color: black"><%=board[i].title%></a></td>
               <% } else { %>
-              <td><a href="../../regionboard/boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>&address=<%=address%>" style="color: black"><%=board[i].title%></a></td>
+              <td><a href="../../regionboard/boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>&board_region=<%=address[i]%>" style="color: black"><%=board[i].title%></a></td>
               <% } %>
               <td style="text-align:center"><%= board[i].id_nickName %></td>
               <td style="text-align:center"><%= board[i].day %></td>
@@ -108,7 +108,7 @@
               <td style="text-align:center"><%= board[i].good_num %></td>
             </tr>
             <% }} %>
-
+              
             <%
             if (page == pageNum) {  // 마지막 페이지인 경우
                 for(var i=(page-1)*5; i<board.length; i++) {
@@ -120,7 +120,7 @@
               %>
               <td><a href="../../freeboard/boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>&address=<%=address%>" style="color: black"><%=board[i].title%></a></td>
               <% } else { %>
-              <td><a href="../../regionboard/boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>&address=<%=address%>" style="color: black"><%=board[i].title%></a></td>
+              <td><a href="../../regionboard/boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>&board_region=<%=address[i]%>" style="color: black"><%=board[i].title%></a></td>
               <% } %>
               <td style="text-align:center"><%= board[i].id_nickName %></td>
               <td style="text-align:center"><%= board[i].day %></td>
@@ -131,7 +131,7 @@
           </tbody>
         </table>
         <br><br><br><hr/>
-
+          
         <!-- pagination -->
         <div class="text-center" style="display:table; margin: auto">
           <ol class="pagination">
@@ -163,7 +163,7 @@
             %>
           </ol>
         </div>
-
+          
         <% } else {%>
           <h3 class="text-center text-uppercase">글이 존재하지 않습니다.</h3>
         <% } %>
