@@ -85,33 +85,32 @@ router.get('/boardRead', function(req, res, next) {
                     // board로 넘겨줄 visit_num를 1 증가
                     free_data.visit_num += 1; 
                 }
-        
+                
                 var userData;
                 db.collection('user').doc(uid).get()
-                    .then((doc) => {
-                        var data = doc.data();    
-                        userData = {  // 로그인한 사용자의 별명 가져옴
+                    .then((doc2) => {
+                        var data = doc2.data();    
+                        userData = {
                             id_nickName : data.id_nickName,
                             id_email : data.id_email
                         }
-                    });
+                        var id_region = data.id_region;
+                    
+                    
+                        var reply = [];
+                        free_doc.collection("reply").orderBy("timeReply").get()
+                            .then((snapshot) => {
     
-    
-    
-                var reply = [];
-                free_doc.collection("reply").orderBy("timeReply").get()
-                    .then((snapshot) => {
-    
-                        snapshot.forEach((reply_doc) => {
-                            var reply_data = reply_doc.data();
-                            reply_data.data_doc = free_data.document_name;
-                            reply.push(reply_data);
+                            snapshot.forEach((reply_doc) => {
+                                var reply_data = reply_doc.data();
+                                reply_data.data_doc = free_data.document_name;
+                                reply.push(reply_data);
+                            });
+                            
+
+                            res.render('freeboard/boardRead', {board: free_data, page: page, reply: reply, user: userData, id_region: id_region});
                         });
-                        res.render('freeboard/boardRead', {board: free_data, page: page, reply: reply, user: userData});
-                    })
-                    .catch((err) => {
-                        console.log('Error getting documents', err);
-                    });       
+                    });  
             })
             .catch((err) => {
                 console.log('Error getting documents', err);
@@ -142,9 +141,12 @@ router.get('/boardWrite', function(req,res,next){
             .then((doc) => {
                 var userData = doc.data();    
 
-                var data = { id_nickName : userData.id_nickName }
+                var data = { 
+                    id_nickName : userData.id_nickName
+                }
+                var id_region = userData.id_region;
 
-                res.render('freeboard/boardWrite', {row: data});
+                res.render('freeboard/boardWrite', {row: data, id_region: id_region});
             });
     }
 
@@ -152,7 +154,15 @@ router.get('/boardWrite', function(req,res,next){
         db.collection('freeData').doc(req.query.document_name).get()
             .then((doc) => {
                 var freeData = doc.data();
-                res.render('freeboard/boardWrite', {row: freeData});
+            
+                db.collection('user').doc(uid).get()
+                    .then((doc2) => {
+                        var id_region = doc2.data().id_region;
+                     
+                        res.render('freeboard/boardWrite', {row: freeData, id_region: id_region});
+                });
+                    
+                
             })
             .catch((err) => {
                 console.log('Error getting documents', err);
@@ -422,38 +432,45 @@ router.get('/search', function(req, res, next) {
 	var search_content = urlencode.decode(req.query.stx);
 	console.log(search_method, search_content);
 	var uid = firebase.auth().currentUser.uid;
-	if(search_method == "by_nickName"){ //작성자 닉네임으로 검색
-		db.collection("freeData").where("id_nickName", "==", search_content).get()
-			.then((snap) => {
-				if(snap.empty){
-					console.log("No matching documents");
-				}
-				var search_result = [];
-				snap.forEach(doc => {
-					console.log(doc.data());
-					search_result.push(doc.data());
-				});
-				// 빛나님 id_region 왜 들어가는지 몰라서 일단 빼고 진행했어요.
-				res.render('freeboard/boardList', {board: search_result, page: page});
-			})
-	}
-	else if(search_method == "by_title"){	//제목으로 검색
-		// 검색은 Prefix 기능만 구현되어 있음.
-		db.collection("freeData").where("title", ">=", search_content)
-			.where("title", "<=", search_content+'\uf8ff').get()
-			.then((snap) => {
-				if(snap.empty){
-					console.log("No matching documents")
-				}
-				var search_result = [];
-				snap.forEach(doc => {
-					console.log(doc.data());
-					search_result.push(doc.data());
-				});
-				// 빛나님 id_region 왜 들어가는지 몰라서 일단 빼고 진행했어요.
-				res.render('freeboard/boardList', {board: search_result, page: page});
-			})
-	}
+    
+    db.collection('user').doc(uid).get()
+        .then((doc) => {
+            var id_region = doc.data().id_region;
+        
+            
+            if(search_method == "by_nickName"){ //작성자 닉네임으로 검색
+	           	db.collection("freeData").where("id_nickName", "==", search_content).get()
+	           		.then((snap) => {
+	           			if(snap.empty){
+	           				console.log("No matching documents");
+	           			}
+	           			var search_result = [];
+	           			snap.forEach(doc => {
+	           				console.log(doc.data());
+	           				search_result.push(doc.data());
+	           			});
+	           			
+	           			res.render('freeboard/boardList', {board: search_result, page: page, id_region: id_region});
+	           		});
+	       }
+	       else if(search_method == "by_title"){	//제목으로 검색
+	           	// 검색은 Prefix 기능만 구현되어 있음.
+	           	db.collection("freeData").where("title", ">=", search_content)
+	           		.where("title", "<=", search_content+'\uf8ff').get()
+	           		.then((snap) => {
+	           			if(snap.empty){
+	           				console.log("No matching documents")
+	           			}
+	           			var search_result = [];
+	           			snap.forEach(doc => {
+	           				console.log(doc.data());
+	           				search_result.push(doc.data());
+	           			});
+	           			
+	           			res.render('freeboard/boardList', {board: search_result, page: page, id_region: id_region});
+	               });
+	       }
+       });
 })
 
 
