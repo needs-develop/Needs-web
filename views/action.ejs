@@ -60,7 +60,7 @@
         </div>
       </div>
     </nav>
-    
+                         
     
     
     <!-- Portfolio Grid Section -->
@@ -70,31 +70,89 @@
             <h3 class="text-center text-uppercase">알림</h3>
             <br><br><br>
 
-            
-            
             <center>
+                
             <%
             if(action.length != 0) {    // 알림이 있는 경우
-                for(var i=0; i<action.length; i++) {  
+                
+                var pageNum = (action.length%5==0) ? parseInt(action.length/5) : parseInt(action.length/5)+1; // 총 페이지 수 계산
                     
-                    if(action[i].value == 'freedata') { // 자유게시판에 쓴 글
-                %>
-                        <li><a href='/freeboard/boardRead?document_name=<%=action[i].document_name%>&visitNew=1&action=true' style='color:grey'><%=action[i].writer%>님이 게시물에 관심을 가졌습니다.</a>&emsp;&emsp;<%=action[i].day%></li><br>      
+                if (page != pageNum) {  // 마지막 페이지가 아닌 경우
+                    for(var i=(page-1)*5; i<page*5; i++) {
+                        if(action[i].value == 'freedata') { // 자유게시판에 쓴 글
+                %>    
+                            <li><a href='/freeboard/boardRead?document_name=<%=action[i].document_name%>&visitNew=1&action=true' style='color:grey'><%=action[i].writer%>님이 게시물에 관심을 가졌습니다.</a>&emsp;&emsp;<%=action[i].day%></li><br>   
                 <%
-                    }
-                    else {  // 지역게시판에 쓴 글           
-                %>        
-                        <li><a href='/regionboard/boardRead?document_name=<%=action[i].document_name%>&visitNew=1&action=true&board_region=<%=action[i].address%>' style='color:grey'><%=action[i].writer%>님이 게시물에 관심을 가졌습니다.</a>&emsp;&emsp;<%=action[i].day%></li><br>    
+                        }
+                        else { // 지역게시판에 쓴 글  
+                %>           
+                            <li><a href='/regionboard/boardRead?document_name=<%=action[i].document_name%>&visitNew=1&action=true&board_region=<%=action[i].address%>' style='color:grey'><%=action[i].writer%>님이 게시물에 관심을 가졌습니다.</a>&emsp;&emsp;<%=action[i].day%></li><br>    
                 <%
+                        }         
                     }
                 }
+                if (page == pageNum) { //else문,  마지막 페이지
+                    for(var i=(page-1)*5; i<action.length; i++) {
+                        if(action[i].value == 'freedata') { // 자유게시판에 쓴 글
+                %>    
+                            <li><a href='/freeboard/boardRead?document_name=<%=action[i].document_name%>&visitNew=1&action=true' style='color:grey'><%=action[i].writer%>님이 게시물에 관심을 가졌습니다.</a>&emsp;&emsp;<%=action[i].day%></li><br>   
+                <%
+                        }
+                        else { // 지역게시판에 쓴 글  
+                %>           
+                            <li><a href='/regionboard/boardRead?document_name=<%=action[i].document_name%>&visitNew=1&action=true&board_region=<%=action[i].address%>' style='color:grey'><%=action[i].writer%>님이 게시물에 관심을 가졌습니다.</a>&emsp;&emsp;<%=action[i].day%></li><br>    
+                <%
+                        }         
+                    }
+                }
+                %>
+                <br>
+                
+                <!-- pagination -->
+                <div class="text-center" style="display:table; margin: auto">
+                    <ol class="pagination">
+                        
+                        <%
+                        if (parseInt((page-1)/5)*5+1 != 1) {    // 1~5페이지가 보이는 경우가 아니면 이전 버튼 출력
+                        %>  
+                        <a href="action?page=<%=parseInt((page-1)/5)*5%>"> 이전 </a> 
+                        <%
+                        }
+                        %>   
+                        
+                        <%
+                        for(var i=parseInt((page-1)/5)*5+1; i<=parseInt((page-1)/5)*5+5; i++) {
+                            if(i > pageNum) {   // 마지막 페이지 번호까지 출력했으면 break
+                                break;
+                            }
+                        %>
+                        <a href="action?page=<%=i%>" style="color: black; padding: 5px"><%= i %></a>
+                        <%
+                        }
+                        %>
+                        
+                        <%
+                        if (parseInt((page-1)/5)*5+5 < pageNum) { // 해당 페이지에서 보이는 다섯 페이지의 다음 페이지가 존재하는 경우 다음 버튼 출력
+                        %>
+                        <a href="action?page=<%=(parseInt((page-1)/5)+1)*5+1%>"> 다음 </a>  
+                        <%
+                        }                                     
+                        %>    
+                        
+                    </ol>
+                </div>
+                
+                
+            <%    
             }
+            
             else {  // 알림이 없는 경우
             %>
                 알림이 없습니다.
             <%
             }
             %>
+                
             </center>
             <br><br>
 
@@ -211,4 +269,4 @@
                                        
 </body>
 </html>
-            
+             
