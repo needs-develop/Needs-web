@@ -25,7 +25,112 @@
   	<link href='https://fonts.googleapis.com/css?family=PT+Sans:700' rel='stylesheet' type='text/css'>
     <link href="/button_styles.css" rel='stylesheet'>
   	<link href="/css/bootstrap.css" rel='stylesheet'>
+    
+    <style>
+    .openbar {
+      height: 100%;
+      width: 250px;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      left: 0;
+      background-color: #111;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 150px;
+    }
 
+    .sidenav2 {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      left: 0;
+      background-color: #101;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 150px;
+    }
+
+    .sidenav3 {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      left: 0;
+      background-color: #101;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 150px;
+    }
+
+    .openbar a {
+      padding: 8px 8px 8px 32px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #818181;
+      display: block;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+
+    .openbar a:hover {
+      color: #f1f1f1;
+    }
+
+    .openbar button {
+      padding: 8px 8px 8px 32px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #818181;
+      display: block;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+
+    .openbar .closebtn {
+      position: absolute;
+      top: 100px;
+      right: 25px;
+      font-size: 36px;
+      margin-left: 50px;
+    }
+
+    #open_bar {
+      transition: margin-left .5s;
+      padding: 16px;
+    }
+
+    /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+    @media screen and (max-height: 450px) {
+      .openbar {
+        padding-top: 80px;
+      }
+
+      .openbar a {
+        font-size: 18px;
+      }
+    }
+
+    .dropbtn {
+      background-color: #111;
+      color: #f1f1f1;
+      padding: 8px 8px 8px 32px;
+      font-size: 25px;
+      border: none;
+    }
+
+    .dropbtn:hover {
+      color: #ffffff;
+    }
+
+    .container img {
+      max-height: initial;
+      margin-top: -20%;
+    }
+  </style>
 </head>
     
 <body id="page-top">
@@ -63,10 +168,81 @@
     
 
     
+    <!-- Header -->
+
+  <div id="myopenbar" class="openbar">
+
+    <a href="/regionboard/boardList?board_region=<%=id_region%>">내 지역</a>
+
+    <div class="dropdown">
+      <button class="dropbtn" onclick="openNav2()">즐겨찾기</button>
+
+      <div id="mySidenav2" class="sidenav2">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav2()">&times;</a>
+
+        <div class="dropdown">
+          <button class="dropbtn" onclick="openNav3()">강남구</button>
+          <div id="mySidenav3" class="sidenav3">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav3()">&times;</a>
+            <a href="/regionboard/boardList?board_region=강남구 청담동">청담동</a>
+            <a href="/regionboard/boardList?board_region=강남구 논현동">논현동</a>
+            <a href="/regionboard/boardList?board_region=강남구 압구정동">압구정동</a>
+            <a href="/regionboard/boardList?board_region=강남구 신사동">신사동</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="dropdown">
+      <button class="dropbtn" onclick="openNav2()">전체지역</button>
+
+      <div id="mySidenav2" class="sidenav2">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav2()">&times;</a>
+        <a href="#">About</a>
+        <a href="#">Services</a>
+        <a href="#">Clients</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+    <a href="#">Contact</a>
+  </div>
+
+  <script>
+    function openNav() {
+      document.getElementById("myopenbar").style.width = "250px";
+      document.getElementById("open_bar").style.marginLeft = "250px";
+    }
+
+    function openNav2() {
+      document.getElementById("mySidenav2").style.width = "250px";
+      document.getElementById("main").style.marginLeft = "250px";
+      document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    }
+
+    function closeNav2() {
+      document.getElementById("mySidenav2").style.width = "0";
+      document.getElementById("main").style.marginLeft = "0";
+      document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    }
+
+    function openNav3() {
+      document.getElementById("mySidenav3").style.width = "250px";
+      document.getElementById("main").style.marginLeft = "250px";
+      document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    }
+
+    function closeNav3() {
+      document.getElementById("mySidenav3").style.width = "0";
+      document.getElementById("main").style.marginLeft = "0";
+      document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    }
+  </script>
     
-    
-    
-    
+  
+  
+  
+  
     
     
     <!-- Portfolio Grid Section -->
@@ -74,6 +250,25 @@
     <section class="portfolio" id="portfolio">
         <div class="container" style="padding-top:100px">
             <h3 class="text-center text-uppercase"><%=board_region%></h3>
+            <br><br>
+            <div class="text-center">
+              <fieldset id="bo_sch">
+                <form name="fsearch" method="get" action="/regionboard/search">
+                  <input type="hidden" name="bo_table" value="gallery">
+                  <input type="hidden" name="sca" value="">
+                  <input type="hidden" name="sop" value="and">
+                  <input type="hidden" name="board_region" value="<%=board_region%>">
+                  <label for="sfl" class="sound_only">검색대상</label>
+                  <select name="sfl" id="sfl">
+                    <option value="by_title">제목</option>
+                    <option value="by_nickName">작성자</option>
+                  </select>
+                  <label for="stx" class="sound_only">검색어</label>
+                  <input type="text" name="stx" value="" required="" id="stx" class="sch_input" size="25" maxlength="20" placeholder="검색어를 입력해주세요">
+                  <button type="submit" value="검색" class="sch_btn"><i class="fa fa-search" aria-hidden="true"></i><span class="sound_only">검색</span></button>
+                </form>
+              </fieldset>
+            </div>
             <br><br><br>
             
             
@@ -151,7 +346,7 @@
                     <%
                     if (parseInt((page-1)/5)*5+1 != 1) {    // 1~5페이지가 보이는 경우가 아니면 이전 버튼 출력
                     %>  
-                    <a href="boardList?page=<%=parseInt((page-1)/5)*5%>"> 이전 </a> 
+                    <a href="boardList?page=<%=parseInt((page-1)/5)*5%>&board_region=<%=board_region%>"> 이전 </a> 
                     <%
                     }
                     %>   
@@ -162,7 +357,7 @@
                             break;
                         }
                     %>
-                    <a href="boardList?page=<%=i%>" style="color: black; padding: 5px"><%= i %></a>
+                    <a href="boardList?page=<%=i%>&board_region=<%=board_region%>" style="color: black; padding: 5px"><%= i %></a>
                     <%
                     }
                     %>
@@ -170,7 +365,7 @@
                     <%
                     if (parseInt((page-1)/5)*5+5 < pageNum) { // 해당 페이지에서 보이는 다섯 페이지의 다음 페이지가 존재하는 경우 다음 버튼 출력
                     %>
-                    <a href="boardList?page=<%=(parseInt((page-1)/5)+1)*5+1%>"> 다음 </a>  
+                    <a href="boardList?page=<%=(parseInt((page-1)/5)+1)*5+1%>&board_region=<%=board_region%>"> 다음 </a>  
                     <%
                     }                                     
                     %>                        
@@ -181,7 +376,7 @@
             
             else {  // 글이 없을 경우
             %>    
-                <br><br><center>글이 없습니다.</center><br><br><br><br>  
+                <br><br><center>글이 존재하지 않습니다.</center><br><br><br><br>  
             <%
             }
             %>
@@ -197,7 +392,10 @@
     
     
     
-
+    
+    
+    
+    
     
    <!-- Contact Section -->
     <section id="contact">
@@ -302,3 +500,6 @@
                                        
 </body>
 </html>
+    
+    
+    
