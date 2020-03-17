@@ -71,14 +71,14 @@ router.post('/', function(req, res) {
                 uid = user.uid;
             }
             var nowDate = new Date();
-            var time = nowDate.toFormat('YYYY/MM/DD HH24:MM');
+            var time = nowDate.toFormat('YYYY/MM/DD HH24:MM:ss');
             var day = nowDate.toFormat('DD');
             db.collection("user").doc(uid).set({ //user 컬렉션 DB생성
                 id_email: user.email,
                 id_name: param_name,
                 id_nickName: param_nickname,
                 id_region: param_region,
-                id_point: 10,
+                id_point: "10",
                 id_uid: uid
             });
             db.collection("user").doc(uid).collection("pointHistory").doc().set({
