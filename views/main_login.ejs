@@ -71,8 +71,8 @@
         <br><br>
         <!-- 검색인데 DB 검색 어케 할지 아직 구현 미정. -->
         <div class="text-center">
-          <br>
-
+        <br>
+            
           <div class="main">
 
             <div class="card" style="float : left; margin : 10px">
@@ -109,7 +109,7 @@
             <div class="card" style="float : left; margin : 10px">
               <div class="board" style="width:330px; text-align:justify; background-color:#b399ff	">
                 <h5 style="margin:20px; text-align:center">
-                  <a href="/regionboard/boardList?board_region=<%=region%>">지역 게시판 HOT</a>
+                  <a href="/regionboard">지역 게시판 HOT</a>
                 </h5>
                 <hr>
                 <% 
@@ -255,14 +255,14 @@
         appId: "1:124851004056:web:b58239166f9907ce3926ed",
         measurementId: "G-CR5E843ZEM"
       };
-
+        
       /* Initialize Firebase */
       if (!firebase.apps.length) {
         firebase.initializeApp(firebase_config);
       }
       var db = firebase.firestore();  //firestore
       var fb_auth = firebase.auth();
-
+        
       function facebook_login(){
         var provider = new firebase.auth.FacebookAuthProvider();
         provider.addScope('user_birthday');
@@ -284,7 +284,7 @@
           }
         );
       }
-
+        
       function google_login(){
         var provider = new firebase.auth.GoogleAuthProvider();
         provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
