@@ -75,4 +75,13 @@ router.get('/', function(req, res, next) {
 });
 
 
+/* GET Logout function */
+router.get('/logout', function(req, res, next) {
+  firebase.auth().signOut().then(function() {
+    res.redirect('/');
+  }).catch(function(err) {
+    console.log(err);
+  });
+});
+
 module.exports = router;

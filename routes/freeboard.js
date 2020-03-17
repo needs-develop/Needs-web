@@ -422,38 +422,42 @@ router.get('/search', function(req, res, next) {
 	var search_content = urlencode.decode(req.query.stx);
 	console.log(search_method, search_content);
 	var uid = firebase.auth().currentUser.uid;
-	if(search_method == "by_nickName"){ //작성자 닉네임으로 검색
-		db.collection("freeData").where("id_nickName", "==", search_content).get()
-			.then((snap) => {
-				if(snap.empty){
-					console.log("No matching documents");
-				}
-				var search_result = [];
-				snap.forEach(doc => {
-					console.log(doc.data());
-					search_result.push(doc.data());
-				});
-				// 빛나님 id_region 왜 들어가는지 몰라서 일단 빼고 진행했어요.
-				res.render('freeboard/boardList', {board: search_result, page: page});
-			})
-	}
-	else if(search_method == "by_title"){	//제목으로 검색
-		// 검색은 Prefix 기능만 구현되어 있음.
-		db.collection("freeData").where("title", ">=", search_content)
-			.where("title", "<=", search_content+'\uf8ff').get()
-			.then((snap) => {
-				if(snap.empty){
-					console.log("No matching documents")
-				}
-				var search_result = [];
-				snap.forEach(doc => {
-					console.log(doc.data());
-					search_result.push(doc.data());
-				});
-				// 빛나님 id_region 왜 들어가는지 몰라서 일단 빼고 진행했어요.
-				res.render('freeboard/boardList', {board: search_result, page: page});
-			})
-	}
+	db.collection('user').doc(uid).get()
+		.then((doc) => {
+			var id_region = doc.data().id_region;   // 지역 가져오기
+			if(search_method == "by_nickName"){ //작성자 닉네임으로 검색
+				db.collection("freeData").where("id_nickName", "==", search_content).get()
+					.then((snap) => {
+						if(snap.empty){
+							console.log("No matching documents");
+						}
+						var search_result = [];
+						snap.forEach(doc => {
+							console.log(doc.data());
+							search_result.push(doc.data());
+						});
+						// 빛나님 id_region 왜 들어가는지 몰라서 일단 빼고 진행했어요.
+						res.render('freeboard/boardList', {board: search_result, page: page, id_region: id_region});
+					})
+			}
+			else if(search_method == "by_title"){	//제목으로 검색
+				// 검색은 Prefix 기능만 구현되어 있음.
+				db.collection("freeData").where("title", ">=", search_content)
+					.where("title", "<=", search_content+'\uf8ff').get()
+					.then((snap) => {
+						if(snap.empty){
+							console.log("No matching documents")
+						}
+						var search_result = [];
+						snap.forEach(doc => {
+							console.log(doc.data());
+							search_result.push(doc.data());
+						});
+						// 빛나님 id_region 왜 들어가는지 몰라서 일단 빼고 진행했어요.
+						res.render('freeboard/boardList', {board: search_result, page: page, id_region: id_region});
+					})
+			}
+		});
 })
 
 

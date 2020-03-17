@@ -20,10 +20,12 @@ var firebase_config = {
 };
 
 var serviceAccount = require("../service_account_key/lloginexample-firebase-adminsdk-7ekvt-a1fd2045eb.json");
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://lloginexample.firebaseio.com"
-});
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://lloginexample.firebaseio.com"
+  });
+}
 
 let db_admin = admin.firestore();
 
@@ -355,37 +357,39 @@ router.get('/myCommentPost', function(req, res, next) {
 		my_reply.forEach(function(element, index){
 			if(element.data == "data"){		//지역게시판
 				region_ref.collection(element.address).doc(element.document_name).get()
-					.then((postsnap_region) => {
-						var data = postsnap_region.data();
-						post.push(data);
-						address.push(element.address);
-						boardType.push("data");
-						if(index == my_reply.length - 1){
-							res.render("mypage/myCommentPost", {
-								boardType: boardType,
-								board: post,
-								page: page,
-								address: address
-							});
-						}
-					})
+				.then((postsnap_region) => {
+					var data = postsnap_region.data();
+					post.push(data);
+					address.push(element.address);
+					boardType.push("data");
+					if(index == my_reply.length - 1){
+						console.log(post, boardType, address);
+						res.render("mypage/myCommentPost", {
+							boardType: boardType,
+							board: post,
+							page: page,
+							address: address
+						});
+					}
+				})
 			}
 			else if(element.data == "freedata"){
 				free_ref.doc(element.document_name).get()
-					.then((postsnap_free) => {
-						var data = postsnap_free.data();
-						post.push(data);
-						address.push("");
-						boardType.push("freeData");
-						if(index == my_reply.length - 1){
-							res.render("mypage/myCommentPost", {
-								boardType: boardType,
-								board: post,
-								page: page,
-								address: address
-							});
-						}
-					})
+				.then((postsnap_free) => {
+					var data = postsnap_free.data();
+					post.push(data);
+					address.push("");
+					boardType.push("freeData");
+					if(index == my_reply.length - 1){
+						console.log(post, boardType, address);
+						res.render("mypage/myCommentPost", {
+							boardType: boardType,
+							board: post,
+							page: page,
+							address: address
+						});
+					}
+				})
 			}
 		})
 	})
