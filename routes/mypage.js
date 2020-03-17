@@ -93,7 +93,7 @@ router.post('/editInfo', function(req, res, next) {
 	//개인정보 수정
 	console.log("개인정보 수정 완료 버튼");
 	var param_nick = req.body.nickName;
-	var new_region = req.body.new_region;
+    var new_region = req.body.new_region;
 	var uid = fb_auth.currentUser.uid;
 	db.collection("user").doc(uid).update({
 		id_nickName: param_nick,
@@ -138,7 +138,6 @@ router.get('/myPost/freeboard', function(req, res, next) {
 				});
 			}
 			else{
-				console.log(my_post.length);
 				res.render('mypage/myPost', {boardType: '', board: my_post, page: '', address: ''});
 			}
 		})
@@ -157,7 +156,7 @@ router.get('/myPost/regionboard', function(req, res, next) {
 	}
 	var post_info = [];
 	var my_post = [];
-  var address = [];
+    var address = [];
 	db.collection("user").doc(uid).collection("write").get()
 		.then((usersnap) => {
 			if(usersnap.size != 0){
@@ -175,12 +174,16 @@ router.get('/myPost/regionboard', function(req, res, next) {
 						.then((post_snapshot) => {
 							var data = post_snapshot.data();
 							my_post.push(data);
-              address.push(element.address);
+                            address.push(element.address);
+                        
 							if(index == post_info.length - 1){
 								res.render('mypage/myPost', {boardType: "data", board: my_post, page: page, address: address});
 							}
 						})
 				});
+			}
+            else{
+				res.render('mypage/myPost', {boardType: '', board: my_post, page: '', address: ''});
 			}
 		})
 		.catch((err) => {

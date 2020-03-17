@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var firebase = require("firebase");
 var dateFormat = require('dateformat');
+var urlencode = require('urlencode');
 // 서울 현재 시간 불러오기 위해 필요한 모듈
 var moment = require('moment');
 require('moment-timezone');
@@ -108,29 +109,27 @@ router.get('/boardRead', function(req, res, next) {
             
                 var userData;
                 db.collection('user').doc(uid).get()
-                    .then((doc) => {
-                        var data = doc.data();    
+                    .then((doc2) => {
+                        var data = doc2.data();    
                         userData = {  // 로그인한 사용자의 별명 가져옴
                             id_nickName : data.id_nickName,
                             id_email : data.id_email
                         }
-                    });
-    
-                
-    
-                var reply = [];
-                region_doc.collection("reply").orderBy("timeReply").get()
-                    .then((snapshot) => {
-                        
-                        snapshot.forEach((reply_doc) => {
-                            var reply_data = reply_doc.data();
-                            reply_data.data_doc = region_data.document_name;
-                            reply.push(reply_data);
-                        });
-                        res.render('regionboard/boardRead', {board: region_data, page: page, reply: reply, user: userData, board_region: board_region});
-                    })
-                    .catch((err) => {
-                        console.log('Error getting documents', err);
+                        var id_region = data.id_region;
+                    
+                    
+                        var reply = [];
+                        region_doc.collection("reply").orderBy("timeReply").get()
+                            .then((snapshot) => {
+                                
+                                snapshot.forEach((reply_doc) => {
+                                    var reply_data = reply_doc.data();
+                                    reply_data.data_doc = region_data.document_name;
+                                    reply.push(reply_data);
+                                });
+                            
+                                res.render('regionboard/boardRead', {board: region_data, page: page, reply: reply, user: userData, id_region: id_region, board_region: board_region});
+                            });
                     });
             }
             else {  // 해당 글이 없는 경우
@@ -147,10 +146,9 @@ router.get('/boardRead', function(req, res, next) {
 router.get('/boardWrite', function(req,res,next){
     var getData = req.query;
     var board_region = getData.board_region;
+    var uid = firebase.auth().currentUser.uid;
     
     if (!getData.document_name) {   // new
-        var uid = firebase.auth().currentUser.uid;
-
         db.collection('user').doc(uid).get()
             .then((doc) => {
                 var data = doc.data();    
@@ -158,8 +156,9 @@ router.get('/boardWrite', function(req,res,next){
                 var userData = {    // 로그인한 사용자의 별명과 이메일 가져옴
                     id_nickName : data.id_nickName
                 }
+                var id_region = userData.id_region;
             
-                res.render('regionboard/boardWrite', {row: userData, board_region: board_region});
+                res.render('regionboard/boardWrite', {row: userData, id_region: id_region, board_region: board_region});
             });
     }
     
@@ -167,7 +166,13 @@ router.get('/boardWrite', function(req,res,next){
         db.collection('data').doc('allData').collection(board_region).doc(getData.document_name).get()
             .then((doc) => {
                 var regionData = doc.data();
-                res.render('regionboard/boardWrite', {row: regionData, board_region: board_region});
+            
+                db.collection('user').doc(uid).get()
+                    .then((doc2) => {
+                        var id_region = doc2.data().id_region;
+                     
+                        res.render('regionboard/boardWrite', {row: regionData, id_region: id_region, board_region: board_region});
+                    });
             })
             .catch((err) => {
                 console.log('Error getting documents', err);
@@ -183,32 +188,64 @@ router.post('/boardSave', function(req,res,next){
     var board_region = postData.board_region;
     delete postData.board_region;
     
+    var user_doc = db.collection('user').doc(uid);
+    
+    
     if (!postData.document_name) {  // new
-        postData.day = moment().format('YYYY/MM/DD HH:mm:ss');
-        postData.visit_num = 0;
-        postData.good_num = 0;
+        user_doc.get().then((doc) => {
+            var num_id_point = Number(doc.data().id_point);
         
-        // data - board_region 컬렉션에 데이터 저장
-        var data_doc = db.collection("data").doc('allData').collection(board_region).doc();
-        postData.document_name = data_doc.id;
-        postData.id_uid = uid;
-        data_doc.set(postData);
-        
-        // user 컬렉션에 데이터 저장
-        var user_doc = db.collection('user').doc(uid).collection('write').doc(postData.document_name);
-        var userData = { 
-            document_name: postData.document_name,
-            address: board_region,
-            data: 'data'
-        }
-        user_doc.set(userData);
+            // 유저 포인트가 0~1이면 글 쓰기 불가
+            if(num_id_point < 2) 
+            {
+                res.send("<script>alert('포인트가 부족해 글을 쓸 수 없습니다.');history.back();</script>");
+            }
+            else 
+            { 
+                postData.day = moment().format('YYYY/MM/DD HH:mm:ss');
+                postData.visit_num = 0;
+                postData.good_num = 0;
+                
+                // data - board_region
+                var data_doc = db.collection("data").doc('allData').collection(board_region).doc();
+                postData.document_name = data_doc.id;
+                postData.id_uid = uid;
+                data_doc.set(postData);
+                
+                // user - write
+                var user_write_doc = user_doc.collection('write').doc(postData.document_name);
+                var writeData = { 
+                    document_name: postData.document_name,
+                    address: board_region,
+                    data: 'data'
+                }
+                user_write_doc.set(writeData); 
+                
+                
+                // 유저 2포인트 차감
+                num_id_point -= 2;
+                user_doc.update( {id_point: String(num_id_point)} );
+                
+                // user - pointHistory 생성
+                var user_pointHistory_doc = user_doc.collection('pointHistory').doc();
+                var pointData = {
+                    day: postData.day,
+                    point: "-2",
+                    type: "사용"
+                }
+                user_pointHistory_doc.set(pointData);           
+                
+                
+                res.redirect('boardRead?document_name=' + postData.document_name + '&board_region=' + board_region);
+            }
+        });
     } 
     else {            // update
         var data_doc = db.collection("data").doc('allData').collection(board_region).doc(postData.document_name);
         data_doc.update(postData);
+        
+        res.redirect('boardRead?document_name=' + postData.document_name + '&board_region=' + board_region);
     }
-    
-    res.redirect('boardRead?document_name=' + postData.document_name + '&board_region=' + board_region);
 });
 
 
@@ -216,11 +253,13 @@ router.post('/boardSave', function(req,res,next){
 router.post('/boardLike', function(req,res,next){   
     var postData = req.body;
     var board_region = postData.board_region;
+    var uid = firebase.auth().currentUser.uid;
     
     var board_doc = db.collection("data").doc('allData').collection(board_region).doc(postData.document_name);   
     var board_like_doc = board_doc.collection("like").doc(postData.id_email + "like");   
-    var uid = firebase.auth().currentUser.uid;
-
+    var user_doc = db.collection('user').doc(uid);
+    
+    
     board_doc.get()
         .then((doc1) => {
             var board_data = doc1.data();
@@ -239,7 +278,7 @@ router.post('/boardLike', function(req,res,next){
                                      
                     
                     // user - like
-                    var user_like_doc = db.collection('user').doc(uid).collection('like').doc(postData.document_name);
+                    var user_like_doc = user_doc.collection('like').doc(postData.document_name);
                     var likeData = { 
                         address: board_region,
                         data: "data", 
@@ -261,8 +300,41 @@ router.post('/boardLike', function(req,res,next){
                         }
                         user_action_doc.set(actionData);
                     }
-                }
-                
+                    
+                    
+                    // 좋아요를 누르면 1포인트 획득 (pointLimit이 0이 아닌 경우만)
+                    user_doc.get()
+                        .then((doc3) => {
+                            var id_email = doc3.data().id_email;  // user의 이메일 가져오기
+
+                            var user_pointDay_doc = user_doc.collection('pointDay').doc(id_email+'pointDay');
+                            user_pointDay_doc.get()
+                                .then((doc4) => {
+                                    var pointLimit = doc4.data().pointLimit;
+
+                                    if(pointLimit != "0") {
+                                        // pointLimit이 1 감소
+                                        var num_pointLimit = Number(pointLimit);
+                                        num_pointLimit -= 1;
+                                        user_pointDay_doc.update( {pointLimit: String(num_pointLimit)} );    
+
+                                        // 유저 1포인트 획득
+                                        var num_id_point = Number(doc3.data().id_point);
+                                        num_id_point += 1;
+                                        user_doc.update( {id_point: String(num_id_point)} );
+                                        
+                                        // user - pointHistory 생성
+                                        var user_pointHistory_doc = user_doc.collection('pointHistory').doc();
+                                        var pointData = {
+                                            day: moment().format('YYYY/MM/DD HH:mm:ss'),
+                                            point: "+1",
+                                            type: "획득"
+                                        }
+                                        user_pointHistory_doc.set(pointData);
+                                    } 
+                                });  
+                        });      
+                } 
                 
                 // 좋아요를 이미 누른 상태에서 또 누른 경우 (좋아요 해제)
                 else
@@ -277,6 +349,40 @@ router.post('/boardLike', function(req,res,next){
                     
                     // user - like 에서 문서 삭제
                     var user_like_doc = db.collection('user').doc(uid).collection('like').doc(postData.document_name).delete();       
+                    
+                    
+                    // 좋아요 해제하면 1포인트 차감
+                    user_doc.get()
+                        .then((doc3) => {
+                            var id_email = doc3.data().id_email;  // user의 이메일 가져오기
+
+                            var user_pointDay_doc = user_doc.collection('pointDay').doc(id_email+'pointDay');
+                            user_pointDay_doc.get()
+                                .then((doc4) => {
+                                    var pointLimit = doc4.data().pointLimit;
+
+                                    if(pointLimit != "0") {
+                                        // pointLimit이 1 증가
+                                        var num_pointLimit = Number(pointLimit);
+                                        num_pointLimit += 1;
+                                        user_pointDay_doc.update( {pointLimit: String(num_pointLimit)} );    
+
+                                        // 유저 1포인트 차감
+                                        var num_id_point = Number(doc3.data().id_point);
+                                        num_id_point -= 1;
+                                        user_doc.update( {id_point: String(num_id_point)} );
+                                        
+                                        // user - pointHistory 생성
+                                        var user_pointHistory_doc = user_doc.collection('pointHistory').doc();
+                                        var pointData = {
+                                            day: moment().format('YYYY/MM/DD HH:mm:ss'),
+                                            point: "-1",
+                                            type: "취소"
+                                        }
+                                        user_pointHistory_doc.set(pointData);
+                                    } 
+                                });  
+                        });   
                 }
                 
                 
@@ -469,6 +575,60 @@ router.post('/favorites', function(req,res,next){
         }
    });         
 });
+
+
+// 지역게시판 검색기능
+router.get('/search', function(req, res, next) {
+	var page = Number(req.query.page);
+	if (!page) {    // 그냥 boardList로 이동할 경우 1페이지를 보여줌
+		page = 1;
+	}
+	var search_method = req.query.sfl;
+	var search_content = urlencode.decode(req.query.stx);
+    var board_region = req.query.board_region;
+	console.log(search_method, search_content);
+	var uid = firebase.auth().currentUser.uid;
+    
+    db.collection('user').doc(uid).get()
+        .then((doc) => {
+            var id_region = doc.data().id_region;
+        
+            
+            if(search_method == "by_nickName"){ //작성자 닉네임으로 검색
+	           	db.collection("data").doc("allData").collection(board_region).where("id_nickName", "==", search_content).get()
+	           		.then((snap) => {
+	           			if(snap.empty){
+	           				console.log("No matching documents");
+	           			}
+	           			var search_result = [];
+	           			snap.forEach(doc => {
+	           				console.log(doc.data());
+	           				search_result.push(doc.data());
+	           			});
+	           			
+	           			res.render('regionboard/boardList', {board: search_result, page: page, id_region: id_region, board_region: board_region});
+	           		});
+	       }
+	       else if(search_method == "by_title"){	//제목으로 검색
+	           	// 검색은 Prefix 기능만 구현되어 있음.
+	           	db.collection("data").doc("allData").collection(board_region).where("title", ">=", search_content)
+	           		.where("title", "<=", search_content+'\uf8ff').get()
+	           		.then((snap) => {
+	           			if(snap.empty){
+	           				console.log("No matching documents")
+	           			}
+	           			var search_result = [];
+	           			snap.forEach(doc => {
+	           				console.log(doc.data());
+	           				search_result.push(doc.data());
+	           			});
+	           			
+	           			res.render('regionboard/boardList', {board: search_result, page: page, id_region: id_region, board_region: board_region});
+	               });
+	       }
+       });
+})
+
 
 
 
