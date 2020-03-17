@@ -100,19 +100,29 @@ schedule.scheduleJob('00 * * * * *', function() {
           snap.forEach((doc) => {
             var data = doc.data();
               var user_ref = db_admin.collection("user").doc(data.id_uid);
+              
+              //user가 없는 경우??;; -> 오류남 -> 따라서 쿼리사용
               if(i == 0){
                 user_ref.get()
                   .then((usersnap) => {
-                    var cur_point = Number(usersnap.id_point);
-                    var new_point = toString(cur_point + 10000);
-                    user_ref.update({
-                      id_point: new_point
-                    });
-                    user_ref.collection("pointHistory").doc().set({
-                      day: time,
-                      point: "+10000",
-                      type: "1등 포인트 지급"
-                    })
+                    if(usersnap.exists){
+                      var user_data = usersnap.data();
+                      var cur_point = Number(user_data.id_point);
+                      var new_point = String(cur_point + 10000);
+                      console.log(cur_point, new_point, user_data.id_uid);
+                      user_ref.update({
+                        id_point: new_point
+                      });
+                      user_ref.collection("pointHistory").doc().set({
+                        day: time,
+                        point: "+10000",
+                        type: "1등 포인트 지급"
+                      })
+                      console.log("1등 포인트 지급");
+                    }
+                    else{
+                      console.log("탈퇴한 회원입니다.");
+                    }
                   })
                   .catch((err) => {
                     console.log(err, "사용자 X");
@@ -121,17 +131,24 @@ schedule.scheduleJob('00 * * * * *', function() {
               if(i == 1){
                 user_ref.get()
                   .then((usersnap) => {
-                    var cur_point = Number(usersnap.id_point);
-                    var new_point = toString(cur_point + 5000);
-                    user_ref.update({
-                      id_point: new_point
-                    });
-                    user_ref.collection("pointHistory").doc().set({
-                      day: time,
-                      point: "+5000",
-                      type: "2등 포인트 지급"
-                    })
-                    console.log("2등 포인트 지급");
+                    if(usersnap.exists){
+                      var user_data = usersnap.data();
+                      var cur_point = Number(user_data.id_point);
+                      var new_point = String(cur_point + 5000);
+                      console.log(cur_point, new_point, user_data.id_uid);
+                      user_ref.update({
+                        id_point: new_point
+                      });
+                      user_ref.collection("pointHistory").doc().set({
+                        day: time,
+                        point: "+5000",
+                        type: "2등 포인트 지급"
+                      })
+                      console.log("2등 포인트 지급");
+                    }
+                    else{
+                      console.log("탈퇴한 회원입니다.");
+                    }
                   })
                   .catch((err) => {
                     console.log(err, "사용자 X");
@@ -140,17 +157,24 @@ schedule.scheduleJob('00 * * * * *', function() {
               if(i == 2){
                 user_ref.get()
                   .then((usersnap) => {
-                    var cur_point = Number(usersnap.id_point);
-                    var new_point = toString(cur_point + 2000);
-                    user_ref.update({
-                      id_point: new_point
-                    });
-                    user_ref.collection("pointHistory").doc().set({
-                      day: time,
-                      point: "+2000",
-                      type: "3등 포인트 지급"
-                    })
-                    console.log("3등 포인트 지급");
+                    if(usersnap.exists){
+                      var user_data = usersnap.data();
+                      var cur_point = Number(user_data.id_point);
+                      var new_point = String(cur_point + 2000);
+                      console.log(cur_point, new_point, user_data.id_uid);
+                      user_ref.update({
+                        id_point: new_point
+                      });
+                      user_ref.collection("pointHistory").doc().set({
+                        day: time,
+                        point: "+2000",
+                        type: "3등 포인트 지급"
+                      })
+                      console.log("3등 포인트 지급");
+                    }
+                    else{
+                      console.log("탈퇴한 회원입니다.");
+                    }
                   })
                   .catch((err) => {
                     console.log(err, "사용자 X");
