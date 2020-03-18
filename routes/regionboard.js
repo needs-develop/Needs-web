@@ -51,30 +51,51 @@ router.get('/boardList', function(req, res, next) {
     var page = Number(req.query.page);
     var uid = firebase.auth().currentUser.uid;
     var board_region = req.query.board_region;
+    var user_doc = db.collection('user').doc(uid);
     
     if (!page) {    // 그냥 boardList로 이동할 경우 1페이지를 보여줌
         page = 1;
     }
   
-    db.collection('user').doc(uid).get()
+    user_doc.get()
         .then((doc) => {
-            var id_region = doc.data().id_region;   // 지역 가져오기
-
+            var id_region = doc.data().id_region;
+            var id_email = doc.data().id_email;
             db.collection('data').doc('allData').collection(board_region).orderBy("day", "desc").get()  // 날짜의 내림차순으로 글 가져오기
                 .then((snapshot) => {
-                    // 글이 있는 경우
-                    if(snapshot.size != 0) {
-                        var region_board = [];
-                        snapshot.forEach((region_doc) => {
-                            var region_data = region_doc.data();
-                            region_board.push(region_data);    
+                
+                    user_doc.collection('favorites').orderBy("region").get()
+                        .then((fav_snap) => {
+                        
+                            var favorite = [];
+                            // 즐겨찾기한 지역이 있는 경우
+                            if(fav_snap.size != 0) {                           
+                                fav_snap.forEach((fav_doc) => {
+                                    var fav_data = fav_doc.data();
+                                    favorite.push(fav_data.region); 
+                                });
+                            }
+
+                        
+                        
+                            // 글이 있는 경우
+                            if(snapshot.size != 0) {
+                                var region_board = [];
+                                snapshot.forEach((region_doc) => {
+                                    var region_data = region_doc.data();
+                                    region_board.push(region_data);    
+                                });
+
+                                res.render('regionboard/boardList', {board: region_board, page: page, id_region: id_region, board_region: board_region, favorite_region: favorite});
+                            }
+                            // 글이 없는 경우
+                            else {
+                                res.render('regionboard/boardList', {board: '', page: '', id_region: id_region, board_region: board_region, favorite_region: favorite});
+                            }
+                        
                         });
-                        res.render('regionboard/boardList', {board: region_board, page: page, id_region: id_region, board_region: board_region});
-                    }
-                    // 글이 없는 경우
-                    else {
-                        res.render('regionboard/boardList', {board: '', page: '', id_region: id_region, board_region: board_region});
-                    }
+                
+                    
                 })
                 .catch((err) => {
                     console.log('Error getting documents', err);
@@ -588,44 +609,59 @@ router.get('/search', function(req, res, next) {
     var board_region = req.query.board_region;
 	console.log(search_method, search_content);
 	var uid = firebase.auth().currentUser.uid;
+    var user_doc = db.collection('user').doc(uid);
     
-    db.collection('user').doc(uid).get()
+    user_doc.get()
         .then((doc) => {
             var id_region = doc.data().id_region;
         
-            
-            if(search_method == "by_nickName"){ //작성자 닉네임으로 검색
-	           	db.collection("data").doc("allData").collection(board_region).where("id_nickName", "==", search_content).get()
-	           		.then((snap) => {
-	           			if(snap.empty){
-	           				console.log("No matching documents");
-	           			}
-	           			var search_result = [];
-	           			snap.forEach(doc => {
-	           				console.log(doc.data());
-	           				search_result.push(doc.data());
-	           			});
-	           			
-	           			res.render('regionboard/boardList', {board: search_result, page: page, id_region: id_region, board_region: board_region});
-	           		});
-	       }
-	       else if(search_method == "by_title"){	//제목으로 검색
-	           	// 검색은 Prefix 기능만 구현되어 있음.
-	           	db.collection("data").doc("allData").collection(board_region).where("title", ">=", search_content)
-	           		.where("title", "<=", search_content+'\uf8ff').get()
-	           		.then((snap) => {
-	           			if(snap.empty){
-	           				console.log("No matching documents")
-	           			}
-	           			var search_result = [];
-	           			snap.forEach(doc => {
-	           				console.log(doc.data());
-	           				search_result.push(doc.data());
-	           			});
-	           			
-	           			res.render('regionboard/boardList', {board: search_result, page: page, id_region: id_region, board_region: board_region});
-	               });
-	       }
+        
+            user_doc.collection('favorites').orderBy("region").get()
+                .then((fav_snap) => {
+                        
+                    var favorite = [];
+                    // 즐겨찾기한 지역이 있는 경우
+                    if(fav_snap.size != 0) {                           
+                        fav_snap.forEach((fav_doc) => {
+                            var fav_data = fav_doc.data();
+                            favorite.push(fav_data.region); 
+                        });
+                    }
+                
+                
+                    if(search_method == "by_nickName"){ //작성자 닉네임으로 검색
+                        db.collection("data").doc("allData").collection(board_region).where("id_nickName", "==", search_content).get()
+                            .then((snap) => {
+                                if(snap.empty){
+                                    console.log("No matching documents");
+                                }
+                                var search_result = [];
+                                snap.forEach(doc => {
+                                    console.log(doc.data());
+                                    search_result.push(doc.data());
+                                });
+
+                                res.render('regionboard/boardList', {board: search_result, page: page, id_region: id_region, board_region: board_region, favorite_region: favorite});
+                            });
+                    }   
+                    else if(search_method == "by_title"){	//제목으로 검색
+                        // 검색은 Prefix 기능만 구현되어 있음.
+                        db.collection("data").doc("allData").collection(board_region).where("title", ">=", search_content)
+                            .where("title", "<=", search_content+'\uf8ff').get()
+                            .then((snap) => {
+                                if(snap.empty){
+                                    console.log("No matching documents")
+                                }
+                                var search_result = [];
+                                snap.forEach(doc => {
+                                    console.log(doc.data());
+                                    search_result.push(doc.data());
+                                });
+
+                                res.render('regionboard/boardList', {board: search_result, page: page, id_region: id_region, board_region: board_region, favorite_region: favorite});
+                           });
+                    }
+             });
        });
 })
 
