@@ -31,7 +31,7 @@
     <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
 		<div class="container">
 		  <a class="navbar-brand js-scroll-trigger" href="/">Needs</a>
-          <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#"><%=id_region%></a>
+          <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/regionboard/boardList?board_region=<%=id_region%>"><%=id_region%></a>
 		  <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-fixed Black rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
 			Menu
 			<i class="fa fa-bars"></i>
@@ -97,23 +97,12 @@
 						<th>내용</th>
 						<td class="form-control" style="min-height: 300px; width: 100%"><%=board.content%></td>
 					</tr>
-					<tr>
-						<th>댓글</th>
-						<td>
-							<form name="form2" action="commentSave" method="post">
-								<textarea name="contentReply" class="autosize" onkeydown="resize(this)" onkeyup="resize(this)"  placeholder="내용을 입력하세요. " class="form-control" style="width: 100%"></textarea>
-								<input type="hidden" name="data_doc" value="<%=board.document_name%>" class="pull-right">
-								<input type="hidden" name="writerReply" value="<%=user.id_nickName%>" class="pull-right">
-								<input type="hidden" name="id_uid" value="<%=board.id_uid%>" class="pull-right">
-								<input type="submit" value=등록 onClick="form2.submit()" class="pull-right">
-							</form>
-						</td>
-					</tr>
+					
 				</tbody>
 			</table>
             
 			<!--  좋아요  -->
-			<div style="float:right">
+			<div style="float:left">
 				<form name="form1" action="boardLike" method="post"> 
 					<input type="button" value=" ❤ " onClick="form1.submit()"> 
 					<input type="hidden" name="document_name" value="<%=board.document_name%>">    
@@ -124,20 +113,29 @@
 			</div>
             
 			<!--  목록  -->	
-			<div style="float:right; margin-left: 10px">
+			<div style="float:right">
 				<form name="form3" action="boardList" method="get">
 					<pre class="pull-right"><input type="submit" value="목록"></pre>               
 					<input type="hidden" name="page" value="<%=page%>">
 				</form>
 			</div>
 		</div>	
-	</section>
-		  
-  <br><hr>       
+	</section>		  
+    <br><br><br><br><hr>       
     
 	<div class="container" style="padding-top:100px">
     <!-- 댓글 읽기-->
-   <caption><h3>댓글(<%=reply.length%>)</h3></caption><br>
+    <caption><h3>댓글(<%=reply.length%>)</h3></caption><br><br>
+        
+        <form name="form2" action="commentSave" method="post">
+              <textarea name="contentReply" rows=5 placeholder="댓글을 입력해주세요. " class="form-control" style="width: 100%"></textarea>
+              <input type="hidden" name="data_doc" value="<%=board.document_name%>" class="pull-right">
+              <input type="hidden" name="writerReply" value="<%=user.id_nickName%>" class="pull-right">
+              <input type="hidden" name="id_uid" value="<%=board.id_uid%>" class="pull-right">
+              <input type="submit" value=등록 onClick="form2.submit()" class="pull-right">
+		</form>
+        <br><br><br>
+        
         
 		<%   
 		if(reply.length != 0) {     // 댓글이 존재하면 댓글을 출력
