@@ -66,6 +66,71 @@
       padding-top: 150px;
     }
 
+    .sidenav4 {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      left: 0;
+      background-color: #101;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 150px;
+    }
+
+    .sidenav5 {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      left: 0;
+      background-color: #101;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 150px;
+    }
+
+    .sidenav6 {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      left: 0;
+      background-color: #101;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 150px;
+    }
+    
+    .sidenavA {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      left: 0;
+      background-color: #101;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 150px;
+    }
+        
+    .sidenavB {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      left: 0;
+      background-color: #101;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 150px;
+    }
+
     .openbar a {
       padding: 8px 8px 8px 32px;
       text-decoration: none;
@@ -131,6 +196,7 @@
       margin-top: -20%;
     }
   </style>
+    
 </head>
     
 <body id="page-top">
@@ -139,7 +205,7 @@
     <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
       <div class="container">
         <a class="navbar-brand js-scroll-trigger" href="/">Needs</a>
-        <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#"><%=id_region%></a>
+        <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/regionboard/boardList?board_region=<%=id_region%>"><%=id_region%></a>
         <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-fixed Black rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           Menu
           <i class="fa fa-bars"></i>
@@ -174,38 +240,80 @@
 
     <a href="/regionboard/boardList?board_region=<%=id_region%>">내 지역</a>
 
+      
     <div class="dropdown">
-      <button class="dropbtn" onclick="openNav2()">즐겨찾기</button>
+      <button class="dropbtn" onclick="openNavA()">즐겨찾기</button>
+        
+      <div id="mySidenavA" class="sidenavA">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNavA()">&times;</a>
+          
+        <%
+        if(favorite_region.length != 0) {  // 즐겨찾기한 지역이 있는 경우
+            for(var i=0; i<favorite_region.length; i++) {
+        %>
+                <a href="/regionboard/boardList?board_region=<%=favorite_region[i]%>"><%=favorite_region[i]%></a>
+                
+                <form name="fav_form">
+                    <input type="button" onclick="fav_form.submit()" value=" ★ ">
+                </form>
+        <%
+            }
+        }
+        %>
+        
+      </div>
+        
+        
+      
+    </div>
 
-      <div id="mySidenav2" class="sidenav2">
+      
+    <div class="dropdown">
+      <button class="dropbtn" onclick="openNav2()">전체지역</button>
+        <div id="mySidenav2" class="sidenav2">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav2()">&times;</a>
 
         <div class="dropdown">
           <button class="dropbtn" onclick="openNav3()">강남구</button>
+
           <div id="mySidenav3" class="sidenav3">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav3()">&times;</a>
-            <a href="/regionboard/boardList?board_region=강남구 청담동">청담동</a>
             <a href="/regionboard/boardList?board_region=강남구 논현동">논현동</a>
-            <a href="/regionboard/boardList?board_region=강남구 압구정동">압구정동</a>
             <a href="/regionboard/boardList?board_region=강남구 신사동">신사동</a>
+            <a href="/regionboard/boardList?board_region=강남구 압구정동">압구정동</a>
+            <a href="/regionboard/boardList?board_region=강남구 청담동">청담동</a>
           </div>
         </div>
 
+        <div class="dropdown">
+          <button class="dropbtn" onclick="openNav4()">강동구</button>
+
+          <div id="mySidenav4" class="sidenav4">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav4()">&times;</a>
+            <a href="/regionboard/boardList?board_region=강동구 천호동">천호동</a>
+          </div>
+        </div>
+
+        <div class="dropdown">
+          <button class="dropbtn" onclick="openNav5()">강북구</button>
+
+          <div id="mySidenav5" class="sidenav5">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav5()">&times;</a>
+            <a href="/regionboard/boardList?board_region=강북구 수유동">수유동</a>
+          </div>
+        </div>
+
+        <div class="dropdown">
+          <button class="dropbtn" onclick="openNav6()">강서구</button>
+
+          <div id="mySidenav6" class="sidenav6">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav6()">&times;</a>
+            <a href="/regionboard/boardList?board_region=강서구 등촌동">등촌동</a>
+          </div>
+        </div>
       </div>
     </div>
-
-    <div class="dropdown">
-      <button class="dropbtn" onclick="openNav2()">전체지역</button>
-
-      <div id="mySidenav2" class="sidenav2">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav2()">&times;</a>
-        <a href="#">About</a>
-        <a href="#">Services</a>
-        <a href="#">Clients</a>
-        <a href="#">Contact</a>
-      </div>
-    </div>
-    <a href="#">Contact</a>
+      
   </div>
 
   <script>
@@ -234,6 +342,70 @@
 
     function closeNav3() {
       document.getElementById("mySidenav3").style.width = "0";
+      document.getElementById("main").style.marginLeft = "0";
+      document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    }
+
+    function openNav4() {
+      document.getElementById("mySidenav4").style.width = "250px";
+      document.getElementById("main").style.marginLeft = "250px";
+      document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    }
+
+    function closeNav4() {
+      document.getElementById("mySidenav4").style.width = "0";
+      document.getElementById("main").style.marginLeft = "0";
+      document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    }
+
+    function openNav5() {
+      document.getElementById("mySidenav5").style.width = "250px";
+      document.getElementById("main").style.marginLeft = "250px";
+      document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    }
+
+    function closeNav5() {
+      document.getElementById("mySidenav5").style.width = "0";
+      document.getElementById("main").style.marginLeft = "0";
+      document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    }
+
+    function openNav6() {
+      document.getElementById("mySidenav6").style.width = "250px";
+      document.getElementById("main").style.marginLeft = "250px";
+      document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    }
+
+    function closeNav6() {
+      document.getElementById("mySidenav6").style.width = "0";
+      document.getElementById("main").style.marginLeft = "0";
+      document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    }
+      
+      
+      
+      
+      
+    function openNavA() {
+      document.getElementById("mySidenavA").style.width = "250px";
+      document.getElementById("main").style.marginLeft = "250px";
+      document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    }
+
+    function closeNavA() {
+      document.getElementById("mySidenavA").style.width = "0";
+      document.getElementById("main").style.marginLeft = "0";
+      document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    }
+    
+    function openNavB() {
+      document.getElementById("mySidenavB").style.width = "250px";
+      document.getElementById("main").style.marginLeft = "250px";
+      document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    }
+
+    function closeNavB() {
+      document.getElementById("mySidenavB").style.width = "0";
       document.getElementById("main").style.marginLeft = "0";
       document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     }
