@@ -49,8 +49,9 @@ router.get('/', function(req, res, next) {
 				let my_email = data.id_email;
 				let my_name = data.id_name;
 				let my_nickName = data.id_nickName;
+                let my_region = data.id_region;
 				let my_point = data.id_point;
-				res.render('mypage/mypage', {email: my_email, name: my_name, nickName: my_nickName, point: my_point});
+				res.render('mypage/mypage', {email: my_email, name: my_name, nickName: my_nickName, region: my_region, point: my_point});
 			}
 		})
 		.catch(err => {
