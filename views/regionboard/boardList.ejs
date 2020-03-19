@@ -252,10 +252,6 @@
             for(var i=0; i<favorite_region.length; i++) {
         %>
                 <a href="/regionboard/boardList?board_region=<%=favorite_region[i]%>"><%=favorite_region[i]%></a>
-                
-                <form name="fav_form">
-                    <input type="button" onclick="fav_form.submit()" value=" ★ ">
-                </form>
         <%
             }
         }
@@ -269,7 +265,7 @@
 
       
     <div class="dropdown">
-      <button class="dropbtn" onclick="openNav2()">전체지역</button>
+      <button class="dropbtn" onclick="openNav2()">모든 지역</button>
         <div id="mySidenav2" class="sidenav2">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav2()">&times;</a>
 
@@ -413,15 +409,35 @@
     
   
   
-  
-  
-    
     
     <!-- Portfolio Grid Section -->
     
     <section class="portfolio" id="portfolio">
         <div class="container" style="padding-top:100px">
             <h3 class="text-center text-uppercase"><%=board_region%></h3>
+            
+            <form name="fav_form" action="/regionboard/favorites" method="post" align="center">
+                <%
+                // 해당 지역이 즐겨찾기된 지역이면 색칠된 별 버튼 출력
+                if(favorite_region.includes(board_region)) { 
+                %>
+                    <input type="button" value=" ★ " onclick="fav_form.submit()">
+                    <input type="hidden" name="id_email" value="<%=id_email%>">
+                    <input type="hidden" name="region" value="<%=board_region%>">
+                <%
+                }
+                // 해당 지역이 즐겨찾기 지역이 아니면 빈 별 버튼 출력
+                else {
+                %>
+                    <input type="button" value=" ☆ " onclick="fav_form.submit()">
+                    <input type="hidden" name="id_email" value="<%=id_email%>">
+                    <input type="hidden" name="region" value="<%=board_region%>">
+                <%    
+                }
+                %>
+                
+            </form>
+            
             <br><br>
             <div class="text-center">
               <fieldset id="bo_sch">
@@ -435,7 +451,7 @@
                     <option value="by_title">제목</option>
                     <option value="by_nickName">작성자</option>
                   </select>
-                  <label for="stx" class="sound_only">검색어</label>
+                  <label for="stx" class="sound_only">&nbsp;검색어</label>
                   <input type="text" name="stx" value="" required="" id="stx" class="sch_input" size="25" maxlength="20" placeholder="검색어를 입력해주세요">
                   <button type="submit" value="검색" class="sch_btn"><i class="fa fa-search" aria-hidden="true"></i><span class="sound_only">검색</span></button>
                 </form>
@@ -508,7 +524,7 @@
                     </tbody>
                     
                 </table>
-                <br><br><br><hr/>
+                <br><hr/>
             
        
             
@@ -570,6 +586,7 @@
     
     
    <!-- Contact Section -->
+    <br><br><br><br>
     <section id="contact">
       <div class="container">
         <h2 class="text-center text-uppercase text-secondary mb-0">Contact Me</h2>
@@ -672,6 +689,3 @@
                                        
 </body>
 </html>
-    
-    
-    
