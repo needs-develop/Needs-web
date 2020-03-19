@@ -86,11 +86,11 @@ router.get('/boardList', function(req, res, next) {
                                     region_board.push(region_data);    
                                 });
 
-                                res.render('regionboard/boardList', {board: region_board, page: page, id_region: id_region, board_region: board_region, favorite_region: favorite});
+                                res.render('regionboard/boardList', {board: region_board, page: page, id_email: id_email, id_region: id_region, board_region: board_region, favorite_region: favorite});
                             }
                             // 글이 없는 경우
                             else {
-                                res.render('regionboard/boardList', {board: '', page: '', id_region: id_region, board_region: board_region, favorite_region: favorite});
+                                res.render('regionboard/boardList', {board: '', page: '', id_email: id_email, id_region: id_region, board_region: board_region, favorite_region: favorite});
                             }
                         
                         });
@@ -580,10 +580,11 @@ router.post('/favorites', function(req,res,next){
         // 즐겨찾기한 지역이 아닌 경우
         if(!doc.exists) 
         {
+            var board_region = postData.region;
             var regionData = { region: postData.region }
             user_favorites_doc.set(regionData);
-    
-            res.send("<script>alert('즐겨찾기 설정 되었습니다.');history.back();</script>");
+            
+            res.send("<script>alert('즐겨찾기 설정 되었습니다.');location.href=document.referrer;</script>");
         }
         
         // 즐겨찾기를 이미 한 상태에서 또 누른 경우 (즐겨찾기 해제)
@@ -592,7 +593,7 @@ router.post('/favorites', function(req,res,next){
             // user - favorites 에서 문서 삭제
             user_favorites_doc.delete();  
             
-            res.send("<script>alert('즐겨찾기 해제 되었습니다.');history.back();</script>");
+            res.send("<script>alert('즐겨찾기 해제 되었습니다.');location.href=document.referrer;</script>");
         }
    });         
 });
@@ -664,8 +665,6 @@ router.get('/search', function(req, res, next) {
              });
        });
 })
-
-
 
 
 module.exports = router;
