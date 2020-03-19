@@ -64,13 +64,10 @@
 			<h3 class="text-center text-uppercase">글 작성/수정</h3><br><br>
 			<form name="form1" action="boardSave" method="post">
 				<table class="table table-bordered">
-					<!--
-					<caption><h1>글 작성/수정</h1></caption>
-					-->
 					<tbody>
 						<tr>
 							<td>제목</td> 
-							<td><input type="text" name="title" size="50" maxlength="250" value="<%=row.title%>"></td> 
+							<td><input type="text" name="title" size="50" maxlength="250" value="<%=row.title%>" placeholder="제목을 입력하세요."></td> 
 						</tr>
 						<tr>
 							<td>내용</td>
