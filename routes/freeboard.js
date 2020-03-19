@@ -47,7 +47,7 @@ router.get('/boardList', function(req, res, next) {
                     if(snapshot.size != 0) {
                         var free_board = [];
                         snapshot.forEach((free_doc) => {
-                            var free_data = free_doc.data();  // Key(문서이름)는 빼고 Data만 저장
+                            var free_data = free_doc.data();
                             free_board.push(free_data);    
                         });
                         res.render('freeboard/boardList', {board: free_board, page: page, id_region: id_region});
