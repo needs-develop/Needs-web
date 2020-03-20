@@ -31,7 +31,7 @@
     <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
 		<div class="container">
 		  <a class="navbar-brand js-scroll-trigger" href="/">Needs</a>
-          <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/regionboard/boardList?board_region=<%=id_region%>"><%=id_region%></a>
+          <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/regionboard/boardList?board_region=<%=id_region%>"><img class="img-fluid" src="img/portfolio/id_region8.png" alt="">&nbsp;<%=id_region%></a>
 		  <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-fixed Black rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
 			Menu
 			<i class="fa fa-bars"></i>
@@ -39,7 +39,7 @@
 		  <div class="collapse navbar-collapse" id="navbarResponsive">
 			<ul class="navbar-nav ml-auto">
 			  <li class="nav-item mx-0 mx-lg-1">
-				<a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/regionboard">지역게시판</a>
+				<a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/regionboard/boardList?board_region=<%=id_region%>">지역게시판</a>
 			  </li>  
 			  <li class="nav-item mx-0 mx-lg-1">
 				<a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/freeboard/boardList">자유게시판</a>
@@ -96,7 +96,7 @@
                     </tr>
                     <tr>
                         <th>내용</th> 
-                        <td class="form-control" style="min-height: 300px; width: 100%"><%=board.content%></td>
+                        <td class="form-control" style="min-height: 200px; width: 100%"><%=board.content%></td>
                     </tr>
                 </tbody>
             </table>    
@@ -140,6 +140,7 @@
             <input type="hidden" name="board_region" value="<%=board_region%>">
             <input type="submit" value=등록 onClick="form2.submit()" class="pull-right">
         </form>
+        <br><br><br>
         
         <%   
         if(reply.length != 0) {     // 댓글이 존재하면 댓글을 출력
