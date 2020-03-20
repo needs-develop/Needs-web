@@ -30,22 +30,6 @@ var db = firebase.firestore(app);
 
 
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-    var uid = firebase.auth().currentUser.uid;
-    var userData;
-    db.collection('user').doc(uid).get()
-        .then((doc) => {
-             //로그인한 사용자의 이메일 가져옴
-            userData = {id_email : doc.data().id_email} 
-        
-            res.render('regionboard/regionboard', {user: userData});
-        })
-        .catch((err) => {
-            console.log('Error getting documents', err);
-        });
-});
-
 
 router.get('/boardList', function(req, res, next) {
     var page = Number(req.query.page);
@@ -76,7 +60,7 @@ router.get('/boardList', function(req, res, next) {
                                 });
                             }
 
-                        
+                            
                         
                             // 글이 있는 경우
                             if(snapshot.size != 0) {
@@ -85,7 +69,7 @@ router.get('/boardList', function(req, res, next) {
                                     var region_data = region_doc.data();
                                     region_board.push(region_data);    
                                 });
-
+                                
                                 res.render('regionboard/boardList', {board: region_board, page: page, id_email: id_email, id_region: id_region, board_region: board_region, favorite_region: favorite});
                             }
                             // 글이 없는 경우
@@ -502,7 +486,7 @@ router.post('/commentSave', function(req,res,next) {
     var uid = firebase.auth().currentUser.uid;    
     var board_uid = postData.id_uid;    // 글쓴이의 uid
     delete postData.id_uid;
-    
+    delete postData.board_region;
     
     if (!postData.reply_doc) {     // new
         
@@ -615,7 +599,7 @@ router.get('/search', function(req, res, next) {
     user_doc.get()
         .then((doc) => {
             var id_region = doc.data().id_region;
-        
+            var id_email = doc.data().id_email;
         
             user_doc.collection('favorites').orderBy("region").get()
                 .then((fav_snap) => {
@@ -642,7 +626,7 @@ router.get('/search', function(req, res, next) {
                                     search_result.push(doc.data());
                                 });
 
-                                res.render('regionboard/boardList', {board: search_result, page: page, id_region: id_region, board_region: board_region, favorite_region: favorite});
+                                res.render('regionboard/boardList', {board: search_result, page: page, id_email: id_email, id_region: id_region, board_region: board_region, favorite_region: favorite});
                             });
                     }   
                     else if(search_method == "by_title"){	//제목으로 검색
@@ -658,8 +642,8 @@ router.get('/search', function(req, res, next) {
                                     console.log(doc.data());
                                     search_result.push(doc.data());
                                 });
-
-                                res.render('regionboard/boardList', {board: search_result, page: page, id_region: id_region, board_region: board_region, favorite_region: favorite});
+                                console.log("여기");
+                                res.render('regionboard/boardList', {board: search_result, page: page, id_email: id_email, id_region: id_region, board_region: board_region, favorite_region: favorite});
                            });
                     }
              });
