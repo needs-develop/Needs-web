@@ -28,6 +28,7 @@ var db = firebase.firestore(app);
 
 
 
+
 // 글 목록
 router.get('/boardList', function(req, res, next) {
     var page = Number(req.query.page);
@@ -77,7 +78,7 @@ router.get('/boardRead', function(req, res, next) {
                 var page = getData.page;
     
                 // boardList에서 글을 처음 읽을 때만 조회수 증가 (수정, 좋아요, 댓글 시에는 증가하지 않음)
-                if(getData.visitNew == 1) {
+                if(getData.visitNew == '1') {
                     // 실제 document의 visit_num를 1 증가
                     var visit = free_data.visit_num + 1;    
                     free_doc.update({visit_num : visit});   
@@ -97,18 +98,27 @@ router.get('/boardRead', function(req, res, next) {
                         var id_region = data.id_region;
                     
                     
+
                         var reply = [];
                         free_doc.collection("reply").orderBy("timeReply").get()
                             .then((snapshot) => {
-    
                             snapshot.forEach((reply_doc) => {
                                 var reply_data = reply_doc.data();
                                 reply_data.data_doc = free_data.document_name;
                                 reply.push(reply_data);
                             });
                             
+                            
+                            // 좋아요한 글인지 확인
+                            free_doc.collection('like').doc(userData.id_email+'like').get()
+                                .then((doc3) => {
+                                    var like;
+                                    if(doc3.exists) {
+                                        like = 1;
+                                    } 
 
-                            res.render('freeboard/boardRead', {board: free_data, page: page, reply: reply, user: userData, id_region: id_region});
+                                    res.render('freeboard/boardRead', {board: free_data, page: page, reply: reply, user: userData, like: like, id_region: id_region});
+                            });     
                         });
                     });  
             })
@@ -134,24 +144,25 @@ router.get('/boardRead', function(req, res, next) {
 
 // 글 쓰기
 router.get('/boardWrite', function(req,res,next){
-    if (!req.query.document_name) {   // new
-        var uid = firebase.auth().currentUser.uid;
-
+    var getData = req.query;
+    var uid = firebase.auth().currentUser.uid;
+    
+    if (!getData.document_name) {   // new
         db.collection('user').doc(uid).get()
             .then((doc) => {
-                var userData = doc.data();    
+                var data = doc.data();    
 
-                var data = { 
-                    id_nickName : userData.id_nickName
+                var userData = { 
+                    id_nickName : data.id_nickName
                 }
-                var id_region = userData.id_region;
+                var id_region = data.id_region;
 
-                res.render('freeboard/boardWrite', {row: data, id_region: id_region});
+                res.render('freeboard/boardWrite', {row: userData, page: 1, id_region: id_region});
             });
     }
 
     else {      // update
-        db.collection('freeData').doc(req.query.document_name).get()
+        db.collection('freeData').doc(getData.document_name).get()
             .then((doc) => {
                 var freeData = doc.data();
             
@@ -159,10 +170,8 @@ router.get('/boardWrite', function(req,res,next){
                     .then((doc2) => {
                         var id_region = doc2.data().id_region;
                      
-                        res.render('freeboard/boardWrite', {row: freeData, id_region: id_region});
-                });
-                    
-                
+                        res.render('freeboard/boardWrite', {row: freeData, page: getData.page, id_region: id_region});
+                });   
             })
             .catch((err) => {
                 console.log('Error getting documents', err);
@@ -175,20 +184,21 @@ router.get('/boardWrite', function(req,res,next){
 router.post('/boardSave', function(req,res,next){
     var postData = req.body;
     var uid = firebase.auth().currentUser.uid;
-
+    var page = postData.page;
+    delete postData.page;
 
     if (!postData.document_name) {  // new
         postData.day = moment().format('YYYY/MM/DD HH:mm:ss');
         postData.visit_num = 0;
         postData.good_num = 0;
 
-        // freeData 컬렉션에 데이터 저장
+        // freeData
         var doc = db.collection("freeData").doc();    // 문서 명을 자동으로 지정
         postData.document_name = doc.id;
         postData.id_uid = uid;
         doc.set(postData);
 
-        // user 컬렉션에 데이터 저장
+        // user - write
         var user_doc = db.collection('user').doc(uid).collection('write').doc(postData.document_name);
         var userData = { 
             data: "freedata",
@@ -201,16 +211,17 @@ router.post('/boardSave', function(req,res,next){
         free_doc.update(postData);
     }
 
-    res.redirect('boardRead?document_name=' + postData.document_name);
+    res.redirect('boardRead?document_name=' + postData.document_name + '&page=' + page);
 });
 
 
 // 글 좋아요
 router.post('/boardLike', function(req,res,next){   
     var postData = req.body;
+    var uid = firebase.auth().currentUser.uid;
+    
     var board_doc = db.collection("freeData").doc(postData.document_name);   
     var board_like_doc = board_doc.collection("like").doc(postData.id_email + "like");   
-    var uid = firebase.auth().currentUser.uid;
 
     board_doc.get()
         .then((doc1) => {
@@ -337,10 +348,11 @@ router.get('/boardDelete', function(req,res,next){
 
 // 댓글 수정
 router.get('/commentEdit', function(req,res,next){
-    db.collection("freeData").doc(req.query.data_doc).collection("reply").doc(req.query.reply_doc).get()
+    var getData = req.query;
+    db.collection("freeData").doc(getData.data_doc).collection("reply").doc(req.query.reply_doc).get()
         .then((doc) => {
             var childData = doc.data();
-            res.render('freeboard/commentEdit', {reply: childData});
+            res.render('freeboard/commentEdit', {reply: childData, page: getData.page});
         })
         .catch((err) => {
             console.log('Error getting documents', err);
@@ -357,8 +369,9 @@ router.post('/commentSave', function(req,res,next){
 
     var uid = firebase.auth().currentUser.uid;    
     var board_uid = postData.id_uid;    // 글쓴이의 uid
+    var page = postData.page;
     delete postData.id_uid;
-
+    delete postData.page;
 
     if (!postData.reply_doc) {     // new
 
@@ -402,7 +415,7 @@ router.post('/commentSave', function(req,res,next){
         free_reply_doc.update(postData);   
     } 
 
-    res.redirect('boardRead?document_name=' + postData.data_doc);
+    res.redirect('boardRead?document_name=' + postData.data_doc + '&page=' + page);
 });
 
 
@@ -418,7 +431,7 @@ router.get('/commentDelete', function(req,res,next){
     db.collection("user").doc(uid).collection('reply').doc(getData.reply_doc).delete();
 
 
-    res.redirect('boardRead?document_name=' + getData.data_doc);
+    res.redirect('boardRead?document_name=' + getData.data_doc + '&page=' + getData.page);
 });
 
 
