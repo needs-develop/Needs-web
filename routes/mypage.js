@@ -89,19 +89,38 @@ router.get('/editInfo', function(req, res, next) {
 });
 
 
-/* POST editInfo page. */
+/* POST change NickName page. */
 router.post('/editInfo', function(req, res, next) {
-	//개인정보 수정
-	console.log("개인정보 수정 완료 버튼");
+	res.redirect('/');
+});
+
+
+/* POST change NickName page. */
+router.post('/editInfo/nickName', function(req, res, next) {
+	// 닉네임 수정
 	var param_nick = req.body.nickName;
-    var new_region = req.body.new_region;
 	var uid = fb_auth.currentUser.uid;
 	db.collection("user").doc(uid).update({
 		id_nickName: param_nick,
-		id_region: new_region
 	});
-	res.redirect("/mypage");
+	res.send(`<script type="text/javascript">
+			alert("닉네임 변경이 완료되었습니다!");
+		</script>`);
 });
+
+/* POST editInfo page. */
+router.post('/editInfo/region', function(req, res, next) {
+	// 지역정보 수정
+	var param_region = req.body.new_region;
+	var uid = fb_auth.currentUser.uid;
+	db.collection("user").doc(uid).update({
+		id_region: param_region,
+	});
+	res.send(`<script type="text/javascript">
+			alert("지역 정보 변경이 완료되었습니다!");
+		</script>`);
+});
+
 
 
 /* GET myPost page. freeboard */
