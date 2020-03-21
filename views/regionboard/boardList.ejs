@@ -205,7 +205,7 @@
     <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
       <div class="container">
         <a class="navbar-brand js-scroll-trigger" href="/">Needs</a>
-        <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/regionboard/boardList?board_region=<%=id_region%>"><img class="img-fluid" src="img/portfolio/id_region8.png" alt="">&nbsp;<%=id_region%></a>
+        <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/regionboard/boardList?board_region=<%=id_region%>"><img class="img-fluid" src="/img/portfolio/id_region8.png" alt="">&nbsp;<%=id_region%></a>
         <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-fixed Black rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           Menu
           <i class="fa fa-bars"></i>
@@ -219,7 +219,7 @@
               <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/freeboard/boardList">자유게시판</a>
             </li>
             <li class="nav-item mx-0 mx-lg-1">
-              <a class="nav-link py-3 px-0 px-lg-3 rounded" href="#">Logout</a>
+              <a class="nav-link py-3 px-0 px-lg-3 rounded" href="/logout">Logout</a>
             </li>
             <li class="nav-item mx-0 mx-lg-1">
               <a class="nav-link py-3 px-0 px-lg-3 rounded" href="/mypage">My Page</a>
@@ -570,7 +570,8 @@
 
             <!-- 글쓰기 버튼 -->
             <form name="form1" action="boardWrite" method="get">
-                <a href="boardWrite?board_region=<%=board_region%>" class="btn btn-default pull-right" style=" width: auto; height: auto; background:#18bc9c; color:white">글쓰기</a>
+                <button class="btn btn-primary btn-xl pull-right" style="background: #18bc9c; width: 120px; height: 50px" onclick="location.href='boardWrite?board_region=<%=board_region%>'">글쓰기&nbsp;<i class="fa fa-pencil"></i></button>
+                <input type="hidden" name="board_region" value="<%=board_region%>">
             </form>
         </div>
       </section> 
