@@ -40,7 +40,7 @@ router.get('/boardList', function(req, res, next) {
     if (!page) {    // 그냥 boardList로 이동할 경우 1페이지를 보여줌
         page = 1;
     }
-  
+    
     user_doc.get()
         .then((doc) => {
             var id_region = doc.data().id_region;
@@ -90,19 +90,20 @@ router.get('/boardList', function(req, res, next) {
 
 // 글 읽기
 router.get('/boardRead', function(req, res, next) {
+    var getData = req.query;
     var uid = firebase.auth().currentUser.uid;
-    var board_region = req.query.board_region;
+    var board_region = getData.board_region;
     
-    var region_doc = db.collection("data").doc('allData').collection(board_region).doc(req.query.document_name);   
+    var region_doc = db.collection("data").doc('allData').collection(board_region).doc(getData.document_name);   
 
-    region_doc.get()
-        .then((doc) => {    
-            if(doc.exists) {   // 해당 글이 있는 경우
+    if(!getData.action) {   // 게시판으로부터 글을 읽는 경우
+        region_doc.get()
+            .then((doc) => {    
                 var region_data = doc.data();    
-                var page = req.query.page;
+                var page = getData.page;
             
                 // boardList에서 글을 처음 읽을 때만 조회수 증가 (수정, 좋아요, 댓글 시에는 증가하지 않음)
-                if(req.query.visitNew == 1) {
+                if(getData.visitNew == '1') {
                     // 실제 document의 visit_num를 1 증가
                     var visit = region_data.visit_num + 1;    
                     region_doc.update({visit_num : visit});   
@@ -110,32 +111,50 @@ router.get('/boardRead', function(req, res, next) {
                     // board로 넘겨줄 visit_num를 1 증가
                     region_data.visit_num += 1; 
                 }
-    
             
                 var userData;
                 db.collection('user').doc(uid).get()
                     .then((doc2) => {
-                        var data = doc2.data();    
-                        userData = {  // 로그인한 사용자의 별명 가져옴
-                            id_nickName : data.id_nickName,
-                            id_email : data.id_email
-                        }
-                        var id_region = data.id_region;
+                    var data = doc2.data();    
+                    userData = { 
+                        id_nickName : data.id_nickName,
+                        id_email : data.id_email
+                    }
+                    var id_region = data.id_region;
                     
                     
-                        var reply = [];
-                        region_doc.collection("reply").orderBy("timeReply").get()
-                            .then((snapshot) => {
-                                
-                                snapshot.forEach((reply_doc) => {
-                                    var reply_data = reply_doc.data();
-                                    reply_data.data_doc = region_data.document_name;
-                                    reply.push(reply_data);
-                                });
-                            
-                                res.render('regionboard/boardRead', {board: region_data, page: page, reply: reply, user: userData, id_region: id_region, board_region: board_region});
-                            });
+                    
+                    var reply = [];
+                    region_doc.collection("reply").orderBy("timeReply").get()
+                        .then((snapshot) => {
+                        snapshot.forEach((reply_doc) => {
+                            var reply_data = reply_doc.data();
+                            reply_data.data_doc = region_data.document_name;
+                            reply.push(reply_data);
+                        });
+                        
+                        
+                        // 좋아요한 글인지 확인
+                        region_doc.collection('like').doc(userData.id_email+'like').get()
+                            .then((doc3) => {
+                                var like;
+                                if(doc3.exists) {
+                                    like = 1;
+                                } 
+
+                                res.render('regionboard/boardRead', {board: region_data, page: page, reply: reply, user: userData, like: like, id_region: id_region, board_region: board_region});
+                            }); 
                     });
+                });
+            })
+            .catch((err) => {
+                console.log('Error getting documents', err);
+            });
+    }
+    else {  // 알림 페이지로부터 읽는 경우
+        region_doc.get().then((doc) => {    
+            if(doc.exists) {  // 해당 글이 있는 경우
+                res.redirect('boardRead?document_name='+getData.document_name+'&visitNew=1&board_region=' + board_region);
             }
             else {  // 해당 글이 없는 경우
                 res.send("<script>alert('삭제된 글입니다.');history.back();</script>")
@@ -143,7 +162,8 @@ router.get('/boardRead', function(req, res, next) {
         })
         .catch((err) => {
             console.log('Error getting documents', err);
-        });
+        });   
+    }
 });
 
 
@@ -152,18 +172,18 @@ router.get('/boardWrite', function(req,res,next){
     var getData = req.query;
     var board_region = getData.board_region;
     var uid = firebase.auth().currentUser.uid;
-    
+
     if (!getData.document_name) {   // new
         db.collection('user').doc(uid).get()
             .then((doc) => {
                 var data = doc.data();    
             
-                var userData = {    // 로그인한 사용자의 별명과 이메일 가져옴
+                var userData = {
                     id_nickName : data.id_nickName
                 }
-                var id_region = userData.id_region;
+                var id_region = data.id_region;
             
-                res.render('regionboard/boardWrite', {row: userData, id_region: id_region, board_region: board_region});
+                res.render('regionboard/boardWrite', {row: userData, page: 1, id_region: id_region, board_region: board_region});
             });
     }
     
@@ -176,7 +196,7 @@ router.get('/boardWrite', function(req,res,next){
                     .then((doc2) => {
                         var id_region = doc2.data().id_region;
                      
-                        res.render('regionboard/boardWrite', {row: regionData, id_region: id_region, board_region: board_region});
+                        res.render('regionboard/boardWrite', {row: regionData, page: getData.page, id_region: id_region, board_region: board_region});
                     });
             })
             .catch((err) => {
@@ -191,10 +211,11 @@ router.post('/boardSave', function(req,res,next){
     var postData = req.body;
     var uid = firebase.auth().currentUser.uid;
     var board_region = postData.board_region;
+    var page = postData.page;
     delete postData.board_region;
+    delete postData.page;
     
-    var user_doc = db.collection('user').doc(uid);
-    
+    var user_doc = db.collection('user').doc(uid); 
     
     if (!postData.document_name) {  // new
         user_doc.get().then((doc) => {
@@ -241,7 +262,7 @@ router.post('/boardSave', function(req,res,next){
                 user_pointHistory_doc.set(pointData);           
                 
                 
-                res.redirect('boardRead?document_name=' + postData.document_name + '&board_region=' + board_region);
+                res.redirect('boardRead?document_name=' + postData.document_name + '&page=' + postData.page + '&board_region=' + board_region);
             }
         });
     } 
@@ -249,7 +270,7 @@ router.post('/boardSave', function(req,res,next){
         var data_doc = db.collection("data").doc('allData').collection(board_region).doc(postData.document_name);
         data_doc.update(postData);
         
-        res.redirect('boardRead?document_name=' + postData.document_name + '&board_region=' + board_region);
+        res.redirect('boardRead?document_name=' + postData.document_name + '&page=' + postData.page + '&board_region=' + board_region);
     }
 });
 
@@ -462,11 +483,12 @@ router.get('/boardDelete', function(req,res,next){
 
 // 댓글 수정
 router.get('/commentEdit', function(req,res,next){
-    var board_region = req.query.board_region;
-    db.collection("data").doc('allData').collection(req.query.board_region).doc(req.query.data_doc).collection("reply").doc(req.query.reply_doc).get()
+    var getData = req.query;
+    var board_region = getData.board_region;
+    db.collection("data").doc('allData').collection(getData.board_region).doc(getData.data_doc).collection("reply").doc(getData.reply_doc).get()
         .then((doc) => {
             var childData = doc.data();
-            res.render('regionboard/commentEdit', {reply: childData, board_region: board_region});
+            res.render('regionboard/commentEdit', {reply: childData, page: getData.page, board_region: board_region});
         })
         .catch((err) => {
             console.log('Error getting documents', err);
@@ -485,8 +507,10 @@ router.post('/commentSave', function(req,res,next) {
     
     var uid = firebase.auth().currentUser.uid;    
     var board_uid = postData.id_uid;    // 글쓴이의 uid
+    var page = postData.page;
     delete postData.id_uid;
     delete postData.board_region;
+    delete postData.page;
     
     if (!postData.reply_doc) {     // new
         
@@ -532,7 +556,7 @@ router.post('/commentSave', function(req,res,next) {
         region_reply_doc.update(postData);   
     } 
     
-    res.redirect('boardRead?document_name=' + postData.data_doc + '&board_region=' + board_region);
+    res.redirect('boardRead?document_name=' + postData.data_doc + '&page=' + page + '&board_region=' + board_region);
 });
 
 
@@ -549,7 +573,7 @@ router.get('/commentDelete', function(req,res,next){
     db.collection("user").doc(uid).collection('reply').doc(getData.reply_doc).delete();
     
     
-    res.redirect('boardRead?document_name=' + getData.data_doc + '&board_region=' + board_region);
+    res.redirect('boardRead?document_name=' + getData.data_doc + '&page=' + getData.page + '&board_region=' + board_region);
 });
 
 
@@ -642,7 +666,7 @@ router.get('/search', function(req, res, next) {
                                     console.log(doc.data());
                                     search_result.push(doc.data());
                                 });
-                                console.log("여기");
+                                
                                 res.render('regionboard/boardList', {board: search_result, page: page, id_email: id_email, id_region: id_region, board_region: board_region, favorite_region: favorite});
                            });
                     }
