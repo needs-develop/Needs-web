@@ -23,6 +23,11 @@
 	<link href='https://fonts.googleapis.com/css?family=PT+Sans:700' rel='stylesheet' type='text/css'>
 	<link href="../button_styles.css" rel='stylesheet'>
 	<link href="../css/bootstrap.css" rel='stylesheet'>
+	<style>
+		.table-bordered tbody tr th{
+			width:20%;
+		}
+	</style>
 </head>
     
 <body id="page-top">
@@ -163,12 +168,6 @@
     <!-- 댓글 읽기-->
 	<div class="container" style="padding-top:100px">
     <caption><h3>댓글(<%=reply.length%>)</h3></caption><br><br>
-    <script>
-        function resize(obj) {
-          obj.style.height = "1px";
-          obj.style.height = (12 + obj.scrollHeight) + "px";
-        }
-    </script>
         
         <form name="form2" action="commentSave" method="post">
               <textarea name="contentReply" placeholder="댓글을 입력하세요." class="autosize" onkeydown="resize(this)" onkeyup="resize(this)" class="form-control" style="width: 100%"></textarea>
@@ -205,7 +204,9 @@
 					</tr>
 					<tr>
 							<th>내용</th>
-							<td><%=reply[i].contentReply%></td>      
+							<td style="word-break:break-all;" wrap="hard">
+								<%=reply[i].contentReply%>
+							</td>      
 					</tr>
 					<tr>
 							<th>작성시간</th>

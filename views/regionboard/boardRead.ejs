@@ -23,6 +23,11 @@
 	<link href='https://fonts.googleapis.com/css?family=PT+Sans:700' rel='stylesheet' type='text/css'>
 	<link href="../button_styles.css" rel='stylesheet'>
 	<link href="../css/bootstrap.css" rel='stylesheet'>
+    <style>
+		.table-bordered tbody tr th{
+			width:20%;
+		}
+	</style>
 </head>
     
 <body id="page-top">
@@ -165,7 +170,9 @@
                     </tr>
                     <tr>
                         <td>내용</td>
-                        <td><%=reply[i].contentReply%></td>      
+                        <td style="word-break:break-all;" wrap="hard">
+                            <%=reply[i].contentReply%>
+                        </td>      
                     </tr>
                     <tr>
                         <td>작성시간</td>
