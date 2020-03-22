@@ -56,12 +56,16 @@ router.get('/google_login', function(req, res){
     var uid = result.user['uid'];
     var email = result.user['email'];
     var name = result.user['displayName'];
+    var photoURL = result.user['photoURL'];
+    console.log(photoURL);
     let data = {
       id_email: email,
       id_name: name,
-      id_nickName: "None",
+      id_nickName: uid,
       id_point: 10,
-      id_uid: uid
+      id_uid: uid,
+      id_region: "강남구 청담동",
+      photoUrl: photoURL
     }
     var nowDate = new Date();
     var time = nowDate.toFormat('YYYY/MM/DD HH24:MM');
@@ -100,12 +104,16 @@ router.get('/facebook_login', function(req, res){
     var uid = result.user['uid'];
     var email = result.user['email'];
     var name = result.user['displayName'];
+    var photoURL = result.user['photoURL'];
+    console.log(photoURL);
     let data = {
       id_email: email,
       id_name: name,
-      id_nickName: "None",
+      id_nickName: uid,
       id_point: 10,
-      id_uid: uid
+      id_uid: uid,
+      id_region: "강남구 청담동",
+      photoUrl: photoURL
     }
     var nowDate = new Date();
     var time = nowDate.toFormat('YYYY/MM/DD HH24:MM');
