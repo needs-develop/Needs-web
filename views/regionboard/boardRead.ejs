@@ -68,7 +68,7 @@
             
             <!-- 자신이 쓴 글일 경우에만 수정 / 삭제 가능 -->
             <%
-            if(board.id_nickName == user.id_nickName) {
+            if(board.id_uid == user.id_uid) {
             %>  
                 <pre class="pull-right">
 		  		<a href="boardWrite?document_name=<%=board.document_name%>&board_region=<%=board_region%>" style="color: #212529"> 수정 | </a><a href="boardDelete?document_name=<%=board.document_name%>&title=<%=board.title%>&content=<%=board.content%>&board_region=<%=board_region%>" style="color: #212529">삭제 </a>
@@ -155,7 +155,7 @@
             %>
                 <!-- 자신이 쓴 댓글일 경우에만 수정 / 삭제 가능 -->
                 <%
-                if(reply[i].writerReply == user.id_nickName) {
+                if(reply[i].id_uid == user.id_uid) {
                 %>
                     <pre class="pull-right"><a href="commentEdit?data_doc=<%=board.document_name%>&reply_doc=<%=reply[i].reply_doc%>&board_region=<%=board_region%>" style="color: #212529"> 수정 | </a><a href="commentDelete?data_doc=<%=board.document_name%>&reply_doc=<%=reply[i].reply_doc%>&board_region=<%=board_region%>" style="color: #212529">삭제 </a></pre>
                 <%

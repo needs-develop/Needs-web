@@ -118,7 +118,8 @@ router.get('/boardRead', function(req, res, next) {
                     var data = doc2.data();    
                     userData = { 
                         id_nickName : data.id_nickName,
-                        id_email : data.id_email
+                        id_email : data.id_email,
+                        id_uid : data.id_uid
                     }
                     var id_region = data.id_region;
                     
