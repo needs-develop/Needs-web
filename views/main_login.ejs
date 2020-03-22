@@ -7,26 +7,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Needs</title>
-
+    <title>Main</title>
+  
     <!-- Bootstrap core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
+  
     <!-- Custom fonts for this template -->
     <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
-
+  
     <!-- Plugin CSS -->
     <link href="vendor/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css">
-
+  
     <!-- Custom styles for this template -->
     <link href="css/freelancer.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type='text/css'>
-  	<link href='https://fonts.googleapis.com/css?family=PT+Sans:700' rel='stylesheet' type='text/css'>
-  	<link href="button_styles.css" rel='stylesheet'>
-    <link href="css/bootstrap.css" rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=PT+Sans:700' rel='stylesheet' type='text/css'>
+    <link href="button_styles.css" rel='stylesheet'>
 
+    <style>
+
+      .main .card .board a p{
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      
+    </style>
   </head>
 
   <body id="page-top">
@@ -70,33 +78,34 @@
       <div class="container" style="padding-top:100px">
         <h2 class="text-center text-uppercase"><img class="img-fluid" src="img/portfolio/handshake.png" alt=""> Board <img class="img-fluid" src="img/portfolio/handshake.png" alt=""></h2>
         <br><br>
-        <!-- 검색인데 DB 검색 어케 할지 아직 구현 미정. -->
         <div class="text-center">
         <br>
             
           <div class="main">
 
-            <div class="card" style="float : left; margin : 10px">
-              <div class="board" style="width:330px; text-align:justify; background-color:#cc99ff	">
-                <h5 style="margin:20px; text-align:center">
-                  <a href="/freeboard/boardList">자유 게시판 HOT</a>
+            <div class="card" style="float : left; margin : 10px; text-overflow: ellipsis;">
+              <div class="board" style="width:500px; text-align:justify; background-color:#ffffff;">
+                
+                <h5 bgcolor="blue" style="margin:20px; text-align:center;">
+                  <a href="/freeboard/boardList" style="color:black;">자유 게시글 - 인기순</a>
                 </h5>
+
                 <hr>
                 <% 
                   for(var i=0; i<4; i++) {
-                    if(freeDataPost[i]){
+                    if(fbp[i]){
                 %>
-                <a class="list" href="freeboard/boardRead?document_name=<%=freeDataPost[i].document_name%>&visitNew=1&page=1">
-                  <time style="float:right; padding-right:1rem"><%=freeDataPost[i].good_num%></time>
-                  <p style="padding-left: 1rem"><%=freeDataPost[i].title%></p>
+                <a class="list" href="freeboard/boardRead?document_name=<%=fbp[i].document_name%>&visitNew=1&page=1">
+                  <time style="float:right; padding-right:1rem; color:black;"><%=fbp[i].good_num%></time>
+                  <p style="padding-left: 1rem; color:black;"><%=fbp[i].title%></p>
                   <% if(i<3){ %>
                     <hr>
                   <% } %>
                 </a>
                 <% } else { %>
                   <a class="list" >
-                    <time style="float:right; padding-right:1rem"><br></time>
-                    <p style="padding-left: 1rem"><br></p>
+                    <time style="float:right; padding-right:1rem; color:black;"><br></time>
+                    <p style="padding-left: 1rem; color:black;"><br></p>
                     <% if(i<3){ %>
                       <hr>
                     <% } %>
@@ -107,27 +116,61 @@
               </div>
             </div>
 
-            <div class="card" style="float : left; margin : 10px">
-              <div class="board" style="width:330px; text-align:justify; background-color:#b399ff	">
-                <h5 style="margin:20px; text-align:center">
-                  <a href="/regionboard">지역 게시판 HOT</a>
+            <div class="card" style="float : left; margin : 10px; text-overflow: ellipsis;">
+              <div class="board" style="width:500px; text-align:justify; background-color:#ffffff;">
+                
+                <h5 bgcolor="blue" style="margin:20px; text-align:center;">
+                  <a href="/freeboard/boardList" style="color:black;">자유 게시글 - 실시간</a>
+                </h5>
+
+                <hr>
+                <% 
+                  for(var i=0; i<4; i++) {
+                    if(ftp[i]){
+                %>
+                <a class="list" href="freeboard/boardRead?document_name=<%=ftp[i].document_name%>&visitNew=1&page=1">
+                  <time style="float:right; padding-right:1rem; color:black;"><%=ftp[i].day%></time>
+                  <p style="padding-left: 1rem; color:black;"><%=ftp[i].title%></p>
+                  <% if(i<3){ %>
+                    <hr>
+                  <% } %>
+                </a>
+                <% } else { %>
+                  <a class="list" >
+                    <time style="float:right; padding-right:1rem; color:black;"><br></time>
+                    <p style="padding-left: 1rem; color:black;"><br></p>
+                    <% if(i<3){ %>
+                      <hr>
+                    <% } %>
+                  </a>
+                <% } %>
+                <% } %>
+
+              </div>
+            </div>
+
+
+            <div class="card" style="float : left; margin : 10px; text-overflow: ellipsis;">
+              <div class="board" style="width:500px; text-align:justify; background-color:#ffffff;">
+                <h5 bgcolor="blue" style="margin:20px; text-align:center;">
+                  <a href="/regionboard/boardList?board_region=<%=region%>" style="color:black;">내 지역 게시글 - 인기순</a>
                 </h5>
                 <hr>
                 <% 
                   for(var i=0; i<4; i++) {
-                    if(regionDataPost[i]){
+                    if(rbp[i]){
                 %>
-                <a class="list" href="regionboard/boardRead?document_name=<%=regionDataPost[i].document_name%>&visitNew=1&page=1&board_region=<%=region%>">
-                  <time style="float:right; padding-right:1rem"><%=regionDataPost[i].good_num%></time>
-                  <p style="padding-left: 1rem"><%=regionDataPost[i].title%></p>
+                <a class="list" href="regionboard/boardRead?document_name=<%=rbp[i].document_name%>&visitNew=1&page=1&board_region=<%=region%>">
+                  <time style="float:right; padding-right:1rem; color:black;"><%=rbp[i].good_num%></time>
+                  <p style="padding-left: 1rem; color:black;"><%=rbp[i].title%></p>
                   <% if(i<3){ %>
                     <hr>
                   <% } %>
                 </a>
                 <% } else { %>
                   <a class="list">
-                    <time style="float:right; padding-right:1rem"><br></time>
-                    <p style="padding-left: 1rem"><br></p>
+                    <time style="float:right; padding-right:1rem; color:black;"><br></time>
+                    <p style="padding-left: 1rem; color:black;"><br></p>
                     <% if(i<3){ %>
                       <hr>
                     <% } %>
@@ -138,6 +181,36 @@
               </div>
             </div>
 
+            <div class="card" style="float : left; margin : 10px;">
+              <div class="board" style="width:500px; text-align:justify; background-color:#ffffff;">
+                <h5 bgcolor="blue" style="margin:20px; text-align:center;">
+                  <a href="/regionboard/boardList?board_region=<%=region%>" style="color:black;">내 지역 게시글 - 실시간</a>
+                </h5>
+                <hr>
+                <% 
+                  for(var i=0; i<4; i++) {
+                    if(rtp[i]){
+                %>
+                <a class="list" href="regionboard/boardRead?document_name=<%=rtp[i].document_name%>&visitNew=1&page=1&board_region=<%=region%>">
+                  <time style="float:right; padding-right:1rem; color:black;"><%=rtp[i].day%></time>
+                  <p style="padding-left: 1rem; color:black;"><%=rtp[i].title%></p>
+                  <% if(i<3){ %>
+                    <hr>
+                  <% } %>
+                </a>
+                <% } else { %>
+                  <a class="list">
+                    <time style="float:right; padding-right:1rem; color:black;"><br></time>
+                    <p style="padding-left: 1rem; color:black;"><br></p>
+                    <% if(i<3){ %>
+                      <hr>
+                    <% } %>
+                  </a>
+                <% } %>
+                <% } %>
+
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -224,7 +224,7 @@
         fb_auth.signInWithPopup(provider)
           .then(function(result) {
             var token = result.credential.accessToken;
-            location.replace("/facebook_login?token="+token);
+            location.replace("/login/facebook_login?token="+token);
             return true;
           })
           .catch(function(error){
@@ -243,7 +243,7 @@
     
         fb_auth.signInWithPopup(provider).then(function(result) {
           var token = result.credential.accessToken;
-          location.replace("/google_login?token="+token);
+          location.replace("/login/google_login?token="+token);
           return true;
         }).catch(function(error) {
           var errorCode = error.code;

@@ -27,31 +27,42 @@ router.get('/', function(req, res, next) {
   var user = firebase.auth().currentUser;
 
   if(user){
-    console.log("---------유저등장---------");   
+    console.log("---------로그인---------");   
     var uid = user.uid;
     var freeData_ref = db.collection("freeData").orderBy("good_num", "desc");
+    var freeData_timeref = db.collection("freeData").orderBy("day", "desc");
     var data_ref = db.collection("data").doc("allData");
     var user_ref = db.collection("user").doc(uid);
 
     var freebestpost = [];
+    var freetimepost = [];
     var regionbestpost = [];
-    freeData_ref.get()
-      .then((freepostsnap) => {
-        if(freepostsnap){
-          var i = 0;
-          freepostsnap.forEach((freesnap) => {
-            i++;
-            if(i<=4){
-              freebestpost.push(freesnap.data());
-            }
-          })
-          
-          //이 부분 callback 함수 어떻게 처리해야할 지 모르겠어서 then 안에 넣었어요.ㅜㅜ
-          user_ref.get()   // user 데이터로부터 지역 가져옴
-            .then((doc) => {
+    var regiontimepost = [];
+    //자유게시판 좋아요 순으로 정렬
+    freeData_ref.get().then((freepostsnap) => {
+      if(freepostsnap){
+        var i = 0;  //4개만 가져옴
+        freepostsnap.forEach((freesnap) => {
+          i++;
+          if(i<=4){
+            freebestpost.push(freesnap.data());
+          }
+        })
+        //자유게시판 최신순으로 정렬
+        freeData_timeref.get().then((freepostsnap2) => {
+          if(freepostsnap2){
+            var k = 0;
+            freepostsnap2.forEach((freesnap2) => {
+              k++;
+              if(k<=4){
+                freetimepost.push(freesnap2.data());
+              }
+            });
+            // user 데이터로부터 지역 가져옴
+            user_ref.get().then((doc) => {
               var data = doc.data();  //사용자 정보
               var region = data.id_region;
-              
+
               // 사용자 지역의 인기글을 좋아요 순으로 읽어옴
               data_ref.collection(region).orderBy("good_num", "desc").get()
                 .then((regionpostsnap) => {
@@ -63,29 +74,43 @@ router.get('/', function(req, res, next) {
                         regionbestpost.push(regionsnap.data());
                       }
                     });
-                    res.render('main_login', {region: region, freeDataPost: freebestpost, regionDataPost: regionbestpost});
-                  }
-                })
-              
-              
-              // pointDay, pointLimit
-              var id_email = data.id_email;
-              var user_pointDay_ref = user_ref.collection('pointDay').doc(id_email+'pointDay');
-              user_pointDay_ref.get()
-                .then((doc2) => {
-                    // pointDay와 오늘 날짜가 다르면 pointDay를 오늘 날짜로 변경
-                    var pointDay = doc2.data().pointDay;
                     
-                    var nowDate = new Date();
-                    var today = nowDate.toFormat('DD');
-                  
-                    if(pointDay != today) {
-                        user_pointDay_ref.update( {pointDay: today, pointLimit: "5"} );
-                    }
-              });
+                    data_ref.collection(region).orderBy("day", "desc").get().then((regionpostsnap2) => {
+                      if(regionpostsnap2){
+                        var l = 0;
+                        regionpostsnap2.forEach((regionsnap2) => {
+                          l++;
+                          if(l<=4){
+                            regiontimepost.push(regionsnap2.data());
+                          }
+                        });
+                        //4가지 섹션대로.
+                        res.render('main_login', {region: region, fbp: freebestpost, ftp: freetimepost, rbp: regionbestpost, rtp: regiontimepost});
+                      }
+                    });
+
+                    // pointDay, pointLimit
+                    var id_email = data.id_email;
+                    var user_pointDay_ref = user_ref.collection('pointDay').doc(id_email+'pointDay');
+                    user_pointDay_ref.get()
+                      .then((doc2) => {
+                        // pointDay와 오늘 날짜가 다르면 pointDay를 오늘 날짜로 변경
+                        var pointDay = doc2.data().pointDay;
+                        
+                        var nowDate = new Date();
+                        var today = nowDate.toFormat('DD');
+                      
+                        if(pointDay != today) {
+                            user_pointDay_ref.update( {pointDay: today, pointLimit: "5"} );
+                        }
+                    });
+                  }
+                });
             });
-        }
-      })
+          }
+        });
+      }
+    });
   }
   else {
     console.log("---------유저없음---------");
