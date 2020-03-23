@@ -23,11 +23,6 @@
 	<link href='https://fonts.googleapis.com/css?family=PT+Sans:700' rel='stylesheet' type='text/css'>
 	<link href="../button_styles.css" rel='stylesheet'>
 	<link href="../css/bootstrap.css" rel='stylesheet'>
-    <style>
-		.table-bordered tbody tr th{
-			width:20%;
-		}
-	</style>
 </head>
     
 <body id="page-top">
@@ -36,7 +31,7 @@
     <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
 		<div class="container">
 		  <a class="navbar-brand js-scroll-trigger" href="/">Needs</a>
-          <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/regionboard/boardList?board_region=<%=id_region%>"><img class="img-fluid" src="img/portfolio/id_region8.png" alt="">&nbsp;<%=id_region%></a>
+          <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/regionboard/boardList?board_region=<%=id_region%>"><img class="img-fluid" src="/img/portfolio/id_region8.png" alt="">&nbsp;<%=id_region%></a>
 		  <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-fixed Black rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
 			Menu
 			<i class="fa fa-bars"></i>
@@ -50,7 +45,7 @@
 				<a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/freeboard/boardList">자유게시판</a>
 			  </li>
 			  <li class="nav-item mx-0 mx-lg-1">
-				<a class="nav-link py-3 px-0 px-lg-3 rounded" href="#">Logout</a>
+				<a class="nav-link py-3 px-0 px-lg-3 rounded" href="/logout">Logout</a>
 			  </li>
 			  <li class="nav-item mx-0 mx-lg-1">
 				<a class="nav-link py-3 px-0 px-lg-3 rounded" href="/mypage">My Page</a>
@@ -71,7 +66,7 @@
             if(board.id_uid == user.id_uid) {
             %>  
                 <pre class="pull-right">
-		  		<a href="boardWrite?document_name=<%=board.document_name%>&board_region=<%=board_region%>" style="color: #212529"> 수정 | </a><a href="boardDelete?document_name=<%=board.document_name%>&title=<%=board.title%>&content=<%=board.content%>&board_region=<%=board_region%>" style="color: #212529">삭제 </a>
+		  		<a href="boardWrite?document_name=<%=board.document_name%>&board_region=<%=board_region%>&page=<%=page%>" style="color: #212529"> 수정 | </a><a href="boardDelete?document_name=<%=board.document_name%>&title=<%=board.title%>&content=<%=board.content%>&board_region=<%=board_region%>" style="color: #212529">삭제 </a>
                 </pre>
             <%
             }
@@ -80,23 +75,23 @@
             <table class="table table-bordered">
                 <tbody>
                     <tr>
-                        <td>제목</td> 
+                        <th>제목</th> 
                         <td><%=board.title%></td> 
                     </tr>
                     <tr>
-                        <td>작성자</td> 
+                        <th>작성자</th> 
                         <td><%=board.id_nickName%></td> 
                     </tr>
                     <tr>
-                        <td>작성시간</td> 
+                        <th>작성시간</th> 
                         <td><%=board.day%></td> 
                     </tr>
                     <tr>
-                        <td>조회수</td>
+                        <th>조회수</th>
                         <td><%=board.visit_num%></td>
                     </tr>
                     <tr>
-                        <td>좋아요</td>
+                        <th>좋아요</th>
                         <td><%=board.good_num%></td>
                     </tr>
                     <tr>
@@ -110,7 +105,14 @@
             <!--  좋아요  -->
             <div style="float:left">
                 <form name="form1" action="boardLike" method="post"> 
-                    <input type="button" value=" ❤ " onClick="form1.submit()"> 
+                    <button type="button" class="dropbtn" class="pull-left" onclick="form1.submit()" style="background:#ffffff; border:#ffffff">
+                        <% if(like == 1) { %>   
+                            <div id="heart" class="fa fa-heart" style="font-size:25px;color:red"></div>
+                        <% }
+                           else { %>
+                            <div id="heart" class="fa fa-heart" style="font-size:25px;color:dimgrey"></div>
+                        <% } %> 
+                    </button>
                     <input type="hidden" name="document_name" value="<%=board.document_name%>">    
                     <input type="hidden" name="page" value="<%=page%>">
                     <input type="hidden" name="id_nickName" value="<%=user.id_nickName%>">
@@ -118,16 +120,41 @@
                     <input type="hidden" name="board_region" value="<%=board_region%>">
                 </form>
             </div>
+            
+            <script>
+                if(like == 1) { // 좋아요한 게시물인 경우
+                    const BASE_COLOR = "red";
+                    const OTHER_COLOR = "dimgrey";
+                }
+                else {  // 좋아요하지 않은 게시물인 경우
+                    const BASE_COLOR = "dimgrey";
+                    const OTHER_COLOR = "red";
+                }
+                const heart = document.querySelector("#heart"); 
+
+                function handClick(){
+                    const currentColor = heart.style.color;
+                    if(currentColor === BASE_COLOR){
+                        heart.style.color = OTHER_COLOR;
+                    } else{
+                        heart.style.color = BASE_COLOR;
+                    }
+                }
+                function init(){    //초기화값
+                    heart.style.color = BASE_COLOR;
+                    heart.addEventListener("click",handClick);
+                }
+        
+                init(); //초기값 실행    
+            </script>
+            
 
             <!--  목록  -->	
-            <div style="float:right">
-                <form name="form3" action="boardList" method="get">
-                    <pre class="pull-right"><input type="submit" value="목록"></pre>               
-                    <input type="hidden" name="page" value="<%=page%>">
-                    <input type="hidden" name="board_region" value="<%=board_region%>">
-                </form>
-            </div>
-    
+            <form name="form3" action="boardList" method="get">
+                <button class="btn btn-primary btn-xl pull-right" style="background: #18bc9c; width: 110px; height: 50px">목록&nbsp;<i class="fa fa-bars"></i></button>
+                <input type="hidden" name="page" value="<%=page%>">
+                <input type="hidden" name="board_region" value="<%=board_region%>">
+            </form>     
         </div>	
     </section>
     <br><br><br><br><hr>   
@@ -135,13 +162,20 @@
     
     <!-- 댓글 읽기-->
     <div class="container" style="padding-top:100px">
-        <caption><h3>댓글(<%=reply.length%>)</h3></caption><br><br>
+    <caption><h3>댓글(<%=reply.length%>)</h3></caption><br><br>
+    <script>
+    function resize(obj) {
+      obj.style.height = "1px";
+      obj.style.height = (12 + obj.scrollHeight) + "px";
+    }
+    </script>
         
         <form name="form2" action="commentSave" method="post">
-            <textarea name="contentReply" rows=5 placeholder="댓글을 입력해주세요. " class="form-control" style="width: 100%"></textarea>
-            <input type="hidden" name="data_doc" value="<%=board.document_name%>" class="pull-right">
-            <input type="hidden" name="writerReply" value="<%=user.id_nickName%>" class="pull-right">
-            <input type="hidden" name="id_uid" value="<%=board.id_uid%>" class="pull-right">
+            <textarea name="contentReply" placeholder="댓글을 입력하세요." class="autosize" onkeydown="resize(this)" onkeyup="resize(this)" class="form-control" style="width: 100%"></textarea>
+            <input type="hidden" name="data_doc" value="<%=board.document_name%>">
+            <input type="hidden" name="writerReply" value="<%=user.id_nickName%>">
+            <input type="hidden" name="id_uid" value="<%=board.id_uid%>">
+            <input type="hidden" name="page" value="<%=page%>">
             <input type="hidden" name="board_region" value="<%=board_region%>">
             <input type="submit" value=등록 onClick="form2.submit()" class="pull-right">
         </form>
@@ -157,7 +191,7 @@
                 <%
                 if(reply[i].id_uid == user.id_uid) {
                 %>
-                    <pre class="pull-right"><a href="commentEdit?data_doc=<%=board.document_name%>&reply_doc=<%=reply[i].reply_doc%>&board_region=<%=board_region%>" style="color: #212529"> 수정 | </a><a href="commentDelete?data_doc=<%=board.document_name%>&reply_doc=<%=reply[i].reply_doc%>&board_region=<%=board_region%>" style="color: #212529">삭제 </a></pre>
+                    <pre class="pull-right"><a href="commentEdit?data_doc=<%=board.document_name%>&reply_doc=<%=reply[i].reply_doc%>&page=<%=page%>&board_region=<%=board_region%>" style="color: #212529"> 수정 | </a><a href="commentDelete?data_doc=<%=board.document_name%>&reply_doc=<%=reply[i].reply_doc%>&page=<%=page%>&board_region=<%=board_region%>" style="color: #212529">삭제 </a></pre>
                 <%
                 }
                 %>
@@ -165,17 +199,15 @@
                 <table class="table table-bordered">         
                     <tbody>
                     <tr>
-                        <td>이름</td>
+                        <th>이름</th>
                         <td><%=reply[i].writerReply%></td>      
                     </tr>
                     <tr>
-                        <td>내용</td>
-                        <td style="word-break:break-all;" wrap="hard">
-                            <%=reply[i].contentReply%>
-                        </td>      
+                        <th>내용</th>
+                        <td><%=reply[i].contentReply%></td>      
                     </tr>
                     <tr>
-                        <td>작성시간</td>
+                        <th>작성시간</th>
                         <td><%=reply[i].timeReply%></td>      
                     </tr>
                     </tbody>
@@ -185,7 +217,6 @@
             <%
             }
             %>
-    
         <%
         }
         %>
