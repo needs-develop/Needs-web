@@ -21,7 +21,7 @@
 
     <!-- Custom styles for this template -->
     <link href="/css/freelancer.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type='text/css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type='text/css'>
   	<link href='https://fonts.googleapis.com/css?family=PT+Sans:700' rel='stylesheet' type='text/css'>
     <link href="/button_styles.css" rel='stylesheet'>
   	<link href="/css/bootstrap.css" rel='stylesheet'>
@@ -195,6 +195,12 @@
       max-height: initial;
       margin-top: -20%;
     }
+        
+    /* 즐겨찾기 */
+   .checked { 
+        color: orange;
+    }     
+    
   </style>
     
 </head>
@@ -413,27 +419,49 @@
     <!-- Portfolio Grid Section -->
     
     <section class="portfolio" id="portfolio">
-        <div class="container" style="padding-top:100px">
-            <h3 class="text-center text-uppercase"><%=board_region%></h3>
+        <div class="container" style="padding-top:60px">
+            
             
             <form name="fav_form" action="/regionboard/favorites" method="post" align="center">
-                <%
-                // 해당 지역이 즐겨찾기된 지역이면 색칠된 별 버튼 출력
-                if(favorite_region.includes(board_region)) { 
-                %>
-                    <input type="button" value=" ★ " onclick="fav_form.submit()">
-                <%
-                }
-                // 해당 지역이 즐겨찾기 지역이 아니면 빈 별 버튼 출력
-                else {
-                %>
-                    <input type="button" value=" ☆ " onclick="fav_form.submit()"> 
-                <%    
-                }
-                %>
+                <button type="button" class="dropbtn" onclick="fav_form.submit()" style="background:#ffffff; border:#ffffff">
+                    <% if(favorite == 1) { %>   
+                        <div id="star" class="fa fa-star checked" style="font-size:25px;color:orange"></div>&emsp;
+                    <% }
+                       else { %>
+                        <div id="star" class="fa fa-star checked" style="font-size:25px;color:dimgrey"></div>&emsp;
+                    <% } %> 
+                </button>
+                <span style="font-size:21pt" class="text-center text-uppercase"><strong><%=board_region%>&emsp;&emsp;&emsp;</strong></span>
+                
                 <input type="hidden" name="id_email" value="<%=id_email%>">
                 <input type="hidden" name="region" value="<%=board_region%>">
             </form>
+            
+            <script>
+                 if(favorite == 1) { // 즐겨찾기한 지역일 경우
+                     const BASE_COLOR = "orange";
+                     const OTHER_COLOR = "dimgrey";
+                 }
+                 else { // 즐겨찾기 지역이 아닐 경우
+                     const BASE_COLOR = "dimgrey";
+                     const OTHER_COLOR = "orange";
+                 }
+                 const star = document.querySelector("#star");
+                     
+                 function handClick() {
+                    const currentColor = star.style.color;
+                    if (currentColor === BASE_COLOR) {
+                      star.style.color = OTHER_COLOR;
+                    } else {
+                      star.style.color = BASE_COLOR;
+                    }
+                 }
+                 function init() { //초기화값
+                    star.style.color = BASE_COLOR;
+                    star.addEventListener("click", handClick);
+                 }
+                 init(); //초기값 실행
+            </script>
             
             <br><br>
             <div class="text-center">
