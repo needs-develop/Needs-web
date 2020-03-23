@@ -44,13 +44,15 @@ router.get('/boardList', function(req, res, next) {
             
             db.collection('freeData').orderBy("day", "desc").get()  // 날짜의 내림차순으로 글 가져오기
                 .then((snapshot) => {
+                    
                     // 글이 있는 경우
                     if(snapshot.size != 0) {
                         var free_board = [];
                         snapshot.forEach((free_doc) => {
                             var free_data = free_doc.data();
-                            free_board.push(free_data);    
+                            free_board.push(free_data);  
                         });
+                    
                         res.render('freeboard/boardList', {board: free_board, page: page, id_region: id_region});
                     }
                     // 글이 없는 경우
