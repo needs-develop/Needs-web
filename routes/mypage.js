@@ -105,6 +105,7 @@ router.post('/editInfo/nickName', function(req, res, next) {
 	});
 	res.send(`<script type="text/javascript">
 			alert("닉네임 변경이 완료되었습니다!");
+			document.location.href="/mypage/editInfo"
 		</script>`);
 });
 
@@ -118,6 +119,7 @@ router.post('/editInfo/region', function(req, res, next) {
 	});
 	res.send(`<script type="text/javascript">
 			alert("지역 정보 변경이 완료되었습니다!");
+			document.location.href="/mypage/editInfo"
 		</script>`);
 });
 
