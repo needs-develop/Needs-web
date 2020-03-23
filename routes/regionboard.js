@@ -49,15 +49,21 @@ router.get('/boardList', function(req, res, next) {
                 .then((snapshot) => {
                 
                     user_doc.collection('favorites').orderBy("region").get()
-                        .then((fav_snap) => {
+                        .then((fav_snap) => {   // 즐겨찾기한 지역을 모두 가져옴
                         
-                            var favorite = [];
+                            var favorite_region = [];
+                            var favorite = 0;
                             // 즐겨찾기한 지역이 있는 경우
                             if(fav_snap.size != 0) {                           
                                 fav_snap.forEach((fav_doc) => {
                                     var fav_data = fav_doc.data();
-                                    favorite.push(fav_data.region); 
+                                    favorite_region.push(fav_data.region); 
                                 });
+                                
+                                // board_region이 즐겨찾기 지역인 경우
+                                if(favorite_region.includes(board_region)) {
+                                    favorite = 1;
+                                }    
                             }
 
                             
@@ -70,11 +76,11 @@ router.get('/boardList', function(req, res, next) {
                                     region_board.push(region_data);    
                                 });
                                 
-                                res.render('regionboard/boardList', {board: region_board, page: page, id_email: id_email, id_region: id_region, board_region: board_region, favorite_region: favorite});
+                                res.render('regionboard/boardList', {board: region_board, page: page, id_email: id_email, id_region: id_region, board_region: board_region, favorite_region: favorite_region, favorite: favorite});
                             }
                             // 글이 없는 경우
                             else {
-                                res.render('regionboard/boardList', {board: '', page: '', id_email: id_email, id_region: id_region, board_region: board_region, favorite_region: favorite});
+                                res.render('regionboard/boardList', {board: '', page: '', id_email: id_email, id_region: id_region, board_region: board_region, favorite_region: favorite_region, favorite: favorite});
                             }
                         
                         });
