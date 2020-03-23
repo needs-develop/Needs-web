@@ -91,10 +91,6 @@
                         <td><%=board.visit_num%></td>
                     </tr>
                     <tr>
-                        <th>좋아요</th>
-                        <td><%=board.good_num%></td>
-                    </tr>
-                    <tr>
                         <th>내용</th> 
                         <td class="form-control" style="min-height: 200px; width: 100%"><%=board.content%></td>
                     </tr>
@@ -112,7 +108,7 @@
                            else { %>
                             <div id="heart" class="fa fa-heart" style="font-size:25px;color:dimgrey"></div>
                         <% } %> 
-                    </button>
+                    </button><%=board.good_num%>
                     <input type="hidden" name="document_name" value="<%=board.document_name%>">    
                     <input type="hidden" name="page" value="<%=page%>">
                     <input type="hidden" name="id_nickName" value="<%=user.id_nickName%>">
