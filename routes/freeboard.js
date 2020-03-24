@@ -48,16 +48,32 @@ router.get('/boardList', function(req, res, next) {
                     // 글이 있는 경우
                     if(snapshot.size != 0) {
                         var free_board = [];
+                        var reply_num = [];
+                        
                         snapshot.forEach((free_doc) => {
                             var free_data = free_doc.data();
-                            free_board.push(free_data);  
-                        });
-                    
-                        res.render('freeboard/boardList', {board: free_board, page: page, id_region: id_region});
+                            free_board.push(free_data); 
+                            
+                            var reply;
+                            db.collection("freeData").doc(free_data.document_name).collection("reply").orderBy("timeReply").get()
+                            .then((reply_snap) => {
+                                reply = 0;
+                                // 글 하나에 달린 댓글 수를 셈
+                                reply_snap.forEach((reply_doc) => {
+                                    reply += 1;
+                                });  
+                                reply_num.push({reply_num: reply});
+                            });
+                        });               
+                        
+                        // reply_snap을 처리한 후 렌더링하기 위해 1초 지연
+                        setTimeout(function() {
+                            res.render('freeboard/boardList', {board: free_board, page: page, id_region: id_region, reply_num: reply_num});
+                        }, 1000);
                     }
                     // 글이 없는 경우
                     else {
-                        res.render('freeboard/boardList', {board: '', page: '', id_region: id_region});
+                        res.render('freeboard/boardList', {board: '', page: '', id_region: id_region, reply_num: ''});
                     }
                 })
                 .catch((err) => {
