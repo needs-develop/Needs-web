@@ -3,6 +3,9 @@ var router = express.Router();
 var firebase = require('firebase');
 require('date-utils');
 var session = require('express-session');
+var moment = require('moment');
+require('moment-timezone');
+moment.tz.setDefault("Asia/Seoul");
 
 /* firebase Web-App Configuration */
 var firebase_config = {
@@ -55,7 +58,9 @@ router.get('/', function(req, res, next) {
             freepostsnap2.forEach((freesnap2) => {
               k++;
               if(k<=4){
-                freetimepost.push(freesnap2.data());
+                var freesnap2_data = freesnap2.data();
+                freesnap2_data.day = moment(freesnap2_data.day).format("MM/DD HH:mm:ss");
+                freetimepost.push(freesnap2_data);
               }
             });
             // user 데이터로부터 지역 가져옴
@@ -81,7 +86,9 @@ router.get('/', function(req, res, next) {
                         regionpostsnap2.forEach((regionsnap2) => {
                           l++;
                           if(l<=4){
-                            regiontimepost.push(regionsnap2.data());
+                            var regionsnap2_data = regionsnap2.data();
+                            regionsnap2_data.day = moment(regionsnap2_data.day).format("MM/DD HH:mm:ss");
+                            regiontimepost.push(regionsnap2_data);
                           }
                         });
                         //4가지 섹션대로.
