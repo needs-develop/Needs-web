@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -27,7 +28,6 @@
     <link href="button_styles.css" rel='stylesheet'>
 
     <style>
-
       .main .card .board a p{
         white-space: nowrap;
         overflow: hidden;
@@ -75,19 +75,83 @@
     
     <!-- Portfolio Grid Section -->
     <section class="portfolio" id="portfolio">
-      <div class="container" style="padding-top:100px">
-        <h2 class="text-center text-uppercase"><img class="img-fluid" src="img/portfolio/handshake.png" alt=""> Board <img class="img-fluid" src="img/portfolio/handshake.png" alt=""></h2>
-        <br><br>
+      <div class="container" style="padding-top:60px">
+<!--        <h2 class="text-center text-uppercase"><img class="img-fluid" src="img/portfolio/handshake.png" alt=""> board <img class="img-fluid" src="img/portfolio/handshake.png" alt="">&emsp;&nbsp;</h2>-->
+<!--        <br><br>-->
         <div class="text-center">
         <br>
             
           <div class="main">
 
+            
+            <div class="card" style="float : left; margin : 10px; text-overflow: ellipsis;">
+              <div class="board" style="width:500px; text-align:justify; background-color:#ffffff;">
+                <h5 bgcolor="blue" style="margin:20px; text-align:center;">
+                  <a href="/regionboard/boardList?board_region=<%=region%>" style="color:#4169e1;">내 지역 인기 글</a>
+                </h5>
+                <hr>
+                <% 
+                  for(var i=0; i<4; i++) {
+                    if(rbp[i]){
+                %>
+                <a class="list" href="regionboard/boardRead?document_name=<%=rbp[i].document_name%>&visitNew=1&page=1&board_region=<%=region%>">
+                  <time style="float:right; padding-right:1rem; color:black;"><div id="heart2" class="fa fa-heart" style="color:dimgrey"></div>&nbsp;<%=rbp[i].good_num%></time>
+                  <p style="padding-left: 1rem; color:black;"><%=rbp[i].title%></p>
+                  <% if(i<3){ %>
+                    <hr>
+                  <% } %>
+                </a>
+                <% } else { %>
+                  <a class="list">
+                    <time style="float:right; padding-right:1rem; color:black;"><br></time>
+                    <p style="padding-left: 1rem; color:black;"><br></p>
+                    <% if(i<3){ %>
+                      <hr>
+                    <% } %>
+                  </a>
+                <% } %>
+                <% } %>
+
+              </div>
+            </div>
+
+            <div class="card" style="float : left; margin : 10px;">
+              <div class="board" style="width:500px; text-align:justify; background-color:#ffffff;">
+                <h5 bgcolor="blue" style="margin:20px; text-align:center;">
+                  <a href="/regionboard/boardList?board_region=<%=region%>" style="color:#4169e1;">내 지역 최신 글</a>
+                </h5>
+                <hr>
+                <% 
+                  for(var i=0; i<4; i++) {
+                    if(rtp[i]){
+                %>
+                <a class="list" href="regionboard/boardRead?document_name=<%=rtp[i].document_name%>&visitNew=1&page=1&board_region=<%=region%>">
+                  <time style="float:right; padding-right:1rem; color:black;"><%=rtp[i].day%></time>
+                  <p style="padding-left: 1rem; color:black;"><%=rtp[i].title%></p>
+                  <% if(i<3){ %>
+                    <hr>
+                  <% } %>
+                </a>
+                <% } else { %>
+                  <a class="list">
+                    <time style="float:right; padding-right:1rem; color:black;"><br></time>
+                    <p style="padding-left: 1rem; color:black;"><br></p>
+                    <% if(i<3){ %>
+                      <hr>
+                    <% } %>
+                  </a>
+                <% } %>
+                <% } %>
+
+              </div>
+            </div>
+              
+              
             <div class="card" style="float : left; margin : 10px; text-overflow: ellipsis;">
               <div class="board" style="width:500px; text-align:justify; background-color:#ffffff;">
                 
                 <h5 bgcolor="blue" style="margin:20px; text-align:center;">
-                  <a href="/freeboard/boardList" style="color:black;">자유 게시글 - 인기순</a>
+                  <a href="/freeboard/boardList" style="color:#4169e1;">자유 인기 글</a>
                 </h5>
 
                 <hr>
@@ -96,7 +160,7 @@
                     if(fbp[i]){
                 %>
                 <a class="list" href="freeboard/boardRead?document_name=<%=fbp[i].document_name%>&visitNew=1&page=1">
-                  <time style="float:right; padding-right:1rem; color:black;"><%=fbp[i].good_num%></time>
+                  <time style="float:right; padding-right:1rem; color:black;"><div id="heart" class="fa fa-heart" style="color:dimgrey"></div>&nbsp;<%=fbp[i].good_num%></time>
                   <p style="padding-left: 1rem; color:black;"><%=fbp[i].title%></p>
                   <% if(i<3){ %>
                     <hr>
@@ -120,7 +184,7 @@
               <div class="board" style="width:500px; text-align:justify; background-color:#ffffff;">
                 
                 <h5 bgcolor="blue" style="margin:20px; text-align:center;">
-                  <a href="/freeboard/boardList" style="color:black;">자유 게시글 - 실시간</a>
+                  <a href="/freeboard/boardList" style="color:#4169e1;">자유 최신 글</a>
                 </h5>
 
                 <hr>
@@ -150,76 +214,18 @@
             </div>
 
 
-            <div class="card" style="float : left; margin : 10px; text-overflow: ellipsis;">
-              <div class="board" style="width:500px; text-align:justify; background-color:#ffffff;">
-                <h5 bgcolor="blue" style="margin:20px; text-align:center;">
-                  <a href="/regionboard/boardList?board_region=<%=region%>" style="color:black;">내 지역 게시글 - 인기순</a>
-                </h5>
-                <hr>
-                <% 
-                  for(var i=0; i<4; i++) {
-                    if(rbp[i]){
-                %>
-                <a class="list" href="regionboard/boardRead?document_name=<%=rbp[i].document_name%>&visitNew=1&page=1&board_region=<%=region%>">
-                  <time style="float:right; padding-right:1rem; color:black;"><%=rbp[i].good_num%></time>
-                  <p style="padding-left: 1rem; color:black;"><%=rbp[i].title%></p>
-                  <% if(i<3){ %>
-                    <hr>
-                  <% } %>
-                </a>
-                <% } else { %>
-                  <a class="list">
-                    <time style="float:right; padding-right:1rem; color:black;"><br></time>
-                    <p style="padding-left: 1rem; color:black;"><br></p>
-                    <% if(i<3){ %>
-                      <hr>
-                    <% } %>
-                  </a>
-                <% } %>
-                <% } %>
-
-              </div>
-            </div>
-
-            <div class="card" style="float : left; margin : 10px;">
-              <div class="board" style="width:500px; text-align:justify; background-color:#ffffff;">
-                <h5 bgcolor="blue" style="margin:20px; text-align:center;">
-                  <a href="/regionboard/boardList?board_region=<%=region%>" style="color:black;">내 지역 게시글 - 실시간</a>
-                </h5>
-                <hr>
-                <% 
-                  for(var i=0; i<4; i++) {
-                    if(rtp[i]){
-                %>
-                <a class="list" href="regionboard/boardRead?document_name=<%=rtp[i].document_name%>&visitNew=1&page=1&board_region=<%=region%>">
-                  <time style="float:right; padding-right:1rem; color:black;"><%=rtp[i].day%></time>
-                  <p style="padding-left: 1rem; color:black;"><%=rtp[i].title%></p>
-                  <% if(i<3){ %>
-                    <hr>
-                  <% } %>
-                </a>
-                <% } else { %>
-                  <a class="list">
-                    <time style="float:right; padding-right:1rem; color:black;"><br></time>
-                    <p style="padding-left: 1rem; color:black;"><br></p>
-                    <% if(i<3){ %>
-                      <hr>
-                    <% } %>
-                  </a>
-                <% } %>
-                <% } %>
-
-              </div>
-            </div>
           </div>
         </div>
       </div>
     </section>
 
+      
+      
+      
     <!-- Contact Section -->
     <section id="contact" style="clear:both">
-      <div class="container">
-        <h2 class="text-center text-uppercase text-secondary mb-0">Contact Me</h2>
+      <div class="container" style="padding-top:200px">
+        <h2 class="text-center text-uppercase text-secondary mb-0">Contact Us</h2>
         <hr class="star-dark mb-5">
         <div class="row">
           <div class="col-lg-8 mx-auto">
