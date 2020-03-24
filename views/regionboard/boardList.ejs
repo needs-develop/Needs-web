@@ -39,7 +39,6 @@
       transition: 0.5s;
       padding-top: 150px;
     }
-
     .sidenav2 {
       height: 100%;
       width: 0;
@@ -52,7 +51,6 @@
       transition: 0.5s;
       padding-top: 150px;
     }
-
     .sidenav3 {
       height: 100%;
       width: 0;
@@ -65,7 +63,6 @@
       transition: 0.5s;
       padding-top: 150px;
     }
-
     .sidenav4 {
       height: 100%;
       width: 0;
@@ -78,7 +75,6 @@
       transition: 0.5s;
       padding-top: 150px;
     }
-
     .sidenav5 {
       height: 100%;
       width: 0;
@@ -91,7 +87,6 @@
       transition: 0.5s;
       padding-top: 150px;
     }
-
     .sidenav6 {
       height: 100%;
       width: 0;
@@ -130,7 +125,6 @@
       transition: 0.5s;
       padding-top: 150px;
     }
-
     .openbar a {
       padding: 8px 8px 8px 32px;
       text-decoration: none;
@@ -140,11 +134,9 @@
       transition: 0.3s;
       cursor: pointer;
     }
-
     .openbar a:hover {
       color: #f1f1f1;
     }
-
     .openbar button {
       padding: 8px 8px 8px 32px;
       text-decoration: none;
@@ -154,7 +146,6 @@
       transition: 0.3s;
       cursor: pointer;
     }
-
     .openbar .closebtn {
       position: absolute;
       top: 100px;
@@ -162,23 +153,19 @@
       font-size: 36px;
       margin-left: 50px;
     }
-
     #open_bar {
       transition: margin-left .5s;
       padding: 16px;
     }
-
     /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
     @media screen and (max-height: 450px) {
       .openbar {
         padding-top: 80px;
       }
-
       .openbar a {
         font-size: 18px;
       }
     }
-
     .dropbtn {
       background-color: #111;
       color: #f1f1f1;
@@ -186,11 +173,9 @@
       font-size: 25px;
       border: none;
     }
-
     .dropbtn:hover {
       color: #ffffff;
     }
-
     .container img {
       max-height: initial;
       margin-top: -20%;
@@ -325,61 +310,51 @@
       document.getElementById("myopenbar").style.width = "250px";
       document.getElementById("open_bar").style.marginLeft = "250px";
     }
-
     function openNav2() {
       document.getElementById("mySidenav2").style.width = "250px";
       document.getElementById("main").style.marginLeft = "250px";
       document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     }
-
     function closeNav2() {
       document.getElementById("mySidenav2").style.width = "0";
       document.getElementById("main").style.marginLeft = "0";
       document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     }
-
     function openNav3() {
       document.getElementById("mySidenav3").style.width = "250px";
       document.getElementById("main").style.marginLeft = "250px";
       document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     }
-
     function closeNav3() {
       document.getElementById("mySidenav3").style.width = "0";
       document.getElementById("main").style.marginLeft = "0";
       document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     }
-
     function openNav4() {
       document.getElementById("mySidenav4").style.width = "250px";
       document.getElementById("main").style.marginLeft = "250px";
       document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     }
-
     function closeNav4() {
       document.getElementById("mySidenav4").style.width = "0";
       document.getElementById("main").style.marginLeft = "0";
       document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     }
-
     function openNav5() {
       document.getElementById("mySidenav5").style.width = "250px";
       document.getElementById("main").style.marginLeft = "250px";
       document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     }
-
     function closeNav5() {
       document.getElementById("mySidenav5").style.width = "0";
       document.getElementById("main").style.marginLeft = "0";
       document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     }
-
     function openNav6() {
       document.getElementById("mySidenav6").style.width = "250px";
       document.getElementById("main").style.marginLeft = "250px";
       document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     }
-
     function closeNav6() {
       document.getElementById("mySidenav6").style.width = "0";
       document.getElementById("main").style.marginLeft = "0";
@@ -395,7 +370,6 @@
       document.getElementById("main").style.marginLeft = "250px";
       document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     }
-
     function closeNavA() {
       document.getElementById("mySidenavA").style.width = "0";
       document.getElementById("main").style.marginLeft = "0";
@@ -407,7 +381,6 @@
       document.getElementById("main").style.marginLeft = "250px";
       document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     }
-
     function closeNavB() {
       document.getElementById("mySidenavB").style.width = "0";
       document.getElementById("main").style.marginLeft = "0";
@@ -498,7 +471,7 @@
                     <colgroup>
                         <col width='13%' />
                         <col width='*%' />
-                        <col width='10%' />
+                        <col width='15%' />
                         <col width='27%' />
                         <col width='10%' />
                         <col width='10%' />
@@ -522,7 +495,7 @@
                         %>    
                         <tr>
                             <td style="text-align:center"><%=board.length-i%></td>
-                            <td><a href="boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>&board_region=<%=board_region%>" style="color: black"><%=board[i].title%></a></td>
+                            <td><a href="boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>&board_region=<%=board_region%>" style="color: black"><%=board[i].title%>&emsp;<span style="color: #1169e1; font-weight:bold;">[<%=reply_num[i].reply_num%>]</span></a></td>
                             <td style="text-align:center"><%=board[i].id_nickName%></td>
                             <td style="text-align:center"><%=board[i].day%></td>
                             <td style="text-align:center"><%=board[i].visit_num%></td>
@@ -538,7 +511,7 @@
                         %>   
                         <tr>
                             <td style="text-align:center"><%=board.length-i%></td>
-                            <td><a href="boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>&board_region=<%=board_region%>" style="color: black"><%=board[i].title%></a></td>
+                            <td><a href="boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>&board_region=<%=board_region%>" style="color: black"><%=board[i].title%>&emsp;<span style="color: #1169e1; font-weight:bold;">[<%=reply_num[i].reply_num%>]</span></a></td>
                             <td style="text-align:center"><%=board[i].id_nickName%></td>
                             <td style="text-align:center"><%=board[i].day%></td>
                             <td style="text-align:center"><%=board[i].visit_num%></td>
@@ -561,7 +534,7 @@
                     <%
                     if (parseInt((page-1)/5)*5+1 != 1) {    // 1~5페이지가 보이는 경우가 아니면 이전 버튼 출력
                     %>  
-                    <a href="boardList?page=<%=parseInt((page-1)/5)*5%>&board_region=<%=board_region%>"> 이전 </a> 
+                    <a href="boardList?page=<%=parseInt((page-1)/5)*5%>&board_region=<%=board_region%>" style="color: black; font-size: 18px; font-weight: bold; padding: 10px">〈 </a> 
                     <%
                     }
                     %>   
@@ -572,7 +545,14 @@
                             break;
                         }
                     %>
-                    <a href="boardList?page=<%=i%>&board_region=<%=board_region%>" style="color: black; padding: 5px"><%= i %></a>
+                    <a href="boardList?page=<%=i%>&board_region=<%=board_region%>" style="color: black; font-size: 18px; padding: 10px">     
+                        <% if(i == page) { // 현재 페이지는 진하게 표시 %>
+                             <span style="color:#1169e1; font-weight:bold;"><%= i %></span>
+                        <% } 
+                           else { %>
+                             <%= i %>
+                        <% } %>  
+                    </a>
                     <%
                     }
                     %>
@@ -580,7 +560,7 @@
                     <%
                     if (parseInt((page-1)/5)*5+5 < pageNum) { // 해당 페이지에서 보이는 다섯 페이지의 다음 페이지가 존재하는 경우 다음 버튼 출력
                     %>
-                    <a href="boardList?page=<%=(parseInt((page-1)/5)+1)*5+1%>&board_region=<%=board_region%>"> 다음 </a>  
+                    <a href="boardList?page=<%=(parseInt((page-1)/5)+1)*5+1%>&board_region=<%=board_region%>" style="color: black; font-size: 18px; font-weight: bold; padding: 10px">  〉</a>  
                     <%
                     }                                     
                     %>                        
@@ -600,7 +580,7 @@
 
             <!-- 글쓰기 버튼 -->
             <form name="form1" action="boardWrite" method="get">
-                <button class="btn btn-primary btn-xl pull-right" style="background: #18bc9c; width: 120px; height: 50px" onclick="location.href='boardWrite?board_region=<%=board_region%>'">글쓰기&nbsp;<i class="fa fa-pencil"></i></button>
+                <button class="btn btn-primary btn-xl pull-right" style="background: #18bc9c; width: 120px; height: 50px;" onclick="location.href='boardWrite?board_region=<%=board_region%>'">글쓰기&nbsp;<i class="fa fa-pencil"></i></button>
                 <input type="hidden" name="board_region" value="<%=board_region%>">
             </form>
         </div>
@@ -616,8 +596,8 @@
    <!-- Contact Section -->
     <br><br><br><br>
     <section id="contact">
-      <div class="container">
-        <h2 class="text-center text-uppercase text-secondary mb-0">Contact Me</h2>
+      <div class="container" style="padding-top: 100px">
+        <h2 class="text-center text-uppercase text-secondary mb-0">Contact Us</h2>
         <hr class="star-dark mb-5">
         <div class="row">
           <div class="col-lg-8 mx-auto">
@@ -662,58 +642,6 @@
         </div>
       </div>
     </section>
-
-    <!-- Footer -->
-    <footer class="footer text-center">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-4 mb-5 mb-lg-0">
-            <h4 class="text-uppercase mb-4">위치</h4>
-            <p class="lead mb-0">서울특별시
-              </p>
-          </div>
-          <div class="col-md-4 mb-5 mb-lg-0">
-
-          </div>
-          <div class="col-md-4">
-            <h4 class="text-uppercase mb-4">문의</h4>
-            <p class="lead mb-0">02) XXX - XXXX</p>
-          </div>
-        </div>
-      </div>
-    </footer>
-
-    <div class="copyright py-4 text-center text-white">
-      <div class="container">
-        <small> (주)Needs</small>
-      </div>
-    </div>
-
-    <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
-    <div class="scroll-to-top d-lg-none position-fixed ">
-      <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top">
-        <i class="fa fa-chevron-up"></i>
-      </a>
-    </div>
-
-
-    <!-- Bootstrap core JavaScript -->
-    <script src="/vendor/jquery/jquery.min.js"></script>
-    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Plugin JavaScript -->
-    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
-    <script src="/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
-
-    <!-- Contact Form JavaScript -->
-    <script src="/js/jqBootstrapValidation.js"></script>
-    <script src="/js/contact_me.js"></script>
-
-    <!-- Custom scripts for this template -->
-    <script src="/js/freelancer.min.js"></script>
-    <script src="/js/jquery-3.1.1.js"></script>
-    <script src="/js/bootstrap.js"></script> 
-
-                                       
+  
 </body>
 </html>
