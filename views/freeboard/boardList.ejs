@@ -66,7 +66,7 @@
     <!-- Portfolio Grid Section -->
     
     <section class="portfolio" id="portfolio">
-        <div class="container" style="padding-top:100px">
+        <div class="container" style="padding-top:70px">
             <h3 class="text-center text-uppercase">자유게시판</h3>
             <br><br>
             <div class="text-center">
@@ -100,7 +100,7 @@
                     <colgroup>
                         <col width='13%' />
                         <col width='*%' />
-                        <col width='10%' />
+                        <col width='15%' />
                         <col width='27%' />
                         <col width='10%' />
                         <col width='10%' />
@@ -116,7 +116,7 @@
                             <th><center>좋아요</center></th>
                         </tr>
                     </thead>
-                    
+
                     <tbody>
                         <%
                         if (page != pageNum) {  // 마지막 페이지가 아닌 경우
@@ -124,7 +124,7 @@
                         %>    
                         <tr>
                             <td style="text-align:center"><%=board.length-i%></td>
-                            <td><a href="boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>" style="color: black"><%=board[i].title%></a></td>
+                            <td><a href="boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>" style="color: black"><%=board[i].title%>&emsp;<span style="color: #1169e1; font-weight:bold;">[<%=reply_num[i].reply_num%>]</span></a></td>
                             <td style="text-align:center"><%=board[i].id_nickName%></td>
                             <td style="text-align:center"><%=board[i].day%></td>
                             <td style="text-align:center"><%=board[i].visit_num%></td>
@@ -140,7 +140,7 @@
                         %>   
                         <tr>
                             <td style="text-align:center"><%=board.length-i%></td>
-                            <td><a href="boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>" style="color: black"><%=board[i].title%></a></td>
+                            <td><a href="boardRead?document_name=<%=board[i].document_name%>&visitNew=1&page=<%=page%>" style="color: black"><%=board[i].title%>&emsp;<span style="color: #1169e1; font-weight:bold;">[<%=reply_num[i].reply_num%>]</span></a></td>
                             <td style="text-align:center"><%=board[i].id_nickName%></td>
                             <td style="text-align:center"><%=board[i].day%></td>
                             <td style="text-align:center"><%=board[i].visit_num%></td>
@@ -163,7 +163,7 @@
                         <%
                         if (parseInt((page-1)/5)*5+1 != 1) {    // 1~5페이지가 보이는 경우가 아니면 이전 버튼 출력
                         %>  
-                        <a href="boardList?page=<%=parseInt((page-1)/5)*5%>"> 이전 </a> 
+                        <a href="boardList?page=<%=parseInt((page-1)/5)*5%>" style="color: black; font-size: 18px; font-weight: bold; padding: 10px">〈 </a> 
                         <%
                         }
                         %>   
@@ -174,15 +174,24 @@
                                 break;
                             }
                         %>
-                        <a href="boardList?page=<%=i%>" style="color: black; padding: 5px"><%= i %></a>
+                        <a href="boardList?page=<%=i%>" style="color: black; font-size: 18px; padding: 10px">
+                        
+                        <% if(i == page) { // 현재 페이지는 진하게 표시 %>
+                             <span style="color:#1169e1; font-weight:bold;"><%= i %></span>
+                        <% } 
+                           else { %>
+                             <%= i %>
+                        <% } %>  
+                        
                         <%
                         }
                         %>
+                        </a>
                         
                         <%
                         if (parseInt((page-1)/5)*5+5 < pageNum) { // 해당 페이지에서 보이는 다섯 페이지의 다음 페이지가 존재하는 경우 다음 버튼 출력
                         %>
-                        <a href="boardList?page=<%=(parseInt((page-1)/5)+1)*5+1%>"> 다음 </a>  
+                        <a href="boardList?page=<%=(parseInt((page-1)/5)+1)*5+1%>" style="color: black; font-size: 18px; font-weight: bold; padding: 10px"> 〉</a>  
                         <%
                         }                                     
                         %>    
@@ -220,8 +229,8 @@
    <!-- Contact Section -->
     <br><br><br><br>
     <section id="contact">
-      <div class="container">
-        <h2 class="text-center text-uppercase text-secondary mb-0">Contact Me</h2>
+      <div class="container" style="padding-top: 100px">
+        <h2 class="text-center text-uppercase text-secondary mb-0">Contact Us</h2>
         <hr class="star-dark mb-5">
         <div class="row">
           <div class="col-lg-8 mx-auto">
@@ -266,58 +275,6 @@
         </div>
       </div>
     </section>
-
-    <!-- Footer -->
-    <footer class="footer text-center">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-4 mb-5 mb-lg-0">
-            <h4 class="text-uppercase mb-4">위치</h4>
-            <p class="lead mb-0">서울특별시
-              </p>
-          </div>
-          <div class="col-md-4 mb-5 mb-lg-0">
-
-          </div>
-          <div class="col-md-4">
-            <h4 class="text-uppercase mb-4">문의</h4>
-            <p class="lead mb-0">02) XXX - XXXX</p>
-          </div>
-        </div>
-      </div>
-    </footer>
-
-    <div class="copyright py-4 text-center text-white">
-      <div class="container">
-        <small> (주)Needs</small>
-      </div>
-    </div>
-
-    <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
-    <div class="scroll-to-top d-lg-none position-fixed ">
-      <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top">
-        <i class="fa fa-chevron-up"></i>
-      </a>
-    </div>
-
-
-    <!-- Bootstrap core JavaScript -->
-    <script src="../vendor/jquery/jquery.min.js"></script>
-    <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Plugin JavaScript -->
-    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
-    <script src="../vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
-
-    <!-- Contact Form JavaScript -->
-    <script src="../js/jqBootstrapValidation.js"></script>
-    <script src="../js/contact_me.js"></script>
-
-    <!-- Custom scripts for this template -->
-    <script src="../js/freelancer.min.js"></script>
-    <script src="../js/jquery-3.1.1.js"></script>
-    <script src="../js/bootstrap.js"></script> 
-
-                                       
+           
 </body>
 </html>
