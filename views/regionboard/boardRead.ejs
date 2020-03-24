@@ -31,7 +31,7 @@
     <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
 		<div class="container">
 		  <a class="navbar-brand js-scroll-trigger" href="/">Needs</a>
-          <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/regionboard/boardList?board_region=<%=id_region%>"><img class="img-fluid" src="/img/portfolio/id_region8.png" alt="">&nbsp;<%=id_region%></a>
+          <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/regionboard/boardList?board_region=<%=id_region%>" style="color:white;"><img class="img-fluid" src="/img/portfolio/id_region8.png" alt="">&nbsp;<%=id_region%></a>
 		  <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-fixed Black rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
 			Menu
 			<i class="fa fa-bars"></i>
@@ -116,6 +116,7 @@
                     <input type="hidden" name="board_region" value="<%=board_region%>">
                 </form>
             </div>
+            <br><br><br>
             
             <script>
                 if(like == 1) { // 좋아요한 게시물인 경우
@@ -127,7 +128,6 @@
                     const OTHER_COLOR = "red";
                 }
                 const heart = document.querySelector("#heart"); 
-
                 function handClick(){
                     const currentColor = heart.style.color;
                     if(currentColor === BASE_COLOR){
@@ -153,7 +153,7 @@
             </form>     
         </div>	
     </section>
-    <br><br><br><br><hr>   
+    <br><hr>   
     
     
     <!-- 댓글 읽기-->
@@ -225,7 +225,7 @@
 			obj.style.height = (12+obj.scrollHeight)+"px";
 		}
 	</script>
-
+    
 	<!-- Bootstrap core JavaScript -->
 	<script src="../vendor/jquery/jquery.min.js"></script>
 	<script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
