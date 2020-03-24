@@ -67,25 +67,39 @@ router.get('/boardList', function(req, res, next) {
                             }
 
                             
-                        
                             // 글이 있는 경우
                             if(snapshot.size != 0) {
                                 var region_board = [];
+                                var reply_num = [];
+                                
                                 snapshot.forEach((region_doc) => {
                                     var region_data = region_doc.data();
-                                    region_board.push(region_data);    
+                                    region_board.push(region_data);  
+                                    
+                                    
+                                    var reply;
+                                    db.collection("data").doc('allData').collection(board_region).doc(region_data.document_name).collection("reply").orderBy("timeReply").get()
+                                        .then((reply_snap) => {
+                                            reply = 0;
+                                            // 글 하나에 달린 댓글 수를 셈
+                                            reply_snap.forEach((reply_doc) => {
+                                                reply += 1;
+                                            });  
+                                            reply_num.push({reply_num: reply});
+                                        });
                                 });
                                 
-                                res.render('regionboard/boardList', {board: region_board, page: page, id_email: id_email, id_region: id_region, board_region: board_region, favorite_region: favorite_region, favorite: favorite});
+                                // reply_snap을 처리한 후 렌더링하기 위해 1초 지연
+                                setTimeout(function() {
+                                    res.render('regionboard/boardList', {board: region_board, page: page, id_email: id_email, id_region: id_region, board_region: board_region, favorite_region: favorite_region, favorite: favorite, reply_num: reply_num});
+                                }, 1000);    
                             }
                             // 글이 없는 경우
                             else {
-                                res.render('regionboard/boardList', {board: '', page: '', id_email: id_email, id_region: id_region, board_region: board_region, favorite_region: favorite_region, favorite: favorite});
+                                res.render('regionboard/boardList', {board: '', page: '', id_email: id_email, id_region: id_region, board_region: board_region, favorite_region: favorite_region, favorite: favorite, reply_num: reply_num});
                             }
                         
-                        });
-                
-                    
+                        }); 
                 })
                 .catch((err) => {
                     console.log('Error getting documents', err);
