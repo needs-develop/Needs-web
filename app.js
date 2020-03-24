@@ -82,112 +82,99 @@ var db = firebase.firestore();  //firestore
 var fb_auth = firebase.auth();
 
 // sec, min, hour, day, mon, week
-// ->매 00초마다 실행한다는 뜻
-schedule.scheduleJob('00 * * * * *', function() {
-  let time_now = new Date();
-  var time = time_now.toFormat('YYYY/MM/DD HH24:MM');
-  console.log(time_now);
+// ->매 00분 00초마다 실행한다는 뜻 (1시간 주기)
+schedule.scheduleJob('00 00 * * * *', function() {
   var region_list = [];
   let region_ref = db_admin.collection("data").doc("allData");
   region_ref.listCollections().then(collections => {
     collections.forEach(collection => {
       region_list.push(collection.id);
     })
-    region_list.forEach(function(element){
-      region_ref.collection(element).orderBy("good_num", "desc").get()
-        .then((snap) => {
-          var i = 0;
-          snap.forEach((doc) => {
-            var data = doc.data();
-              var user_ref = db_admin.collection("user").doc(data.id_uid);
-              
-              //user가 없는 경우??;; -> 오류남 -> 따라서 쿼리사용
-              if(i == 0){
-                user_ref.get()
-                  .then((usersnap) => {
-                    if(usersnap.exists){
-                      var user_data = usersnap.data();
-                      var cur_point = Number(user_data.id_point);
-                      var new_point = String(cur_point + 10000);
-                      console.log(cur_point, new_point, user_data.id_uid);
-                      user_ref.update({
-                        id_point: new_point
-                      });
-                      user_ref.collection("pointHistory").doc().set({
-                        day: time,
-                        point: "+10000",
-                        type: "1등 포인트 지급"
-                      })
-                      console.log("1등 포인트 지급");
-                    }
-                    else{
-                      console.log("탈퇴한 회원입니다.");
-                    }
-                  })
-                  .catch((err) => {
-                    console.log(err, "사용자 X");
-                  });
-              }
-              if(i == 1){
-                user_ref.get()
-                  .then((usersnap) => {
-                    if(usersnap.exists){
-                      var user_data = usersnap.data();
-                      var cur_point = Number(user_data.id_point);
-                      var new_point = String(cur_point + 5000);
-                      console.log(cur_point, new_point, user_data.id_uid);
-                      user_ref.update({
-                        id_point: new_point
-                      });
-                      user_ref.collection("pointHistory").doc().set({
-                        day: time,
-                        point: "+5000",
-                        type: "2등 포인트 지급"
-                      })
-                      console.log("2등 포인트 지급");
-                    }
-                    else{
-                      console.log("탈퇴한 회원입니다.");
-                    }
-                  })
-                  .catch((err) => {
-                    console.log(err, "사용자 X");
-                  });
-              }
-              if(i == 2){
-                user_ref.get()
-                  .then((usersnap) => {
-                    if(usersnap.exists){
-                      var user_data = usersnap.data();
-                      var cur_point = Number(user_data.id_point);
-                      var new_point = String(cur_point + 2000);
-                      console.log(cur_point, new_point, user_data.id_uid);
-                      user_ref.update({
-                        id_point: new_point
-                      });
-                      user_ref.collection("pointHistory").doc().set({
-                        day: time,
-                        point: "+2000",
-                        type: "3등 포인트 지급"
-                      })
-                      console.log("3등 포인트 지급");
-                    }
-                    else{
-                      console.log("탈퇴한 회원입니다.");
-                    }
-                  })
-                  .catch((err) => {
-                    console.log(err, "사용자 X");
-                  });
-              }
-            i++;
-          })
+    var point_dict = {};
+    var point_sum = 17000*region_list.length;
+    var total_point = 0;
+    // 각 지역을 순회하며 TOP3 Search
+    region_list.forEach(function(element, index){
+      // 각 지역 TOP3 good_num_m 을 descending으로 정렬
+      region_ref.collection(element).orderBy("good_num_m", "desc").get().then((snap) => {
+        var i = 0;
+        snap.forEach((doc) => {
+          var data = doc.data();
+          // 1등
+          if(i == 0){
+            if(point_dict[data.id_uid]){
+              point_dict[data.id_uid] = point_dict[data.id_uid] + 10000
+              total_point += 10000;
+            }
+            else{
+              point_dict[data.id_uid] = 10000
+              total_point += 10000;
+            }
+          }
+          // 2등
+          if(i == 1){
+            if(point_dict[data.id_uid]){
+              point_dict[data.id_uid] = point_dict[data.id_uid] + 5000
+              total_point += 5000;
+            }
+            else{
+              point_dict[data.id_uid] = 5000
+              total_point += 5000;
+            }
+          }
+          // 3등
+          if(i == 2){
+            if(point_dict[data.id_uid]){
+              point_dict[data.id_uid] = point_dict[data.id_uid] + 2000
+              total_point += 2000;
+            }
+            else{
+              point_dict[data.id_uid] = 2000
+              total_point += 2000;
+            }
+          }
+          i++;
         })
+        // 유저에게 포인트 지급
+        if(total_point == point_sum){
+          reward(point_dict);
+        }
+      })
     });
   })
 });
 
+async function reward(point_dict){
+  for(var key in point_dict){
+    await pushAsync(key, point_dict);
+  }
+}
 
-
+function pushAsync(key, point_dict){
+  let time_now = new Date();
+  var time = time_now.toFormat('YYYY/MM/DD HH24:MM');
+  var month = time_now.toFormat('MM'+"월");
+  var user_ref = db_admin.collection("user").doc(key);
+  user_ref.get().then((usersnap) => {
+    if(usersnap.exists){
+      console.log(key, point_dict[key]);
+      var userData = usersnap.data();
+      var cur_point = Number(userData.id_point);
+      var new_point = cur_point + point_dict[key];
+      console.log(userData.id_uid, cur_point, "->", new_point);
+      user_ref.update({
+        id_point: new_point
+      });
+      user_ref.collection("pointHistory").doc().set({
+        day: time,
+        point: "+"+String(point_dict[key]),
+        type: month+" 포인트 지급"
+      })
+    }
+    else{
+      console.log("탈퇴한 회원입니다.");
+    }
+  })
+} 
 
 module.exports = app;

@@ -238,6 +238,7 @@ router.post('/boardSave', function(req,res,next){
                 postData.day = moment().format('YYYY/MM/DD HH:mm:ss');
                 postData.visit_num = 0;
                 postData.good_num = 0;
+                postData.good_num_m = 0;
                 
                 // data - board_region
                 var data_doc = db.collection("data").doc('allData').collection(board_region).doc();
@@ -302,9 +303,13 @@ router.post('/boardLike', function(req,res,next){
                 // 좋아요를 누른 적 없는 경우
                 if(!doc2.exists) 
                 {
-                    // freeData의 good_num 증가
+                    // regionData의 good_num, good_num_m 증가
                     var good = board_data.good_num + 1;  
-                    board_doc.update({good_num : good});
+                    var good_m = board_data.good_num_m + 1;
+                    board_doc.update({
+                        good_num : good,
+                        good_num_m : good_m
+                    });
                 
                     // data - board_region - like
                     board_like_doc.set({goodBoolean: true, id_uid: uid});
@@ -375,9 +380,13 @@ router.post('/boardLike', function(req,res,next){
                     // data - board_region - like 에서 문서 삭제
                     board_doc.collection("like").doc(postData.id_email + "like").delete();  
                     
-                    // data - board_region 문서의 good_num 감소
+                    // data - board_region 문서의 good_num, good_num_m 감소
                     var good = board_data.good_num - 1;  
-                    board_doc.update({good_num : good}); 
+                    var good_m = board_data.good_num_m - 1;
+                    board_doc.update({
+                        good_num : good,
+                        good_num_m : good_m
+                    }); 
                     
                     
                     // user - like 에서 문서 삭제
