@@ -103,6 +103,50 @@ router.post('/editInfo/nickName', function(req, res, next) {
 	db.collection("user").doc(uid).update({
 		id_nickName: param_nick,
 	});
+    
+    
+    // 자유게시판, 지역게시판 글의 작성자 닉네임 변경
+    db.collection("user").doc(uid).collection('write').get()
+        .then((user_write_snap) => {
+            user_write_snap.forEach((user_write_doc) => {
+                var user_write_data = user_write_doc.data();
+                var document_name = user_write_data.document_name;
+                
+                // 자유게시판 글
+                if(user_write_data.data == "freedata")  
+                {
+                    db.collection('freeData').doc(document_name).update({id_nickName: param_nick});
+                }
+                // 지역게시판 글
+                else
+                {
+                    db.collection('data').doc('allData').collection(user_write_data.address).doc(document_name).update({id_nickName: param_nick});
+                }   
+            });
+        }); 
+    
+    // 댓글 닉네임 변경
+    db.collection("user").doc(uid).collection('reply').get()
+        .then((user_reply_snap) => {
+            user_reply_snap.forEach((user_reply_doc) => {
+                var user_reply_data = user_reply_doc.data();
+                var document_name = user_reply_data.document_name;
+                var reply_doc = user_reply_data.reply_doc;
+                
+                // 자유게시판 글
+                if(user_reply_data.data == "freedata")  
+                {
+                    db.collection('freeData').doc(document_name).collection('reply').doc(reply_doc).update({writerReply: param_nick});
+                }
+                // 지역게시판 글
+                else
+                {
+                    db.collection('data').doc('allData').collection(user_reply_data.address).doc(document_name).collection('reply').doc(reply_doc).update({writerReply: param_nick});
+                }   
+            });
+        });
+    
+    
 	res.send(`<script type="text/javascript">
 			alert("닉네임 변경이 완료되었습니다!");
 			document.location.href="/mypage/editInfo"
