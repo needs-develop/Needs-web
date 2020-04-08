@@ -133,14 +133,22 @@
         </table>
         <br><br><br><hr/>
           
+          
         <!-- pagination -->
         <div class="text-center" style="display:table; margin: auto">
           <ol class="pagination">
             <%
             if (parseInt((page-1)/5)*5+1 != 1) {    // 1~5페이지가 보이는 경우가 아니면 이전 버튼 출력
+                if(boardType == "freeData") {
             %>  
-            <a href="myPost?page=<%=parseInt((page-1)/5)*5%>"> 이전 </a> 
+                    <a href="freeboard?page=<%=parseInt((page-1)/5)*5%>"  style="color: black; font-size: 18px; font-weight: bold; padding: 10px">〈 </a> 
             <%
+                }
+                else {
+            %>   
+                    <a href="regionboard?page=<%=parseInt((page-1)/5)*5%>" style="color: black; font-size: 18px; font-weight: bold; padding: 10px">〈 </a>
+            <%        
+                }
             }
             %>   
             
@@ -149,17 +157,46 @@
                 if(i > pageNum) {   // 마지막 페이지 번호까지 출력했으면 break
                     break;
                 }
+              
+                if(boardType == "freeData") {
             %>
-            <a href="myPost?page=<%=i%>" style="color: black; padding: 5px"><%= i %></a>
-            <%
+                    <a href="freeboard?page=<%=i%>" style="color: black; font-size: 18px; padding: 10px">
+                        <% if(i == page) { // 현재 페이지는 진하게 표시 %>
+                             <span style="color:#1169e1; font-weight:bold;"><%= i %></span>
+                        <% } 
+                           else { %>
+                             <%= i %>
+                        <% } %> 
+                    </a>
+            <% 
+                }
+                else {
+            %>
+                    <a href="regionboard?page=<%=i%>" style="color: black; font-size: 18px; padding: 10px">
+                        <% if(i == page) { // 현재 페이지는 진하게 표시 %>
+                             <span style="color:#1169e1; font-weight:bold;"><%= i %></span>
+                        <% } 
+                           else { %>
+                             <%= i %>
+                        <% } %>                         
+                    </a>
+            <%        
+                }
             }
             %>
             
             <%
             if (parseInt((page-1)/5)*5+5 < pageNum) { // 해당 페이지에서 보이는 다섯 페이지의 다음 페이지가 존재하는 경우 다음 버튼 출력
+                if(boardType == "freeData") {
             %>
-            <a href="myPost?page=<%=(parseInt((page-1)/5)+1)*5+1%>"> 다음 </a>  
+                    <a href="freeboard?page=<%=(parseInt((page-1)/5)+1)*5+1%>" style="color: black; font-size: 18px; font-weight: bold; padding: 10px"> 〉</a>  
             <%
+                }
+                else {
+            %>
+                    <a href="regionboard?page=<%=(parseInt((page-1)/5)+1)*5+1%>" style="color: black; font-size: 18px; font-weight: bold; padding: 10px"> 〉</a>   
+            <%        
+                }
             }                                     
             %>
           </ol>
