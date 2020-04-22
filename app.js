@@ -81,11 +81,32 @@ if (!firebase.apps.length) {
 var db = firebase.firestore();  //firestore
 var fb_auth = firebase.auth();
 
+let region_ref = db_admin.collection("data").doc("allData");
+var region_list = [];
+
+// sec, min, hour, day, mon, week
+// ->매 01분 00초마다 실행한다는 뜻 (1시간 주기)
+schedule.scheduleJob('00 01 * * * *', function(){
+  region_ref.listCollections().then(collections => { //모든 지역구 정보를 가져옴
+    collections.forEach(collection => {
+      region_list.push(collection.id);
+    });
+    //각 지역을 순회하며 모든 good_num_m을 0으로 초기화
+    region_list.forEach(function(element){
+      region_ref.collection(element).get().then((snap) => {
+        snap.forEach((doc) => {
+          var data = doc.data();
+          var doc_uid = data.document_name;
+          region_ref.collection(element).doc(doc_uid).update({good_num_m : 0 });
+        })
+      })
+    });
+  });
+});
+
 // sec, min, hour, day, mon, week
 // ->매 00분 00초마다 실행한다는 뜻 (1시간 주기)
 schedule.scheduleJob('00 00 * * * *', function() {
-  var region_list = [];
-  let region_ref = db_admin.collection("data").doc("allData");
   region_ref.listCollections().then(collections => {
     collections.forEach(collection => {
       region_list.push(collection.id);
@@ -94,7 +115,7 @@ schedule.scheduleJob('00 00 * * * *', function() {
     var point_sum = 17000*region_list.length;
     var total_point = 0;
     // 각 지역을 순회하며 TOP3 Search
-    region_list.forEach(function(element, index){
+    region_list.forEach(function(element){
       // 각 지역 TOP3 good_num_m 을 descending으로 정렬
       region_ref.collection(element).orderBy("good_num_m", "desc").get().then((snap) => {
         var i = 0;
@@ -139,18 +160,18 @@ schedule.scheduleJob('00 00 * * * *', function() {
         if(total_point == point_sum){
           reward(point_dict);
         }
-      })
+      });
     });
   })
 });
-
+//포인트 지급을 synchronous하게 작동하도록 구현
 async function reward(point_dict){
   for(var key in point_dict){
-    await pushAsync(key, point_dict);
+    await GivePoint(key, point_dict);
   }
 }
-
-function pushAsync(key, point_dict){
+// 포인트 지급 코드
+function GivePoint(key, point_dict){
   let time_now = new Date();
   var time = time_now.toFormat('YYYY/MM/DD HH24:MM');
   var month = time_now.toFormat('MM'+"월");
@@ -176,5 +197,6 @@ function pushAsync(key, point_dict){
     }
   })
 } 
+
 
 module.exports = app;
