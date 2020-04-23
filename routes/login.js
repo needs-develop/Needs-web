@@ -62,7 +62,7 @@ router.get('/google_login', function(req, res){
       id_email: email,
       id_name: name,
       id_nickName: uid,
-      id_point: 10,
+      id_point: "10",
       id_uid: uid,
       id_region: "강남구 청담동",
       photoUrl: photoURL
@@ -110,7 +110,7 @@ router.get('/facebook_login', function(req, res){
       id_email: email,
       id_name: name,
       id_nickName: uid,
-      id_point: 10,
+      id_point: "10",
       id_uid: uid,
       id_region: "강남구 청담동",
       photoUrl: photoURL

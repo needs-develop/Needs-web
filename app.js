@@ -82,11 +82,11 @@ var db = firebase.firestore();  //firestore
 var fb_auth = firebase.auth();
 
 let region_ref = db_admin.collection("data").doc("allData");
-var region_list = [];
 
 // sec, min, hour, day, mon, week
 // ->매 01분 00초마다 실행한다는 뜻 (1시간 주기)
-schedule.scheduleJob('00 01 * * * *', function(){
+const r = schedule.scheduleJob('00 01 * * * *', function(){
+  var region_list = [];
   region_ref.listCollections().then(collections => { //모든 지역구 정보를 가져옴
     collections.forEach(collection => {
       region_list.push(collection.id);
@@ -104,9 +104,11 @@ schedule.scheduleJob('00 01 * * * *', function(){
   });
 });
 
+
 // sec, min, hour, day, mon, week
 // ->매 00분 00초마다 실행한다는 뜻 (1시간 주기)
-schedule.scheduleJob('00 00 * * * *', function() {
+const p = schedule.scheduleJob('00 00 * * * *', function() {
+  var region_list = [];
   region_ref.listCollections().then(collections => {
     collections.forEach(collection => {
       region_list.push(collection.id);
@@ -115,7 +117,8 @@ schedule.scheduleJob('00 00 * * * *', function() {
     var point_sum = 17000*region_list.length;
     var total_point = 0;
     // 각 지역을 순회하며 TOP3 Search
-    region_list.forEach(function(element){
+    console.log(region_list.length);
+    region_list.forEach(function(element, index){
       // 각 지역 TOP3 good_num_m 을 descending으로 정렬
       region_ref.collection(element).orderBy("good_num_m", "desc").get().then((snap) => {
         var i = 0;
@@ -160,7 +163,7 @@ schedule.scheduleJob('00 00 * * * *', function() {
         if(total_point == point_sum){
           reward(point_dict);
         }
-      });
+      })
     });
   })
 });
@@ -181,7 +184,7 @@ function GivePoint(key, point_dict){
       console.log(key, point_dict[key]);
       var userData = usersnap.data();
       var cur_point = Number(userData.id_point);
-      var new_point = cur_point + point_dict[key];
+      var new_point = String(cur_point + point_dict[key]);
       console.log(userData.id_uid, cur_point, "->", new_point);
       user_ref.update({
         id_point: new_point
