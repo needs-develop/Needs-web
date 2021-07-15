@@ -65,7 +65,7 @@ var firebase_config = {
   appId: "1:124851004056:web:b58239166f9907ce3926ed",
   measurementId: "G-CR5E843ZEM"
 };
-var serviceAccount = require("../Needs-web/service_account_key/lloginexample-firebase-adminsdk-7ekvt-a1fd2045eb.json");
+var serviceAccount = require("../Needs-web/service_account_key/lloginexample-firebase-adminsdk-7ekvt-5551212715.json");
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -85,7 +85,7 @@ let region_ref = db_admin.collection("data").doc("allData");
 
 // sec, min, hour, day, mon, week
 // ->매 01분 00초마다 실행한다는 뜻 (1시간 주기)
-const r = schedule.scheduleJob('00 01 * * * *', function(){
+/*const r = schedule.scheduleJob('00 01 * * * *', function(){
   var region_list = [];
   region_ref.listCollections().then(collections => { //모든 지역구 정보를 가져옴
     collections.forEach(collection => {
@@ -102,12 +102,12 @@ const r = schedule.scheduleJob('00 01 * * * *', function(){
       })
     });
   });
-});
+}); */
 
 
 // sec, min, hour, day, mon, week
 // ->매 00분 00초마다 실행한다는 뜻 (1시간 주기)
-const p = schedule.scheduleJob('00 00 * * * *', function() {
+/*const p = schedule.scheduleJob('00 00 * * * *', function() {
   var region_list = [];
   region_ref.listCollections().then(collections => {
     collections.forEach(collection => {
@@ -166,15 +166,16 @@ const p = schedule.scheduleJob('00 00 * * * *', function() {
       })
     });
   })
-});
+});*/
 //포인트 지급을 synchronous하게 작동하도록 구현
-async function reward(point_dict){
+/*async function reward(point_dict){
   for(var key in point_dict){
     await GivePoint(key, point_dict);
   }
-}
+}*/
 // 포인트 지급 코드
-function GivePoint(key, point_dict){
+
+/* function GivePoint(key, point_dict){
   let time_now = new Date();
   var time = time_now.toFormat('YYYY/MM/DD HH24:MM');
   var month = time_now.toFormat('MM'+"월");
@@ -199,7 +200,7 @@ function GivePoint(key, point_dict){
       console.log("탈퇴한 회원입니다.");
     }
   })
-} 
+} */
 
 
 module.exports = app;

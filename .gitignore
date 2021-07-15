@@ -1,2 +1,4 @@
 node_modules
 bin
+service_account_key
+.DS_Store

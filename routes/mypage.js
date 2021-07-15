@@ -19,7 +19,7 @@ var firebase_config = {
   measurementId: "G-CR5E843ZEM"
 };
 
-var serviceAccount = require("../service_account_key/lloginexample-firebase-adminsdk-7ekvt-a1fd2045eb.json");
+var serviceAccount = require("../service_account_key/lloginexample-firebase-adminsdk-7ekvt-5551212715.json");
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
